@@ -185,6 +185,7 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);fon
     <div class="view active" id="view-servicios">
       <div id="kpi-row" class="kpi-row"></div>
       <div class="filter-row" id="filter-row">
+        <select class="filter-select" id="filter-mes" onchange="renderServicios()"><option value="">Todos los meses</option></select>
         <select class="filter-select" id="filter-prop" onchange="renderServicios()"><option value="">Todas las props.</option></select>
         <select class="filter-select" id="filter-cli" onchange="renderServicios()"><option value="">Todos los clientes</option></select>
         <select class="filter-select" id="filter-fact" onchange="renderServicios()">
@@ -469,6 +470,7 @@ const EXTRAS_CAT=[
   {key:'lavanderia',label:'Lavandería',icon:'👕', defaultPrice:25},
   {key:'dog',       label:'Dog',       icon:'🐕', defaultPrice:25},
   {key:'bbq',       label:'BBQ',       icon:'🍖', defaultPrice:25},
+  {key:'compras',   label:'Compras',   icon:'🛒', defaultPrice:25, hasImporte:true},
 ];
 window.EXTRAS_CAT=EXTRAS_CAT;
 
@@ -482,7 +484,7 @@ function calcBase(s){
   let lim=0;
   if(s.tipoLimpieza==='Inicial/Obra'||s.tipoLimpieza==='Check') lim=(s.horas||0)*(s.tarifa||0);
   else lim=s.precioLimpieza||0;
-  return lim+(s.extras||[]).reduce((a,e)=>a+(e.precio||0),0);
+  return lim+(s.extras||[]).reduce((a,e)=>a+(e.precio||0)+(e.importe||0),0);
 }
 window.calcBase=calcBase;
 function calcTotal(s){ const b=calcBase(s); return b+b*getIva()/100; }
@@ -589,9 +591,18 @@ function initFilters(){
   if(ivaSaved&&document.getElementById('iva-pct')) document.getElementById('iva-pct').value=ivaSaved;
 }
 function updateFilters(){
+  const fMes=document.getElementById('filter-mes');
   const fProp=document.getElementById('filter-prop');
   const fCli=document.getElementById('filter-cli');
-  const prevP=fProp.value, prevC=fCli.value;
+  const prevM=fMes.value, prevP=fProp.value, prevC=fCli.value;
+  // Populate months
+  const meses=[...new Set(window.servicios.map(s=>s.fechaServicio?.substring(0,7)).filter(Boolean))].sort().reverse();
+  fMes.innerHTML='<option value="">Todos los meses</option>'+meses.map(m=>{
+    const [y,mo]=m.split('-');
+    const label=new Date(y,mo-1,1).toLocaleDateString('es-ES',{month:'long',year:'numeric'});
+    return `<option value="${m}">${label.charAt(0).toUpperCase()+label.slice(1)}</option>`;
+  }).join('');
+  fMes.value=prevM;
   fProp.innerHTML='<option value="">Todas las props.</option>'+window.propiedades.map(p=>`<option value="${p.id}">${p.nombre.substring(0,20)}…</option>`).join('');
   fCli.innerHTML='<option value="">Todos los clientes</option>'+window.clientes.map(c=>`<option value="${c.id}">${c.nombre}</option>`).join('');
   fProp.value=prevP; fCli.value=prevC;
@@ -601,12 +612,14 @@ function updateFilters(){
 // SERVICIOS
 // ═══════════════════════════════════
 window.renderServicios=function(){
+  const fMes=document.getElementById('filter-mes')?.value||'';
   const fProp=document.getElementById('filter-prop')?.value||'';
   const fCli=document.getElementById('filter-cli')?.value||'';
   const fFact=document.getElementById('filter-fact')?.value||'';
   const fCobro=document.getElementById('filter-cobro')?.value||'';
 
   const data=window.servicios.filter(s=>
+    (!fMes||s.fechaServicio?.startsWith(fMes))&&
     (!fProp||s.propiedadId===fProp)&&
     (!fCli||s.clienteId===fCli)&&
     (!fFact||s.estadoFactura===fFact)&&
@@ -780,7 +793,7 @@ window.recalcTotal=function(){
     lim=parseFloat(document.getElementById('f-precio-profunda')?.value)||0;
   else if(tipo)
     lim=parseFloat(document.getElementById('f-precio-limpieza')?.value)||0;
-  const extTotal=window._selectedExtras.reduce((a,e)=>a+(e.precio||0),0);
+  const extTotal=window._selectedExtras.reduce((a,e)=>a+(e.precio||0)+(e.importe||0),0);
   const base=lim+extTotal;
   const ivaPct=getIva();
   document.getElementById('ps-limpieza').textContent=fmt(lim);
@@ -803,14 +816,27 @@ function renderExtrasSelected(){
   const cont=document.getElementById('extras-selected');
   if(!cont) return;
   if(!window._selectedExtras.length){cont.innerHTML='';return;}
-  cont.innerHTML=window._selectedExtras.map((e,i)=>`
-    <div class="extra-row">
-      <div class="extra-row-label">${e.icon} ${e.label}</div>
-      <input type="number" class="extra-price-input" value="${e.precio!=null?e.precio:''}" min="0" step="0.01" placeholder="0.00"
-        oninput="onExtraPriceChange(${i},this.value)">
-      <span style="color:var(--muted);font-size:13px">€</span>
-      <button class="extra-remove" onclick="removeExtra(${i})">✕</button>
-    </div>`).join('');
+  cont.innerHTML=window._selectedExtras.map((e,i)=>{
+    const isCompras=e.key==='compras';
+    return `<div class="extra-row" style="flex-wrap:wrap;gap:8px">
+      <div style="display:flex;justify-content:space-between;align-items:center;width:100%">
+        <div class="extra-row-label">${e.icon} ${e.label}</div>
+        <button class="extra-remove" onclick="removeExtra(${i})">✕</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex:1">
+        <span style="font-size:11px;color:var(--muted)">Tarifa</span>
+        <input type="number" class="extra-price-input" value="${e.precio!=null?e.precio:''}" min="0" step="0.01" placeholder="0.00"
+          oninput="onExtraPriceChange(${i},this.value,'precio')">
+        <span style="color:var(--muted);font-size:13px">€</span>
+      </div>
+      ${isCompras?`<div style="display:flex;align-items:center;gap:6px;flex:1">
+        <span style="font-size:11px;color:var(--muted)">Importe compra</span>
+        <input type="number" class="extra-price-input" value="${e.importe!=null?e.importe:''}" min="0" step="0.01" placeholder="0.00"
+          oninput="onExtraPriceChange(${i},this.value,'importe')">
+        <span style="color:var(--muted);font-size:13px">€</span>
+      </div>`:''}
+    </div>`;
+  }).join('');
 }
 window.onExtrasSelectChange=function(sel){
   const key=sel.value; if(!key) return;
@@ -819,8 +845,8 @@ window.onExtrasSelectChange=function(sel){
     window._selectedExtras.push({key:cat.key,label:cat.label,icon:cat.icon,precio:cat.defaultPrice||0});
   renderExtrasSelected(); renderExtrasSelect(); sel.value=''; recalcTotal();
 };
-window.onExtraPriceChange=function(idx,val){
-  window._selectedExtras[idx].precio=parseFloat(val)||0;
+window.onExtraPriceChange=function(idx,val,field='precio'){
+  window._selectedExtras[idx][field]=parseFloat(val)||0;
   recalcTotal();
 };
 window.removeExtra=function(idx){
@@ -850,7 +876,7 @@ window.guardarServicio=async function(){
     clienteId:cli,
     propiedadId:document.getElementById('f-propiedad').value,
     tipoLimpieza:tipo,precioLimpieza,horas,tarifa,
-    extras:window._selectedExtras.map(e=>({key:e.key,label:e.label,icon:e.icon,precio:e.precio||0})),
+    extras:window._selectedExtras.map(e=>({key:e.key,label:e.label,icon:e.icon,precio:e.precio||0,importe:e.importe||0})),
     arreglos:document.getElementById('f-arreglos').value,
     detalleArreglos:document.getElementById('f-detalle-arreglos').value.trim(),
     estadoFactura:document.getElementById('f-estado-factura').value,
