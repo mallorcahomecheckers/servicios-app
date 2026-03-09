@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ServiGestión">
+<meta name="theme-color" content="#0e0f13">
+<title>ServiGestión</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e0f13;--surface:#16181f;--surface2:#1e2029;--border:#2a2d38;
+  --accent:#c8f04a;--accent2:#4af0b8;--accent3:#f04a7a;--text:#e8eaf0;--muted:#6b7080;
+  --radius:12px;--safe-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;}
+
+/* LAYOUT */
+.app{display:flex;flex-direction:column;height:100vh;height:100dvh;}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;padding-top:calc(14px + env(safe-area-inset-top,0px));}
+.topbar-title{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:var(--accent);}
+.topbar-title span{color:var(--text);}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:var(--accent2);animation:pulse 2s infinite;}
+.sync-dot.error{background:var(--accent3);animation:none;}
+.sync-dot.loading{background:#ffc832;animation:pulse 0.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+
+.content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px;padding-bottom:calc(80px + var(--safe-bottom));}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--border);display:flex;padding-bottom:var(--safe-bottom);z-index:100;}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;border:none;background:none;color:var(--muted);font-family:inherit;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;cursor:pointer;transition:color .15s;}
+.nav-btn.active{color:var(--accent);}
+.nav-btn .nav-icon{font-size:20px;line-height:1;}
+
+/* VIEWS */
+.view{display:none;}.view.active{display:block;}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;}
+.card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.card-title{font-weight:600;font-size:14px;flex:1;}
+.card-meta{font-size:12px;color:var(--muted);}
+.card-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.card-row:last-child{border:none;padding-bottom:0;}
+.card-row .lbl{color:var(--muted);}
+.card-row .val{font-weight:500;text-align:right;max-width:60%;}
+.card-actions{display:flex;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;}
+.badge-green{background:rgba(200,240,74,.15);color:var(--accent);}
+.badge-teal{background:rgba(74,240,184,.15);color:var(--accent2);}
+.badge-red{background:rgba(240,74,122,.15);color:var(--accent3);}
+.badge-yellow{background:rgba(255,200,50,.15);color:#ffc832;}
+.badge-gray{background:rgba(107,112,128,.2);color:var(--muted);}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 18px;border-radius:var(--radius);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .15s;min-height:44px;}
+.btn-primary{background:var(--accent);color:#0e0f13;width:100%;}
+.btn-ghost{background:var(--surface2);color:var(--text);border:1px solid var(--border);flex:1;}
+.btn-danger{background:rgba(240,74,122,.15);color:var(--accent3);border:1px solid rgba(240,74,122,.3);flex:1;}
+.btn-sm{padding:7px 12px;font-size:12px;min-height:36px;}
+.btn-icon{padding:8px;font-size:18px;min-height:44px;min-width:44px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);}
+
+/* FAB */
+.fab{position:fixed;bottom:calc(72px + var(--safe-bottom) + 12px);right:18px;width:54px;height:54px;border-radius:50%;background:var(--accent);color:#0e0f13;border:none;font-size:26px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(200,240,74,.35);z-index:99;transition:transform .15s;}
+.fab:active{transform:scale(.92);}
+
+/* FORMS */
+.form-group{margin-bottom:14px;}
+.form-label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:6px;}
+.form-label .req{color:var(--accent3);}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:12px 14px;color:var(--text);font-family:inherit;font-size:15px;transition:border-color .15s;appearance:none;-webkit-appearance:none;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:var(--accent);}
+.form-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7080' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;}
+.form-textarea{resize:none;min-height:80px;}
+.form-hint{font-size:11px;color:var(--accent2);margin-top:5px;background:rgba(74,240,184,.08);padding:6px 10px;border-radius:6px;}
+.section-title{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+
+/* SHEET (bottom modal) */
+.sheet-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;}
+.sheet-overlay.open{display:block;}
+.sheet{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-radius:20px 20px 0 0;z-index:201;max-height:92dvh;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .3s cubic-bezier(.32,.72,0,1);}
+.sheet.open{transform:translateY(0);}
+.sheet-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:12px auto 0;}
+.sheet-header{display:flex;justify-content:space-between;align-items:center;padding:14px 18px 10px;}
+.sheet-title{font-family:'Syne',sans-serif;font-weight:700;font-size:17px;}
+.sheet-close{background:var(--surface2);border:1px solid var(--border);color:var(--muted);border-radius:8px;width:32px;height:32px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;}
+.sheet-body{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 18px;padding-bottom:calc(18px + env(safe-area-inset-bottom,0px));flex:1;}
+
+/* PRECIO BOX */
+.precio-box{background:var(--surface2);border:1px solid rgba(74,240,184,.25);border-radius:10px;padding:14px;margin-bottom:14px;}
+.precio-box.hidden{display:none;}
+.precio-box-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--accent2);margin-bottom:10px;}
+.precio-hint{font-size:12px;color:var(--accent);background:rgba(200,240,74,.08);padding:6px 10px;border-radius:6px;margin-bottom:10px;}
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+/* EXTRAS */
+.extra-row{display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--accent);border-radius:9px;padding:10px 12px;margin-bottom:8px;}
+.extra-row-label{flex:1;font-size:14px;font-weight:500;display:flex;align-items:center;gap:7px;}
+.extra-price-input{width:80px;text-align:right;background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:7px 10px;color:var(--text);font-family:inherit;font-size:14px;}
+.extra-price-input:focus{outline:none;border-color:var(--accent);}
+.extra-remove{background:none;border:none;color:var(--accent3);font-size:18px;cursor:pointer;padding:0 4px;min-width:32px;min-height:32px;display:flex;align-items:center;justify-content:center;}
+
+/* PRICE SUMMARY */
+.price-summary{background:rgba(200,240,74,.07);border:1px solid rgba(200,240,74,.2);border-radius:10px;padding:14px 16px;margin-bottom:14px;}
+.ps-row{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;}
+.ps-row .lbl{color:var(--muted);}
+.ps-row.divider{border-top:1px dashed rgba(200,240,74,.2);margin-top:4px;padding-top:8px;}
+.ps-row.total{font-family:'Syne',sans-serif;font-weight:700;font-size:17px;color:var(--accent);border-top:1px solid rgba(200,240,74,.25);margin-top:6px;padding-top:8px;}
+
+/* KPI ROW */
+.kpi-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;}
+.kpi-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
+.kpi-value{font-family:'Syne',sans-serif;font-weight:700;font-size:22px;letter-spacing:-1px;}
+.kpi-value.green{color:var(--accent);}.kpi-value.teal{color:var(--accent2);}.kpi-value.red{color:var(--accent3);}
+
+/* FILTERS */
+.filter-row{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px;}
+.filter-row::-webkit-scrollbar{display:none;}
+.filter-chip{flex-shrink:0;padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;font-family:inherit;}
+.filter-chip.active{background:var(--accent);color:#0e0f13;border-color:var(--accent);}
+.filter-select{flex-shrink:0;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:7px 28px 7px 12px;color:var(--muted);font-size:12px;font-weight:600;font-family:inherit;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236b7080' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;}
+
+/* EMPTY */
+.empty{text-align:center;padding:50px 20px;color:var(--muted);}
+.empty-icon{font-size:40px;margin-bottom:10px;}
+.empty-text{font-size:14px;}
+
+/* LOADING */
+.loading-overlay{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:16px;}
+.loading-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:28px;color:var(--accent);}
+.loading-logo span{color:var(--text);}
+.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* MAESTROS LIST */
+.master-item{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid var(--border);}
+.master-item:last-child{border:none;}
+.master-name{font-weight:500;font-size:14px;}
+.master-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+.price-pill{font-size:10px;background:rgba(74,240,184,.1);color:var(--accent2);padding:2px 7px;border-radius:8px;}
+
+/* FACT CARD */
+.fact-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;overflow:hidden;}
+.fact-card-header{padding:14px 16px;cursor:pointer;}
+.fact-card-body{display:none;padding:14px 16px;border-top:1px solid var(--border);}
+.fact-card-body.open{display:block;}
+.fact-line{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--border);}
+.fact-line:last-child{border:none;}
+.fact-line .lbl{color:var(--muted);}
+.fact-total-row{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;}
+.fact-total-row.grand{font-family:'Syne',sans-serif;font-weight:700;font-size:16px;color:var(--accent);padding-top:8px;border-top:1px solid rgba(200,240,74,.2);margin-top:4px;}
+
+::-webkit-scrollbar{display:none;}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div class="loading-overlay" id="loading">
+  <div class="loading-logo">servi<span>gestión</span></div>
+  <div class="spinner"></div>
+</div>
+
+<div class="app" id="app" style="display:none">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-title">servi<span>gestión</span></div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <span style="font-size:11px;color:var(--muted)" id="sync-label">Conectando…</span>
+      <div class="sync-dot loading" id="sync-dot"></div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content" id="content">
+
+    <!-- SERVICIOS -->
+    <div class="view active" id="view-servicios">
+      <div id="kpi-row" class="kpi-row"></div>
+      <div class="filter-row" id="filter-row">
+        <select class="filter-select" id="filter-prop" onchange="renderServicios()"><option value="">Todas las props.</option></select>
+        <select class="filter-select" id="filter-cli" onchange="renderServicios()"><option value="">Todos los clientes</option></select>
+        <select class="filter-select" id="filter-fact" onchange="renderServicios()">
+          <option value="">Factura</option><option>Pendiente</option><option>Facturado</option>
+        </select>
+        <select class="filter-select" id="filter-cobro" onchange="renderServicios()">
+          <option value="">Cobro</option><option>Pendiente</option><option>Cobrado</option>
+        </select>
+      </div>
+      <div id="lista-servicios"></div>
+    </div>
+
+    <!-- FACTURACIÓN -->
+    <div class="view" id="view-facturacion">
+      <div id="kpi-fact-row" class="kpi-row"></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;">
+        <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);">IVA %</span>
+        <input type="number" id="iva-pct" value="21" min="0" max="100" step="0.1" class="form-input" style="width:80px;text-align:center;padding:8px;" oninput="saveIva();renderFacturacion()">
+      </div>
+      <div id="lista-fact"></div>
+    </div>
+
+    <!-- COBROS -->
+    <div class="view" id="view-cobros">
+      <div id="lista-cobros"></div>
+    </div>
+
+    <!-- MAESTROS -->
+    <div class="view" id="view-maestros">
+      <div style="display:flex;gap:8px;margin-bottom:16px;">
+        <button class="btn btn-ghost" onclick="openSheet('sheet-cliente',false)" style="flex:1">+ Cliente</button>
+        <button class="btn btn-ghost" onclick="openSheet('sheet-prop',false)" style="flex:1">+ Propiedad</button>
+      </div>
+      <div class="section-title">👤 Clientes</div>
+      <div id="lista-clientes"></div>
+      <div class="section-title" style="margin-top:20px">🏠 Propiedades</div>
+      <div id="lista-propiedades"></div>
+    </div>
+
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" onclick="showView('servicios',this)">
+      <span class="nav-icon">🗂</span><span>Servicios</span>
+    </button>
+    <button class="nav-btn" onclick="showView('facturacion',this)">
+      <span class="nav-icon">🧾</span><span>Facturación</span>
+    </button>
+    <button class="nav-btn" onclick="showView('cobros',this)">
+      <span class="nav-icon">💰</span><span>Cobros</span>
+    </button>
+    <button class="nav-btn" onclick="showView('maestros',this)">
+      <span class="nav-icon">👥</span><span>Maestros</span>
+    </button>
+  </nav>
+
+  <!-- FAB -->
+  <button class="fab" onclick="openSheet('sheet-servicio',false)" id="fab">＋</button>
+</div>
+
+<!-- ══════════ SHEET SERVICIO ══════════ -->
+<div class="sheet-overlay" id="overlay-sheet-servicio" onclick="closeSheet('sheet-servicio')"></div>
+<div class="sheet" id="sheet-servicio">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <div class="sheet-title" id="serv-sheet-title">Nuevo servicio</div>
+    <button class="sheet-close" onclick="closeSheet('sheet-servicio')">✕</button>
+  </div>
+  <div class="sheet-body">
+    <div class="section-title" style="margin-top:0">Datos generales</div>
+    <div class="form-group">
+      <label class="form-label">Fecha servicio <span class="req">*</span></label>
+      <input type="date" class="form-input" id="f-fecha-servicio">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Fecha ingreso <span class="req">*</span></label>
+      <input type="date" class="form-input" id="f-fecha-ingreso">
+    </div>
+    <div class="row-2">
+      <div class="form-group">
+        <label class="form-label">Ocupación</label>
+        <input type="text" class="form-input" id="f-ocupacion" placeholder="Turistas…">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Empleado</label>
+        <input type="text" class="form-input" id="f-empleado" placeholder="Nombre">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Cliente <span class="req">*</span></label>
+      <select class="form-select" id="f-cliente"><option value="">— seleccionar —</option></select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Propiedad</label>
+      <select class="form-select" id="f-propiedad"><option value="">— seleccionar —</option></select>
+    </div>
+
+    <div class="section-title">Limpieza</div>
+    <div class="form-group">
+      <label class="form-label">Tipo de limpieza</label>
+      <select class="form-select" id="f-tipo-limpieza" onchange="onTipoLimpiezaChange()">
+        <option value="">— ninguna —</option>
+        <option value="Normal">Normal</option>
+        <option value="Intermedia">Intermedia</option>
+        <option value="Profunda">Profunda</option>
+        <option value="Inicial/Obra">Inicial / Obra</option>
+        <option value="Check">Check</option>
+      </select>
+    </div>
+    <div class="row-2">
+      <div class="form-group">
+        <label class="form-label">Arreglos</label>
+        <select class="form-select" id="f-arreglos"><option value="">—</option><option>Sí</option><option>No</option></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Detalle arreglos</label>
+        <input type="text" class="form-input" id="f-detalle-arreglos" placeholder="Descripción">
+      </div>
+    </div>
+
+    <!-- PRECIO DINÁMICO -->
+    <div class="precio-box hidden" id="precio-box">
+      <div class="precio-box-title" id="precio-box-title">Precio limpieza</div>
+      <div id="pw-hint" class="precio-hint" style="display:none"></div>
+      <div id="pw-fijo" style="display:none">
+        <div class="form-group" style="margin:0">
+          <label class="form-label">Precio (€ sin IVA)</label>
+          <input type="number" class="form-input" id="f-precio-limpieza" min="0" step="0.01" placeholder="0.00" oninput="recalcTotal()">
+        </div>
+      </div>
+      <div id="pw-profunda" style="display:none">
+        <div class="form-group" style="margin:0">
+          <label class="form-label">Precio profunda (€)</label>
+          <input type="number" class="form-input" id="f-precio-profunda" min="0" step="0.01" placeholder="0.00" oninput="recalcTotal()">
+        </div>
+      </div>
+      <div id="pw-horas-wrap" class="row-2" style="display:none">
+        <div class="form-group" style="margin:0">
+          <label class="form-label">Horas</label>
+          <input type="number" class="form-input" id="f-horas" min="0" step="0.5" placeholder="0" oninput="recalcTotal()">
+        </div>
+        <div class="form-group" style="margin:0">
+          <label class="form-label">Tarifa/hora (€)</label>
+          <input type="number" class="form-input" id="f-tarifa" min="0" step="0.01" placeholder="0.00" oninput="recalcTotal()">
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">Servicios extra</div>
+    <div class="form-group">
+      <label class="form-label">Agregar extra</label>
+      <select class="form-select" id="extras-select" onchange="onExtrasSelectChange(this)">
+        <option value="">— seleccionar —</option>
+      </select>
+    </div>
+    <div id="extras-selected"></div>
+
+    <div class="section-title">Resumen</div>
+    <div class="price-summary">
+      <div class="ps-row"><span class="lbl">Limpieza</span><span id="ps-limpieza">—</span></div>
+      <div class="ps-row"><span class="lbl">Extras</span><span id="ps-extras">—</span></div>
+      <div class="ps-row divider"><span class="lbl">Base s/IVA</span><span id="ps-base">—</span></div>
+      <div class="ps-row"><span class="lbl">IVA (<span id="ps-iva-pct">21</span>%)</span><span id="ps-iva" style="color:var(--muted)">—</span></div>
+      <div class="ps-row total"><span>TOTAL</span><span id="ps-total">—</span></div>
+    </div>
+
+    <div class="section-title">Estado</div>
+    <div class="row-2">
+      <div class="form-group">
+        <label class="form-label">Factura</label>
+        <select class="form-select" id="f-estado-factura"><option>Pendiente</option><option>Facturado</option></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Cobro</label>
+        <select class="form-select" id="f-estado-cobro"><option>Pendiente</option><option>Cobrado</option></select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Observaciones</label>
+      <textarea class="form-textarea" id="f-observaciones" placeholder="Notas…"></textarea>
+    </div>
+
+    <button class="btn btn-primary" onclick="guardarServicio()">Guardar servicio</button>
+    <div style="height:10px"></div>
+  </div>
+</div>
+
+<!-- ══════════ SHEET CLIENTE ══════════ -->
+<div class="sheet-overlay" id="overlay-sheet-cliente" onclick="closeSheet('sheet-cliente')"></div>
+<div class="sheet" id="sheet-cliente">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <div class="sheet-title" id="cli-sheet-title">Nuevo cliente</div>
+    <button class="sheet-close" onclick="closeSheet('sheet-cliente')">✕</button>
+  </div>
+  <div class="sheet-body">
+    <div class="form-group"><label class="form-label">Nombre <span class="req">*</span></label><input type="text" class="form-input" id="cli-nombre" placeholder="Nombre del cliente"></div>
+    <div class="form-group"><label class="form-label">Teléfono</label><input type="text" class="form-input" id="cli-telefono" placeholder="+34 000 000 000"></div>
+    <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="cli-email"></div>
+    <div class="form-group"><label class="form-label">Notas</label><textarea class="form-textarea" id="cli-notas" placeholder="Observaciones…"></textarea></div>
+    <button class="btn btn-primary" onclick="guardarCliente()">Guardar cliente</button>
+    <div style="height:10px"></div>
+  </div>
+</div>
+
+<!-- ══════════ SHEET PROPIEDAD ══════════ -->
+<div class="sheet-overlay" id="overlay-sheet-prop" onclick="closeSheet('sheet-prop')"></div>
+<div class="sheet" id="sheet-prop">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <div class="sheet-title" id="prop-sheet-title">Nueva propiedad</div>
+    <button class="sheet-close" onclick="closeSheet('sheet-prop')">✕</button>
+  </div>
+  <div class="sheet-body">
+    <div class="form-group"><label class="form-label">Código / Nombre <span class="req">*</span></label><input type="text" class="form-input" id="prop-nombre"></div>
+    <div class="form-group"><label class="form-label">Dirección</label><input type="text" class="form-input" id="prop-direccion"></div>
+    <div class="form-group"><label class="form-label">Cliente</label><select class="form-select" id="prop-cliente"><option value="">— sin cliente —</option></select></div>
+    <div class="row-2">
+      <div class="form-group"><label class="form-label">Precio Normal (€)</label><input type="number" class="form-input" id="prop-precio-normal" min="0" step="0.01" placeholder="0.00"></div>
+      <div class="form-group"><label class="form-label">Precio Intermedia (€)</label><input type="number" class="form-input" id="prop-precio-intermedia" min="0" step="0.01" placeholder="0.00"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Notas</label><textarea class="form-textarea" id="prop-notas" placeholder="Acceso, código…"></textarea></div>
+    <button class="btn btn-primary" onclick="guardarPropiedad()">Guardar propiedad</button>
+    <div style="height:10px"></div>
+  </div>
+</div>
+
+<!-- FIREBASE -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getFirestore, collection, doc, onSnapshot, addDoc, setDoc, deleteDoc, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCrvK6TceX15Tn-tQkk8eQGGcvqTseaML0",
+  authDomain: "mhc-app-70b14.firebaseapp.com",
+  projectId: "mhc-app-70b14",
+  storageBucket: "mhc-app-70b14.firebasestorage.app",
+  messagingSenderId: "629767080876",
+  appId: "1:629767080876:web:0ca40f14926399853ac809"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// ═══════════════════════════════════
+// DATA
+// ═══════════════════════════════════
+window.servicios=[];
+window.clientes=[];
+window.propiedades=[];
+window._editServId=null;
+window._editCliId=null;
+window._editPropId=null;
+window._selectedExtras=[];
+
+const PROP_DATA=[
+  {code:'ES0087A',name:'Alcudia Garden & Beach',precioNormal:184.54},
+  {code:'ES0197A',name:'Moderne Villa mit Meerblick in Bonaire',precioNormal:252.73},
+  {code:'ES0220A',name:'Alcanada Villa',precioNormal:312.40},
+  {code:'ES0235A',name:'Casita del Sol',precioNormal:198.34},
+  {code:'ES0236A',name:'Traumhaftes Landhaus mit Pool Muro',precioNormal:330.00},
+  {code:'ES0282A',name:'Neubau-Apartment in Cala Major',precioNormal:110.99},
+  {code:'ES0305A',name:'Santa Ponsa Penthouse',precioNormal:174.05},
+  {code:'ES0385A',name:'Bonaire Neubauvilla 2.0',precioNormal:214.20},
+  {code:'ES0405A',name:'Santa Ponsa Terrassenwohnung',precioNormal:153.14},
+  {code:'ES0434A',name:'Finca Romero',precioNormal:299.25},
+  {code:'ES0488A',name:'Santanyí Townhouse',precioNormal:164.87},
+  {code:'ES0525A',name:'Santa Ponsa Terraza al Mar',precioNormal:214.90},
+  {code:'ES0583A',name:'Villa Nou',precioNormal:300.00},
+  {code:'ES0612A',name:'La Mola Mar',precioNormal:174.05},
+  {code:'ES0615A',name:'La Marina',precioNormal:169.16},
+  {code:'ES0635A',name:'Porto Sol',precioNormal:248.00},
+];
+
+const CLIENTES_DEFAULT=['Myne','Barbara','Thies','Kim','Anna','Ines','Bianka','Tony'];
+
+const EXTRAS_CAT=[
+  {key:'cristales', label:'Cristales', icon:'🪟', defaultPrice:0},
+  {key:'chimenea',  label:'Chimenea',  icon:'🔥', defaultPrice:25},
+  {key:'basura',    label:'Basura',    icon:'🗑', defaultPrice:25},
+  {key:'lavanderia',label:'Lavandería',icon:'👕', defaultPrice:25},
+  {key:'dog',       label:'Dog',       icon:'🐕', defaultPrice:25},
+  {key:'bbq',       label:'BBQ',       icon:'🍖', defaultPrice:25},
+];
+window.EXTRAS_CAT=EXTRAS_CAT;
+
+function getIva(){ return parseFloat(document.getElementById('iva-pct')?.value||21)||21; }
+window.saveIva=()=>localStorage.setItem('sg_iva', document.getElementById('iva-pct')?.value||21);
+function fmt(n){ return new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR'}).format(n||0); }
+function fmtDate(d){ if(!d)return'—'; return new Date(d+'T00:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'short'}); }
+window.fmt=fmt; window.fmtDate=fmtDate;
+
+function calcBase(s){
+  let lim=0;
+  if(s.tipoLimpieza==='Inicial/Obra'||s.tipoLimpieza==='Check') lim=(s.horas||0)*(s.tarifa||0);
+  else lim=s.precioLimpieza||0;
+  return lim+(s.extras||[]).reduce((a,e)=>a+(e.precio||0),0);
+}
+window.calcBase=calcBase;
+function calcTotal(s){ const b=calcBase(s); return b+b*getIva()/100; }
+window.calcTotal=calcTotal;
+
+// ═══════════════════════════════════
+// SYNC STATUS
+// ═══════════════════════════════════
+function setSyncStatus(status){
+  const dot=document.getElementById('sync-dot');
+  const lbl=document.getElementById('sync-label');
+  dot.className='sync-dot';
+  if(status==='ok'){dot.classList.add('');lbl.textContent='Sincronizado';dot.style.background='var(--accent2)';}
+  else if(status==='loading'){dot.classList.add('loading');lbl.textContent='Sincronizando…';dot.style.background='#ffc832';}
+  else{dot.classList.add('error');lbl.textContent='Sin conexión';dot.style.background='var(--accent3)';}
+}
+
+// ═══════════════════════════════════
+// FIRESTORE LISTENERS
+// ═══════════════════════════════════
+let _ready={s:false,c:false,p:false};
+function checkReady(){
+  if(_ready.s&&_ready.c&&_ready.p){
+    document.getElementById('loading').style.display='none';
+    document.getElementById('app').style.display='flex';
+    setSyncStatus('ok');
+    initFilters();
+    renderAll();
+    // Seed default data if empty
+    seedDefaultData();
+  }
+}
+
+onSnapshot(query(collection(db,'servicios'),orderBy('fechaServicio','desc')), snap=>{
+  setSyncStatus('loading');
+  window.servicios=snap.docs.map(d=>({id:d.id,...d.data()}));
+  _ready.s=true; checkReady();
+  if(_ready.c&&_ready.p){ setSyncStatus('ok'); renderAll(); }
+}, err=>{ console.error(err); setSyncStatus('error'); _ready.s=true; checkReady(); });
+
+onSnapshot(collection(db,'clientes'), snap=>{
+  window.clientes=snap.docs.map(d=>({id:d.id,...d.data()}));
+  _ready.c=true; checkReady();
+  if(_ready.s&&_ready.p){ setSyncStatus('ok'); renderAll(); }
+});
+
+onSnapshot(collection(db,'propiedades'), snap=>{
+  window.propiedades=snap.docs.map(d=>({id:d.id,...d.data()}));
+  _ready.p=true; checkReady();
+  if(_ready.s&&_ready.c){ setSyncStatus('ok'); renderAll(); }
+});
+
+async function seedDefaultData(){
+  // Seed clients
+  if(window.clientes.length===0){
+    for(const n of CLIENTES_DEFAULT){
+      await addDoc(collection(db,'clientes'),{nombre:n,telefono:'',email:'',notas:''});
+    }
+  }
+  // Seed properties
+  if(window.propiedades.length===0){
+    for(const p of PROP_DATA){
+      await addDoc(collection(db,'propiedades'),{
+        nombre:`${p.code} - ${p.name}`,direccion:'',clienteId:'',notas:'',
+        precioNormal:p.precioNormal,precioIntermedia:0
+      });
+    }
+  }
+}
+
+// ═══════════════════════════════════
+// RENDER ALL
+// ═══════════════════════════════════
+function renderAll(){
+  const view=document.querySelector('.view.active')?.id?.replace('view-','');
+  if(view==='servicios'||!view) renderServicios();
+  else if(view==='facturacion') renderFacturacion();
+  else if(view==='cobros') renderCobros();
+  else if(view==='maestros') renderMaestros();
+  updateFilters();
+}
+
+// ═══════════════════════════════════
+// NAV
+// ═══════════════════════════════════
+window.showView=function(name,btn){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  btn.classList.add('active');
+  // Show/hide FAB
+  document.getElementById('fab').style.display=name==='maestros'?'none':'flex';
+  if(name==='servicios') renderServicios();
+  else if(name==='facturacion') renderFacturacion();
+  else if(name==='cobros') renderCobros();
+  else if(name==='maestros') renderMaestros();
+};
+
+// ═══════════════════════════════════
+// FILTERS
+// ═══════════════════════════════════
+function initFilters(){
+  const ivaSaved=localStorage.getItem('sg_iva');
+  if(ivaSaved&&document.getElementById('iva-pct')) document.getElementById('iva-pct').value=ivaSaved;
+}
+function updateFilters(){
+  const fProp=document.getElementById('filter-prop');
+  const fCli=document.getElementById('filter-cli');
+  const prevP=fProp.value, prevC=fCli.value;
+  fProp.innerHTML='<option value="">Todas las props.</option>'+window.propiedades.map(p=>`<option value="${p.id}">${p.nombre.substring(0,20)}…</option>`).join('');
+  fCli.innerHTML='<option value="">Todos los clientes</option>'+window.clientes.map(c=>`<option value="${c.id}">${c.nombre}</option>`).join('');
+  fProp.value=prevP; fCli.value=prevC;
+}
+
+// ═══════════════════════════════════
+// SERVICIOS
+// ═══════════════════════════════════
+window.renderServicios=function(){
+  const fProp=document.getElementById('filter-prop')?.value||'';
+  const fCli=document.getElementById('filter-cli')?.value||'';
+  const fFact=document.getElementById('filter-fact')?.value||'';
+  const fCobro=document.getElementById('filter-cobro')?.value||'';
+
+  const data=window.servicios.filter(s=>
+    (!fProp||s.propiedadId===fProp)&&
+    (!fCli||s.clienteId===fCli)&&
+    (!fFact||s.estadoFactura===fFact)&&
+    (!fCobro||s.estadoCobro===fCobro)
+  );
+
+  // KPIs
+  const ti=data.reduce((a,s)=>a+calcBase(s),0);
+  const co=data.filter(s=>s.estadoCobro==='Cobrado').reduce((a,s)=>a+calcBase(s),0);
+  document.getElementById('kpi-row').innerHTML=`
+    <div class="kpi-card"><div class="kpi-label">Base total</div><div class="kpi-value green">${fmt(ti)}</div></div>
+    <div class="kpi-card"><div class="kpi-label">Pendiente</div><div class="kpi-value red">${fmt(ti-co)}</div></div>`;
+
+  const cont=document.getElementById('lista-servicios');
+  if(!data.length){cont.innerHTML='<div class="empty"><div class="empty-icon">📋</div><div class="empty-text">Sin servicios</div></div>';return;}
+  cont.innerHTML=data.map(s=>{
+    const c=window.clientes.find(x=>x.id===s.clienteId);
+    const p=window.propiedades.find(x=>x.id===s.propiedadId);
+    const base=calcBase(s);
+    return `<div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">${c?.nombre||'Sin cliente'}</div>
+          <div class="card-meta">${p?.nombre||'Sin propiedad'} · ${fmtDate(s.fechaServicio)}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:16px;color:var(--accent)">${fmt(base)}</div>
+          <div style="font-size:11px;color:var(--muted)">${s.tipoLimpieza||'—'}</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        ${s.estadoFactura==='Facturado'?'<span class="badge badge-green">✓ Facturado</span>':'<span class="badge badge-yellow">⏳ Factura</span>'}
+        ${s.estadoCobro==='Cobrado'?'<span class="badge badge-teal">✓ Cobrado</span>':'<span class="badge badge-red">⏳ Cobro</span>'}
+        ${s.empleado?`<span class="badge badge-gray">${s.empleado}</span>`:''}
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-ghost btn-sm" onclick="editServicio('${s.id}')">✏️ Editar</button>
+        <button class="btn btn-danger btn-sm" onclick="delServicio('${s.id}')">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+};
+
+// ═══════════════════════════════════
+// SERVICIO FORM
+// ═══════════════════════════════════
+window.openSheet=function(id, isEdit=false){
+  if(id==='sheet-servicio' && !isEdit){
+    window._editServId=null;
+    document.getElementById('serv-sheet-title').textContent='Nuevo servicio';
+    clearServForm();
+  }
+  document.getElementById('overlay-'+id).classList.add('open');
+  setTimeout(()=>document.getElementById(id).classList.add('open'),10);
+};
+
+window.closeSheet=function(id){
+  document.getElementById(id).classList.remove('open');
+  document.getElementById('overlay-'+id).classList.remove('open');
+};
+
+window.editServicio=function(id){
+  const s=window.servicios.find(x=>x.id===id);
+  if(!s) return;
+  window._editServId=id;
+  document.getElementById('serv-sheet-title').textContent='Editar servicio';
+  fillServForm(s);
+  openSheet('sheet-servicio',true);
+};
+
+window.delServicio=async function(id){
+  if(!confirm('¿Eliminar este servicio?')) return;
+  await deleteDoc(doc(db,'servicios',id));
+};
+
+function fillCliSel(){
+  const el=document.getElementById('f-cliente');
+  const prev=el.value;
+  el.innerHTML='<option value="">— seleccionar —</option>'+window.clientes.map(c=>`<option value="${c.id}">${c.nombre}</option>`).join('');
+  el.value=prev;
+}
+function fillPropSel(){
+  const el=document.getElementById('f-propiedad');
+  const prev=el.value;
+  el.innerHTML='<option value="">— seleccionar —</option>'+window.propiedades.map(p=>`<option value="${p.id}">${p.nombre}</option>`).join('');
+  el.value=prev;
+}
+
+function clearServForm(){
+  const t=new Date().toISOString().slice(0,10);
+  document.getElementById('f-fecha-servicio').value=t;
+  document.getElementById('f-fecha-ingreso').value=t;
+  ['f-ocupacion','f-empleado','f-detalle-arreglos','f-observaciones'].forEach(id=>document.getElementById(id).value='');
+  fillCliSel(); fillPropSel();
+  document.getElementById('f-cliente').value='';
+  document.getElementById('f-propiedad').value='';
+  document.getElementById('f-tipo-limpieza').value='';
+  document.getElementById('f-arreglos').value='';
+  document.getElementById('f-estado-factura').value='Pendiente';
+  document.getElementById('f-estado-cobro').value='Pendiente';
+  ['f-precio-limpieza','f-precio-profunda','f-horas','f-tarifa'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  window._selectedExtras=[];
+  renderExtrasSelect(); renderExtrasSelected();
+  onTipoLimpiezaChange(); recalcTotal();
+}
+
+function fillServForm(s){
+  fillCliSel(); fillPropSel();
+  document.getElementById('f-fecha-servicio').value=s.fechaServicio||'';
+  document.getElementById('f-fecha-ingreso').value=s.fechaIngreso||'';
+  document.getElementById('f-ocupacion').value=s.ocupacion||'';
+  document.getElementById('f-empleado').value=s.empleado||'';
+  document.getElementById('f-cliente').value=s.clienteId||'';
+  document.getElementById('f-propiedad').value=s.propiedadId||'';
+  document.getElementById('f-tipo-limpieza').value=s.tipoLimpieza||'';
+  document.getElementById('f-arreglos').value=s.arreglos||'';
+  document.getElementById('f-detalle-arreglos').value=s.detalleArreglos||'';
+  document.getElementById('f-estado-factura').value=s.estadoFactura||'Pendiente';
+  document.getElementById('f-estado-cobro').value=s.estadoCobro||'Pendiente';
+  document.getElementById('f-observaciones').value=s.observaciones||'';
+  onTipoLimpiezaChange();
+  const tipo=s.tipoLimpieza||'';
+  if(tipo==='Inicial/Obra'||tipo==='Check'){
+    const h=document.getElementById('f-horas');if(h)h.value=s.horas||'';
+    const t=document.getElementById('f-tarifa');if(t)t.value=s.tarifa||'';
+  } else if(tipo==='Profunda'){
+    const p=document.getElementById('f-precio-profunda');if(p)p.value=s.precioLimpieza||'';
+  } else if(tipo){
+    const p=document.getElementById('f-precio-limpieza');if(p)p.value=s.precioLimpieza||'';
+  }
+  window._selectedExtras=(s.extras||[]).map(e=>({...e}));
+  renderExtrasSelect(); renderExtrasSelected(); recalcTotal();
+}
+
+window.onTipoLimpiezaChange=function(){
+  const tipo=document.getElementById('f-tipo-limpieza').value;
+  const propId=document.getElementById('f-propiedad').value;
+  const prop=window.propiedades.find(p=>p.id===propId);
+  const box=document.getElementById('precio-box');
+  ['pw-fijo','pw-profunda','pw-horas-wrap'].forEach(id=>document.getElementById(id).style.display='none');
+  document.getElementById('pw-hint').style.display='none';
+  if(!tipo){box.classList.add('hidden');recalcTotal();return;}
+  box.classList.remove('hidden');
+  const title=document.getElementById('precio-box-title');
+  if(tipo==='Normal'||tipo==='Intermedia'){
+    title.textContent=`Precio ${tipo}`;
+    document.getElementById('pw-fijo').style.display='';
+    const autoPrice=tipo==='Normal'?prop?.precioNormal||0:prop?.precioIntermedia||0;
+    if(autoPrice){
+      const hint=document.getElementById('pw-hint');
+      hint.style.display=''; hint.textContent=`💡 Precio fijo: ${fmt(autoPrice)}`;
+      const el=document.getElementById('f-precio-limpieza');
+      if(el&&(!el.value||parseFloat(el.value)===0)) el.value=autoPrice;
+    }
+  } else if(tipo==='Profunda'){
+    title.textContent='Precio Profunda';
+    document.getElementById('pw-profunda').style.display='';
+  } else {
+    title.textContent=`${tipo} (horas × tarifa)`;
+    document.getElementById('pw-horas-wrap').style.display='';
+  }
+  recalcTotal();
+};
+
+window.recalcTotal=function(){
+  const tipo=document.getElementById('f-tipo-limpieza').value;
+  let lim=0;
+  if(tipo==='Inicial/Obra'||tipo==='Check')
+    lim=(parseFloat(document.getElementById('f-horas')?.value)||0)*(parseFloat(document.getElementById('f-tarifa')?.value)||0);
+  else if(tipo==='Profunda')
+    lim=parseFloat(document.getElementById('f-precio-profunda')?.value)||0;
+  else if(tipo)
+    lim=parseFloat(document.getElementById('f-precio-limpieza')?.value)||0;
+  const extTotal=window._selectedExtras.reduce((a,e)=>a+(e.precio||0),0);
+  const base=lim+extTotal;
+  const ivaPct=getIva();
+  document.getElementById('ps-limpieza').textContent=fmt(lim);
+  document.getElementById('ps-extras').textContent=fmt(extTotal);
+  document.getElementById('ps-base').textContent=fmt(base);
+  document.getElementById('ps-iva-pct').textContent=ivaPct;
+  document.getElementById('ps-iva').textContent=fmt(base*ivaPct/100);
+  document.getElementById('ps-total').textContent=fmt(base+base*ivaPct/100);
+};
+
+// EXTRAS
+function renderExtrasSelect(){
+  const sel=document.getElementById('extras-select');
+  if(!sel) return;
+  const available=EXTRAS_CAT.filter(e=>!window._selectedExtras.some(x=>x.key===e.key));
+  sel.innerHTML='<option value="">— seleccionar —</option>'+
+    available.map(e=>`<option value="${e.key}">${e.icon} ${e.label}${e.defaultPrice?' ('+fmt(e.defaultPrice)+')':''}</option>`).join('');
+}
+function renderExtrasSelected(){
+  const cont=document.getElementById('extras-selected');
+  if(!cont) return;
+  if(!window._selectedExtras.length){cont.innerHTML='';return;}
+  cont.innerHTML=window._selectedExtras.map((e,i)=>`
+    <div class="extra-row">
+      <div class="extra-row-label">${e.icon} ${e.label}</div>
+      <input type="number" class="extra-price-input" value="${e.precio!=null?e.precio:''}" min="0" step="0.01" placeholder="0.00"
+        oninput="onExtraPriceChange(${i},this.value)">
+      <span style="color:var(--muted);font-size:13px">€</span>
+      <button class="extra-remove" onclick="removeExtra(${i})">✕</button>
+    </div>`).join('');
+}
+window.onExtrasSelectChange=function(sel){
+  const key=sel.value; if(!key) return;
+  const cat=EXTRAS_CAT.find(e=>e.key===key);
+  if(cat&&!window._selectedExtras.find(x=>x.key===key))
+    window._selectedExtras.push({key:cat.key,label:cat.label,icon:cat.icon,precio:cat.defaultPrice||0});
+  renderExtrasSelected(); renderExtrasSelect(); sel.value=''; recalcTotal();
+};
+window.onExtraPriceChange=function(idx,val){
+  window._selectedExtras[idx].precio=parseFloat(val)||0;
+  recalcTotal();
+};
+window.removeExtra=function(idx){
+  window._selectedExtras.splice(idx,1);
+  renderExtrasSelect(); renderExtrasSelected(); recalcTotal();
+};
+
+window.guardarServicio=async function(){
+  const fs=document.getElementById('f-fecha-servicio').value;
+  const fi=document.getElementById('f-fecha-ingreso').value;
+  const cli=document.getElementById('f-cliente').value;
+  if(!fs||!fi||!cli){alert('Fecha servicio, fecha ingreso y cliente son obligatorios.');return;}
+  const tipo=document.getElementById('f-tipo-limpieza').value;
+  let precioLimpieza=0, horas=0, tarifa=0;
+  if(tipo==='Inicial/Obra'||tipo==='Check'){
+    horas=parseFloat(document.getElementById('f-horas')?.value)||0;
+    tarifa=parseFloat(document.getElementById('f-tarifa')?.value)||0;
+  } else if(tipo==='Profunda'){
+    precioLimpieza=parseFloat(document.getElementById('f-precio-profunda')?.value)||0;
+  } else if(tipo){
+    precioLimpieza=parseFloat(document.getElementById('f-precio-limpieza')?.value)||0;
+  }
+  const obj={
+    fechaServicio:fs,fechaIngreso:fi,
+    ocupacion:document.getElementById('f-ocupacion').value.trim(),
+    empleado:document.getElementById('f-empleado').value.trim(),
+    clienteId:cli,
+    propiedadId:document.getElementById('f-propiedad').value,
+    tipoLimpieza:tipo,precioLimpieza,horas,tarifa,
+    extras:window._selectedExtras.map(e=>({key:e.key,label:e.label,icon:e.icon,precio:e.precio||0})),
+    arreglos:document.getElementById('f-arreglos').value,
+    detalleArreglos:document.getElementById('f-detalle-arreglos').value.trim(),
+    estadoFactura:document.getElementById('f-estado-factura').value,
+    estadoCobro:document.getElementById('f-estado-cobro').value,
+    observaciones:document.getElementById('f-observaciones').value.trim(),
+  };
+  setSyncStatus('loading');
+  if(window._editServId) await setDoc(doc(db,'servicios',window._editServId),obj);
+  else await addDoc(collection(db,'servicios'),obj);
+  closeSheet('sheet-servicio');
+};
+
+// ═══════════════════════════════════
+// FACTURACIÓN
+// ═══════════════════════════════════
+window.renderFacturacion=function(){
+  const ivaPct=getIva();
+  const data=window.servicios;
+  const totalBase=data.reduce((a,s)=>a+calcBase(s),0);
+  const totalIva=totalBase*ivaPct/100;
+  document.getElementById('kpi-fact-row').innerHTML=`
+    <div class="kpi-card"><div class="kpi-label">Base s/IVA</div><div class="kpi-value green">${fmt(totalBase)}</div></div>
+    <div class="kpi-card"><div class="kpi-label">Total c/IVA</div><div class="kpi-value teal">${fmt(totalBase+totalIva)}</div></div>`;
+  if(!data.length){document.getElementById('lista-fact').innerHTML='<div class="empty"><div class="empty-icon">🧾</div><div class="empty-text">Sin servicios</div></div>';return;}
+  document.getElementById('lista-fact').innerHTML=data.map(s=>{
+    const c=window.clientes.find(x=>x.id===s.clienteId);
+    const p=window.propiedades.find(x=>x.id===s.propiedadId);
+    const base=calcBase(s); const ivaAmt=base*ivaPct/100; const total=base+ivaAmt;
+    let lines=[];
+    if(s.tipoLimpieza){
+      if(s.tipoLimpieza==='Inicial/Obra'||s.tipoLimpieza==='Check')
+        lines.push({desc:`${s.tipoLimpieza} (${s.horas}h × ${fmt(s.tarifa)}/h)`,precio:(s.horas||0)*(s.tarifa||0)});
+      else lines.push({desc:`Limpieza ${s.tipoLimpieza}`,precio:s.precioLimpieza||0});
+    }
+    (s.extras||[]).forEach(e=>lines.push({desc:`${e.icon} ${e.label}`,precio:e.precio||0}));
+    return `<div class="fact-card">
+      <div class="fact-card-header" onclick="this.nextElementSibling.classList.toggle('open')">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-weight:600;font-size:14px">${c?.nombre||'—'}</div>
+            <div style="font-size:12px;color:var(--muted)">${p?.nombre||'—'} · ${fmtDate(s.fechaServicio)}</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-family:'Syne',sans-serif;font-weight:700;color:var(--accent)">${fmt(total)}</div>
+            <div style="display:flex;gap:4px;justify-content:flex-end;margin-top:4px">
+              ${s.estadoFactura==='Facturado'?'<span class="badge badge-green" style="font-size:10px">✓ Fact.</span>':'<span class="badge badge-yellow" style="font-size:10px">⏳ Fact.</span>'}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="fact-card-body">
+        ${lines.map(l=>`<div class="fact-line"><span class="lbl">${l.desc}</span><span>${fmt(l.precio)}</span></div>`).join('')}
+        <div class="fact-total-row" style="margin-top:8px"><span style="color:var(--muted)">Base s/IVA</span><span>${fmt(base)}</span></div>
+        <div class="fact-total-row"><span style="color:var(--muted)">IVA (${ivaPct}%)</span><span>${fmt(ivaAmt)}</span></div>
+        <div class="fact-total-row grand"><span>TOTAL</span><span>${fmt(total)}</span></div>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          ${s.estadoFactura==='Pendiente'?`<button class="btn btn-ghost btn-sm" onclick="marcar('${s.id}','estadoFactura','Facturado')">📄 Facturar</button>`:''}
+          ${s.estadoCobro==='Pendiente'?`<button class="btn btn-ghost btn-sm" onclick="marcar('${s.id}','estadoCobro','Cobrado')">✓ Cobrar</button>`:''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+};
+
+// ═══════════════════════════════════
+// COBROS
+// ═══════════════════════════════════
+window.renderCobros=function(){
+  const ivaPct=getIva();
+  const cont=document.getElementById('lista-cobros');
+  if(!window.servicios.length){cont.innerHTML='<div class="empty"><div class="empty-icon">💰</div><div class="empty-text">Sin servicios</div></div>';return;}
+  const sorted=[...window.servicios].sort((a,b)=>a.estadoCobro.localeCompare(b.estadoCobro));
+  cont.innerHTML=sorted.map(s=>{
+    const c=window.clientes.find(x=>x.id===s.clienteId);
+    const p=window.propiedades.find(x=>x.id===s.propiedadId);
+    const base=calcBase(s); const ivaAmt=base*ivaPct/100;
+    return `<div class="card">
+      <div class="card-header">
+        <div><div class="card-title">${c?.nombre||'—'}</div><div class="card-meta">${p?.nombre||'—'} · ${fmtDate(s.fechaServicio)}</div></div>
+        <div style="text-align:right">
+          <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--accent)">${fmt(base+ivaAmt)}</div>
+          <div style="font-size:11px;color:var(--muted)">base ${fmt(base)}</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px">
+        ${s.estadoFactura==='Facturado'?'<span class="badge badge-green">✓ Facturado</span>':'<span class="badge badge-yellow">⏳ Factura</span>'}
+        ${s.estadoCobro==='Cobrado'?'<span class="badge badge-teal">✓ Cobrado</span>':'<span class="badge badge-red">⏳ Cobro</span>'}
+      </div>
+      <div class="card-actions">
+        ${s.estadoCobro==='Pendiente'?`<button class="btn btn-ghost btn-sm" onclick="marcar('${s.id}','estadoCobro','Cobrado')">✓ Marcar cobrado</button>`:''}
+        ${s.estadoFactura==='Pendiente'?`<button class="btn btn-ghost btn-sm" onclick="marcar('${s.id}','estadoFactura','Facturado')">📄 Facturar</button>`:''}
+      </div>
+    </div>`;
+  }).join('');
+};
+
+window.marcar=async function(id, campo, valor){
+  await setDoc(doc(db,'servicios',id),{[campo]:valor},{merge:true});
+};
+
+// ═══════════════════════════════════
+// MAESTROS
+// ═══════════════════════════════════
+window.renderMaestros=function(){
+  // Clientes
+  document.getElementById('lista-clientes').innerHTML=window.clientes.length?
+    window.clientes.map(c=>`
+      <div class="master-item">
+        <div><div class="master-name">${c.nombre}</div><div class="master-sub">${c.telefono||c.email||'Sin contacto'}</div></div>
+        <div style="display:flex;gap:6px">
+          <button class="btn-icon" onclick="editCliente('${c.id}')">✏️</button>
+          <button class="btn-icon" style="color:var(--accent3)" onclick="delCliente('${c.id}')">🗑</button>
+        </div>
+      </div>`).join('')
+    :'<div class="empty" style="padding:20px"><div class="empty-icon">👤</div></div>';
+
+  // Propiedades
+  document.getElementById('lista-propiedades').innerHTML=window.propiedades.length?
+    window.propiedades.map(p=>{
+      const c=window.clientes.find(x=>x.id===p.clienteId);
+      return `<div class="master-item">
+        <div style="flex:1;min-width:0">
+          <div class="master-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.nombre}</div>
+          <div class="master-sub">${c?'👤 '+c.nombre:'Sin cliente'}
+            ${p.precioNormal?`<span class="price-pill">N:${fmt(p.precioNormal)}</span>`:''}
+            ${p.precioIntermedia?`<span class="price-pill">I:${fmt(p.precioIntermedia)}</span>`:''}
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;flex-shrink:0">
+          <button class="btn-icon" onclick="editProp('${p.id}')">✏️</button>
+          <button class="btn-icon" style="color:var(--accent3)" onclick="delProp('${p.id}')">🗑</button>
+        </div>
+      </div>`;
+    }).join('')
+    :'<div class="empty" style="padding:20px"><div class="empty-icon">🏠</div></div>';
+};
+
+// CLIENTE CRUD
+window.openSheet('sheet-cliente',false); // preload
+window.editCliente=function(id){
+  const c=window.clientes.find(x=>x.id===id); if(!c) return;
+  window._editCliId=id;
+  document.getElementById('cli-sheet-title').textContent='Editar cliente';
+  document.getElementById('cli-nombre').value=c.nombre||'';
+  document.getElementById('cli-telefono').value=c.telefono||'';
+  document.getElementById('cli-email').value=c.email||'';
+  document.getElementById('cli-notas').value=c.notas||'';
+  document.getElementById('overlay-sheet-cliente').classList.add('open');
+  setTimeout(()=>document.getElementById('sheet-cliente').classList.add('open'),10);
+};
+window.guardarCliente=async function(){
+  const nombre=document.getElementById('cli-nombre').value.trim();
+  if(!nombre){alert('El nombre es obligatorio');return;}
+  const obj={nombre,telefono:document.getElementById('cli-telefono').value.trim(),email:document.getElementById('cli-email').value.trim(),notas:document.getElementById('cli-notas').value.trim()};
+  if(window._editCliId) await setDoc(doc(db,'clientes',window._editCliId),obj);
+  else await addDoc(collection(db,'clientes'),obj);
+  window._editCliId=null; closeSheet('sheet-cliente');
+};
+window.delCliente=async function(id){
+  if(!confirm('¿Eliminar cliente?')) return;
+  await deleteDoc(doc(db,'clientes',id));
+};
+
+// PROPIEDAD CRUD
+window.editProp=function(id){
+  const p=window.propiedades.find(x=>x.id===id); if(!p) return;
+  window._editPropId=id;
+  document.getElementById('prop-sheet-title').textContent='Editar propiedad';
+  document.getElementById('prop-nombre').value=p.nombre||'';
+  document.getElementById('prop-direccion').value=p.direccion||'';
+  document.getElementById('prop-precio-normal').value=p.precioNormal||'';
+  document.getElementById('prop-precio-intermedia').value=p.precioIntermedia||'';
+  document.getElementById('prop-notas').value=p.notas||'';
+  const sel=document.getElementById('prop-cliente');
+  sel.innerHTML='<option value="">— sin cliente —</option>'+window.clientes.map(c=>`<option value="${c.id}">${c.nombre}</option>`).join('');
+  sel.value=p.clienteId||'';
+  document.getElementById('overlay-sheet-prop').classList.add('open');
+  setTimeout(()=>document.getElementById('sheet-prop').classList.add('open'),10);
+};
+window.guardarPropiedad=async function(){
+  const nombre=document.getElementById('prop-nombre').value.trim();
+  if(!nombre){alert('El nombre es obligatorio');return;}
+  const obj={nombre,direccion:document.getElementById('prop-direccion').value.trim(),clienteId:document.getElementById('prop-cliente').value,notas:document.getElementById('prop-notas').value.trim(),precioNormal:parseFloat(document.getElementById('prop-precio-normal').value)||0,precioIntermedia:parseFloat(document.getElementById('prop-precio-intermedia').value)||0};
+  if(window._editPropId) await setDoc(doc(db,'propiedades',window._editPropId),obj);
+  else await addDoc(collection(db,'propiedades'),obj);
+  window._editPropId=null; closeSheet('sheet-prop');
+};
+window.delProp=async function(id){
+  if(!confirm('¿Eliminar propiedad?')) return;
+  await deleteDoc(doc(db,'propiedades',id));
+};
+
+</script>
+</body>
+</html>
