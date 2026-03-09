@@ -538,19 +538,34 @@ onSnapshot(collection(db,'propiedades'), snap=>{
 });
 
 async function seedDefaultData(){
-  // Seed clients
-  if(window.clientes.length===0){
+  // CLIENTES: wipe and reseed if names don't match official list
+  const nombresActuales=window.clientes.map(c=>c.nombre);
+  const clientesOk=CLIENTES_DEFAULT.every(n=>nombresActuales.includes(n)) && window.clientes.length===CLIENTES_DEFAULT.length;
+  if(!clientesOk){
+    // Delete all existing clients
+    for(const c of window.clientes){
+      await deleteDoc(doc(db,'clientes',c.id));
+    }
+    // Insert official list
     for(const n of CLIENTES_DEFAULT){
       await addDoc(collection(db,'clientes'),{nombre:n,telefono:'',email:'',notas:''});
     }
   }
-  // Seed properties
-  if(window.propiedades.length===0){
-    for(const p of PROP_DATA){
+
+  // PROPIEDADES: ensure all 16 official properties exist with correct prices
+  let propsChanged=false;
+  for(const pd of PROP_DATA){
+    const officialName=`${pd.code} - ${pd.name}`;
+    const existing=window.propiedades.find(p=>p.nombre&&p.nombre.startsWith(pd.code));
+    if(!existing){
       await addDoc(collection(db,'propiedades'),{
-        nombre:`${p.code} - ${p.name}`,direccion:'',clienteId:'',notas:'',
-        precioNormal:p.precioNormal,precioIntermedia:0
+        nombre:officialName,direccion:'',clienteId:'',notas:'',
+        precioNormal:pd.precioNormal,precioIntermedia:0
       });
+      propsChanged=true;
+    } else if(!existing.precioNormal){
+      await setDoc(doc(db,'propiedades',existing.id),{precioNormal:pd.precioNormal},{merge:true});
+      propsChanged=true;
     }
   }
 }
