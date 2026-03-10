@@ -1319,6 +1319,38 @@ window.addEventListener('resize',()=>renderTable());
 // Mostrar indicador de carga y arrancar Firebase
 document.getElementById('kpi-grid').innerHTML='<div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--muted)">⏳ Conectando con la base de datos...</div>';
 loadData();
+
+// ── EXPONER FUNCIONES AL HTML (necesario con type="module") ──
+window.showView=showView;
+window.openServModal=openServModal;
+window.closeServModal=closeServModal;
+window.guardarServicio=guardarServicio;
+window.delServ=delServ;
+window.onTipoLimpiezaChange=onTipoLimpiezaChange;
+window.onClienteChange=onClienteChange;
+window.recalcTotal=recalcTotal;
+window.openClienteModal=openClienteModal;
+window.closeClienteModal=closeClienteModal;
+window.guardarCliente=guardarCliente;
+window.delCliente=delCliente;
+window.openEditCliente=openEditCliente;
+window.openPropModal=openPropModal;
+window.closePropModal=closePropModal;
+window.openEditProp=openEditProp;
+window.guardarPropiedad=guardarPropiedad;
+window.delProp=delProp;
+window.marcarCobrado=marcarCobrado;
+window.marcarFacturado=marcarFacturado;
+window.renderTable=renderTable;
+window.renderFacturacion=renderFacturacion;
+window.renderCobros=renderCobros;
+window.toggleFactCard=toggleFactCard;
+window.toggleSidebar=toggleSidebar;
+window.closeSidebar=closeSidebar;
+window.saveIva=saveIva;
+window.addExtraFromSelect=addExtraFromSelect;
+window.removeExtra=removeExtra;
+window.updateExtraPrice=updateExtraPrice;
 </script>
 </body>
 </html>
