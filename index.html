@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Gestión de Servicios</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
 <style>
@@ -621,6 +621,11 @@ function renderKPIs(){
     <div class="kpi-card"><div class="kpi-label">Base total s/IVA</div><div class="kpi-value green">${fmt(ti)}</div><div class="kpi-sub">acumulado</div></div>
     <div class="kpi-card"><div class="kpi-label">Cobrado</div><div class="kpi-value teal">${fmt(co)}</div><div class="kpi-sub">recibido</div></div>
     <div class="kpi-card"><div class="kpi-label">Pendiente</div><div class="kpi-value red">${fmt(ti-co)}</div><div class="kpi-sub">por cobrar</div></div>`;
+  // Force 2-column grid on all devices
+  const kg=document.getElementById('kpi-grid');
+  if(window.innerWidth<=768||screen.width<=768||/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){
+    kg.style.gridTemplateColumns='repeat(2,1fr)';
+  }
 }
 
 // ══════════════════════════════════════
@@ -645,7 +650,7 @@ function renderTable(){
     const txt=((c?.nombre||'')+(p?.nombre||'')+(s.empleado||'')).toLowerCase();
     return(!search||txt.includes(search))&&(!fCli||s.clienteId===fCli)&&(!fProp||s.propiedadId===fProp)&&(!fFact||s.estadoFactura===fFact)&&(!fCobro||s.estadoCobro===fCobro);
   });
-  const isMobile=window.innerWidth<=768;
+  const isMobile=window.innerWidth<=768||screen.width<=768||/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
   if(isMobile){
     // Render as cards on mobile
     const container=document.getElementById('tabla-body');
