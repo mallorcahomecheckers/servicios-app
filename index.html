@@ -163,19 +163,64 @@ td{padding:11px 14px;white-space:nowrap;}
 ::-webkit-scrollbar{width:6px;height:6px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px;}
+
+/* ── RESPONSIVE MOBILE ── */
+.mobile-nav-toggle{display:none;position:fixed;top:12px;left:12px;z-index:200;background:#1e2a3a;border:none;border-radius:8px;padding:10px 12px;cursor:pointer;font-size:18px;color:#e2e8f0;}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:99;}
+.sidebar-overlay.open{display:block;}
+
+@media(max-width:768px){
+  .mobile-nav-toggle{display:flex;align-items:center;justify-content:center;}
+  .sidebar{transform:translateX(-100%);transition:transform .25s ease;z-index:150;}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;padding:16px;padding-top:60px;}
+  .kpi-grid{grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px;}
+  .kpi-value{font-size:22px;}
+  .page-header{flex-wrap:wrap;gap:10px;margin-bottom:18px;}
+  .page-title{font-size:20px;}
+  .two-col{grid-template-columns:1fr;}
+  .resumen-grid{grid-template-columns:1fr;}
+  .form-grid{grid-template-columns:1fr;}
+  .form-group.full{grid-column:1;}
+  .section-divider{grid-column:1;}
+  .precio-box{grid-template-columns:1fr;}
+  .prop-prices-grid{grid-template-columns:1fr;}
+  .modal{padding:18px;width:96vw;}
+  .modal-sm{width:96vw;}
+  .filters{flex-direction:column;align-items:stretch;}
+  .filters .form-input,.filters .form-select{max-width:100%;}
+  .fact-filters{flex-direction:column;}
+  .fact-filters .form-select{max-width:100%;}
+  .fact-card-meta{flex-wrap:wrap;}
+  .iva-config{flex-wrap:wrap;gap:8px;}
+  table{font-size:12px;}
+  td,thead th{padding:8px 10px;}
+  .price-summary{padding:12px 14px;}
+  .extras-select-wrap{flex-direction:column;}
+  .panel-header{flex-wrap:wrap;gap:8px;}
+}
+
+@media(max-width:420px){
+  .kpi-grid{grid-template-columns:1fr 1fr;}
+  .kpi-card{padding:14px;}
+  .kpi-value{font-size:20px;}
+  .btn{padding:8px 14px;font-size:12px;}
+}
 </style>
 </head>
 <body>
+<button class="mobile-nav-toggle" onclick="toggleSidebar()" id="nav-toggle">☰</button>
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
 <div class="layout">
-<aside class="sidebar">
+<aside class="sidebar" id="sidebar">
   <div class="logo">servi<span>gestión</span></div>
   <div class="nav-section">Principal</div>
-  <button class="nav-item active" onclick="showView('servicios',this)"><span>🗂</span> Servicios</button>
-  <button class="nav-item" onclick="showView('facturacion',this)"><span>🧾</span> Facturación</button>
-  <button class="nav-item" onclick="showView('cobros',this)"><span>💰</span> Cobros</button>
-  <button class="nav-item" onclick="showView('resumen',this)"><span>📊</span> Resumen</button>
+  <button class="nav-item active" onclick="showView('servicios',this);closeSidebar()"><span>🗂</span> Servicios</button>
+  <button class="nav-item" onclick="showView('facturacion',this);closeSidebar()"><span>🧾</span> Facturación</button>
+  <button class="nav-item" onclick="showView('cobros',this);closeSidebar()"><span>💰</span> Cobros</button>
+  <button class="nav-item" onclick="showView('resumen',this);closeSidebar()"><span>📊</span> Resumen</button>
   <div class="nav-section">Maestros</div>
-  <button class="nav-item" onclick="showView('maestros',this)"><span>👥</span> Clientes &amp; Prop.</button>
+  <button class="nav-item" onclick="showView('maestros',this);closeSidebar()"><span>👥</span> Clientes &amp; Prop.</button>
 </aside>
 
 <main class="main">
@@ -1162,6 +1207,15 @@ const savedIva=localStorage.getItem('sg_iva');
 if(savedIva&&document.getElementById('iva-pct')) document.getElementById('iva-pct').value=savedIva;
 renderTable();
 renderKPIs();
+
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebar-overlay').classList.toggle('open');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('open');
+}
 </script>
 </body>
 </html>
