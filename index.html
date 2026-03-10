@@ -508,7 +508,22 @@ td{padding:11px 14px;white-space:nowrap;}
 </div>
 </div>
 
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getFirestore, collection, doc, setDoc, getDocs, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDiv5SbDfveNgrEoYUmwMKlU6PF90m6OSk",
+  authDomain: "mhc-app-184e9.firebaseapp.com",
+  projectId: "mhc-app-184e9",
+  storageBucket: "mhc-app-184e9.firebasestorage.app",
+  messagingSenderId: "564434438421",
+  appId: "1:564434438421:web:a4628396a190fd894b011c"
+};
+
+const firebaseApp = initializeApp(firebaseConfig);
+const db = getFirestore(firebaseApp);
+
 // ══════════════════════════════════════
 // DATA
 // ══════════════════════════════════════
@@ -525,7 +540,6 @@ const EXTRAS_CAT=[
   {key:'compras',    label:'Compras',    icon:'🛒', defaultPrice:25, hasImporte:true},
 ];
 
-// Real property data: { code, name, precioNormal, precioIntermedia }
 const PROP_DATA=[
   {code:'ES0087A',  name:'Alcudia Garden & Beach',              precioNormal:184.54, precioIntermedia:0},
   {code:'ES0197A',  name:'Moderne Villa mit Meerblick in Bonaire',precioNormal:252.73,precioIntermedia:0},
@@ -549,56 +563,78 @@ function uid(){ return Date.now().toString(36)+Math.random().toString(36).substr
 function getIva(){ return parseFloat(document.getElementById('iva-pct')?.value||localStorage.getItem('sg_iva')||21)||21; }
 function saveIva(){ localStorage.setItem('sg_iva', document.getElementById('iva-pct')?.value||21); }
 
-function loadData(){
-  try{ servicios   =JSON.parse(localStorage.getItem('sg_servicios')||'[]'); }catch(e){ servicios=[]; }
-  try{ clientes    =JSON.parse(localStorage.getItem('sg_clientes') ||'[]'); }catch(e){ clientes=[]; }
-  try{ propiedades =JSON.parse(localStorage.getItem('sg_props')    ||'[]'); }catch(e){ propiedades=[]; }
-
-  // Always enforce default prices: 25€ for all extras except cristales=0
-  // User edits during a session are kept in _selectedExtras, not in EXTRAS_CAT
-  localStorage.removeItem('sg_extra_prices');
-  EXTRAS_CAT.forEach(e=>{ e.defaultPrice = e.key==='cristales' ? 0 : 25; });
-
-  // Always sync official PROP_DATA into stored properties (preserving user edits)
-  let _changed=false;
-  PROP_DATA.forEach(pd=>{
-    const existing=propiedades.find(p=>p.nombre&&p.nombre.startsWith(pd.code));
-    if(!existing){
-      propiedades.push({id:uid(),nombre:pd.code+' - '+pd.name,direccion:'',clienteId:'',notas:'',precioNormal:pd.precioNormal,precioIntermedia:0});
-      _changed=true;
-    } else {
-      if(!existing.precioNormal){existing.precioNormal=pd.precioNormal;_changed=true;}
-    }
-  });
-  propiedades.sort((a,b)=>a.nombre.localeCompare(b.nombre));
-  if(_changed) saveProps();
-
-  // Always reset clients to official list
-  const _oficialClientes=['Myne','Barbara','Thies','Kim','Anna','Ines','Bianka','Tony'];
-  // Check if list matches - if not, reseed
-  const _nombres=clientes.map(c=>c.nombre);
-  const _match=_oficialClientes.every(n=>_nombres.includes(n)) && clientes.length===_oficialClientes.length;
-  if(!_match){
-    clientes=_oficialClientes.map(n=>({id:uid(),nombre:n,telefono:'',email:'',notas:''}));
-    saveClientes();
-  }
-
-  if(!servicios.length){
-    const p0=propiedades[0]; const p1=propiedades[1];
-    servicios=[
-      {fechaServicio:'2025-03-01',fechaIngreso:'2025-03-01',ocupacion:'Turistas',   empleado:'María García',clienteId:clientes[0].id,propiedadId:p0.id,tipoLimpieza:'Normal',   precioLimpieza:p0.precioNormal,precioIntermedia:0,horas:0,tarifa:0,extras:[],arreglos:'No',detalleArreglos:'',estadoFactura:'Facturado',estadoCobro:'Cobrado',  observaciones:''},
-      {fechaServicio:'2025-03-05',fechaIngreso:'2025-03-04',ocupacion:'Propietario',empleado:'Pedro López', clienteId:clientes[0].id,propiedadId:p1.id,tipoLimpieza:'Profunda', precioLimpieza:0,precioIntermedia:0,horas:0,tarifa:0,extras:[{key:'cristales',label:'Cristales',icon:'🪟',precio:30},{key:'bbq',label:'BBQ',icon:'🍖',precio:25}],arreglos:'No',detalleArreglos:'',estadoFactura:'Pendiente',estadoCobro:'Pendiente',observaciones:''},
-      {fechaServicio:'2025-03-08',fechaIngreso:'2025-03-07',ocupacion:'',           empleado:'María García',clienteId:'',            propiedadId:p0.id,tipoLimpieza:'Inicial/Obra',precioLimpieza:0,precioIntermedia:0,horas:6,tarifa:20,extras:[{key:'lavanderia',label:'Lavandería',icon:'👕',precio:25}],arreglos:'No',detalleArreglos:'',estadoFactura:'Pendiente',estadoCobro:'Pendiente',observaciones:''},
-    ];
-    saveServicios();
+// ── FIREBASE SAVE / DELETE ──
+async function saveServicios(){
+  for(const s of servicios){
+    if(!s.id) s.id=uid();
+    await setDoc(doc(db,'servicios',s.id), s);
   }
 }
+async function saveClientes(){
+  for(const c of clientes){
+    if(!c.id) c.id=uid();
+    await setDoc(doc(db,'clientes',c.id), c);
+  }
+}
+async function saveProps(){
+  for(const p of propiedades){
+    if(!p.id) p.id=uid();
+    await setDoc(doc(db,'propiedades',p.id), p);
+  }
+}
+async function deleteServicio(id){ await deleteDoc(doc(db,'servicios',id)); }
+async function deleteCliente(id){ await deleteDoc(doc(db,'clientes',id)); }
+async function deleteProp(id){ await deleteDoc(doc(db,'propiedades',id)); }
 
-function saveServicios(){ localStorage.setItem('sg_servicios',JSON.stringify(servicios)); }
-function saveClientes() { localStorage.setItem('sg_clientes', JSON.stringify(clientes)); }
-function saveProps()    { localStorage.setItem('sg_props',    JSON.stringify(propiedades)); }
 function getCliente(id)   { return clientes.find(c=>c.id===id)||null; }
 function getPropiedad(id) { return propiedades.find(p=>p.id===id)||null; }
+
+// ── LOAD DATA FROM FIREBASE ──
+async function loadData(){
+  // Clientes
+  const cSnap = await getDocs(collection(db,'clientes'));
+  clientes = cSnap.docs.map(d=>d.data());
+
+  // Propiedades
+  const pSnap = await getDocs(collection(db,'propiedades'));
+  propiedades = pSnap.docs.map(d=>d.data());
+
+  // Seed default data if empty
+  if(!clientes.length){
+    const _oficialClientes=['Myne','Bjorn'];
+    clientes=_oficialClientes.map(n=>({id:uid(),nombre:n,telefono:'',email:'',notas:''}));
+    await saveClientes();
+  }
+  if(!propiedades.length){
+    propiedades=PROP_DATA.map(p=>({id:uid(),code:p.code,nombre:`${p.code} - ${p.name}`,clienteId:'',direccion:p.name,precioNormal:p.precioNormal,precioIntermedia:p.precioIntermedia,notas:''}));
+    await saveProps();
+  }
+
+  // Servicios
+  const sSnap = await getDocs(collection(db,'servicios'));
+  servicios = sSnap.docs.map(d=>d.data());
+
+  renderTable();
+  renderKPIs();
+  renderMaestros();
+  renderFacturacion();
+  renderCobros();
+  renderResumen();
+
+  // ── REALTIME LISTENERS ──
+  onSnapshot(collection(db,'servicios'), snap=>{
+    servicios=snap.docs.map(d=>d.data());
+    renderTable(); renderKPIs(); renderFacturacion(); renderCobros(); renderResumen();
+  });
+  onSnapshot(collection(db,'clientes'), snap=>{
+    clientes=snap.docs.map(d=>d.data());
+    renderTable(); renderMaestros(); renderFacturacion();
+  });
+  onSnapshot(collection(db,'propiedades'), snap=>{
+    propiedades=snap.docs.map(d=>d.data());
+    renderTable(); renderMaestros();
+  });
+}
 
 function calcBase(s){
   let lim=0;
@@ -969,7 +1005,7 @@ function fillServForm(s){
   recalcTotal();
 }
 
-function guardarServicio(){
+async function guardarServicio(){
   const fs=document.getElementById('f-fecha-servicio').value;
   const fi=document.getElementById('f-fecha-ingreso').value;
   const cli=document.getElementById('f-cliente').value;
@@ -987,6 +1023,7 @@ function guardarServicio(){
     precioLimpieza=parseFloat(document.getElementById('f-precio-limpieza')?.value)||0;
   }
   const obj={
+    id: editServIdx===-1 ? uid() : (servicios[editServIdx].id||uid()),
     fechaServicio:fs,fechaIngreso:fi,
     ocupacion:document.getElementById('f-ocupacion').value.trim(),
     empleado:document.getElementById('f-empleado').value.trim(),
@@ -1000,10 +1037,15 @@ function guardarServicio(){
     estadoCobro:document.getElementById('f-estado-cobro').value,
     observaciones:document.getElementById('f-observaciones').value.trim(),
   };
-  if(editServIdx===-1) servicios.push(obj); else{servicios[editServIdx]=obj;editServIdx=-1;}
-  saveServicios(); closeServModal(); renderTable();
+  await setDoc(doc(db,'servicios',obj.id), obj);
+  editServIdx=-1;
+  closeServModal();
 }
-function delServ(idx){ if(!confirm('¿Eliminar este servicio?'))return; servicios.splice(idx,1); saveServicios(); renderTable(); }
+async function delServ(idx){
+  if(!confirm('¿Eliminar este servicio?'))return;
+  const s=servicios[idx];
+  if(s?.id) await deleteDoc(doc(db,'servicios',s.id));
+}
 
 // ══════════════════════════════════════
 // FACTURACIÓN
@@ -1093,8 +1135,14 @@ function renderCobros(){
     </tr>`;
   }).join('');
 }
-function marcarCobrado(i){servicios[i].estadoCobro='Cobrado';saveServicios();renderCobros();}
-function marcarFacturado(i){servicios[i].estadoFactura='Facturado';saveServicios();renderCobros();}
+async function marcarCobrado(i){
+  servicios[i].estadoCobro='Cobrado';
+  await setDoc(doc(db,'servicios',servicios[i].id), servicios[i]);
+}
+async function marcarFacturado(i){
+  servicios[i].estadoFactura='Facturado';
+  await setDoc(doc(db,'servicios',servicios[i].id), servicios[i]);
+}
 
 // ══════════════════════════════════════
 // MAESTROS
@@ -1116,19 +1164,19 @@ function openEditCliente(idx){
   document.getElementById('modal-cliente').classList.add('open');
 }
 function closeClienteModal(){ document.getElementById('modal-cliente').classList.remove('open'); }
-function guardarCliente(){
+async function guardarCliente(){
   const nombre=document.getElementById('cli-nombre').value.trim();
   if(!nombre){alert('El nombre es obligatorio.');return;}
   const obj={id:editCliIdx===-1?uid():clientes[editCliIdx].id,nombre,telefono:document.getElementById('cli-telefono').value.trim(),email:document.getElementById('cli-email').value.trim(),notas:document.getElementById('cli-notas').value.trim()};
-  if(editCliIdx===-1) clientes.push(obj); else{clientes[editCliIdx]=obj;editCliIdx=-1;}
-  saveClientes();closeClienteModal();renderMaestros();
+  await setDoc(doc(db,'clientes',obj.id), obj);
+  editCliIdx=-1;
+  closeClienteModal();
   if(fromServ){fillCliSel('f-cliente',obj.id);fillPropSel('','');}
 }
-function delCliente(idx){
+async function delCliente(idx){
   if(!confirm('¿Eliminar cliente?'))return;
-  const id=clientes[idx].id;
-  propiedades.forEach(p=>{if(p.clienteId===id)p.clienteId='';});
-  clientes.splice(idx,1);saveClientes();saveProps();renderMaestros();
+  const c=clientes[idx];
+  if(c?.id) await deleteDoc(doc(db,'clientes',c.id));
 }
 
 function openPropModal(fromServicio=false){
@@ -1155,7 +1203,7 @@ function openEditProp(idx){
   document.getElementById('modal-prop').classList.add('open');
 }
 function closePropModal(){ document.getElementById('modal-prop').classList.remove('open'); }
-function guardarPropiedad(){
+async function guardarPropiedad(){
   const nombre=document.getElementById('prop-nombre').value.trim();
   if(!nombre){alert('El nombre / código es obligatorio.');return;}
   const obj={
@@ -1167,11 +1215,16 @@ function guardarPropiedad(){
     precioNormal:parseFloat(document.getElementById('prop-precio-normal').value)||0,
     precioIntermedia:parseFloat(document.getElementById('prop-precio-intermedia').value)||0,
   };
-  if(editPropIdx===-1) propiedades.push(obj); else{propiedades[editPropIdx]=obj;editPropIdx=-1;}
-  saveProps();closePropModal();renderMaestros();
+  await setDoc(doc(db,'propiedades',obj.id), obj);
+  editPropIdx=-1;
+  closePropModal();
   if(fromServ){fillPropSel('',obj.id);}
 }
-function delProp(idx){ if(!confirm('¿Eliminar propiedad?'))return; propiedades.splice(idx,1); saveProps(); renderMaestros(); }
+async function delProp(idx){
+  if(!confirm('¿Eliminar propiedad?'))return;
+  const p=propiedades[idx];
+  if(p?.id) await deleteDoc(doc(db,'propiedades',p.id));
+}
 
 function renderMaestros(){
   document.getElementById('lista-clientes').innerHTML=clientes.length?clientes.map((c,i)=>{
@@ -1248,25 +1301,10 @@ function fmt(n){ if(!n&&n!==0)return'—'; return new Intl.NumberFormat('es-ES',
 function fmtDate(d){ if(!d)return'—'; return new Date(d+'T00:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'}); }
 
 // ══════════════════════════════════════
-// INIT — clear stale props cache so PROP_DATA sync always runs fresh
+// INIT
 // ══════════════════════════════════════
-// Force reset clients if stale (old demo data)
-try{
-  const _sc=JSON.parse(localStorage.getItem('sg_clientes')||'[]');
-  if(_sc.some(c=>c.nombre==='Cliente demo'||c.nombre==='Casa Sol'||c.nombre==='Villa Azul')){
-    localStorage.removeItem('sg_clientes');
-  }
-}catch(e){ localStorage.removeItem('sg_clientes'); }
-// Force re-sync of properties on every load (safe: merges, never deletes)
-try{ const _p=JSON.parse(localStorage.getItem('sg_props')||'[]');
-  // If stored props don't have precioNormal on first item, wipe to force full reseed
-  if(_p.length && !_p[0].hasOwnProperty('precioNormal')){ localStorage.removeItem('sg_props'); }
-}catch(e){ localStorage.removeItem('sg_props'); }
-loadData();
 const savedIva=localStorage.getItem('sg_iva');
 if(savedIva&&document.getElementById('iva-pct')) document.getElementById('iva-pct').value=savedIva;
-renderTable();
-renderKPIs();
 
 function toggleSidebar(){
   document.getElementById('sidebar').classList.toggle('open');
@@ -1277,6 +1315,10 @@ function closeSidebar(){
   document.getElementById('sidebar-overlay').classList.remove('open');
 }
 window.addEventListener('resize',()=>renderTable());
+
+// Mostrar indicador de carga y arrancar Firebase
+document.getElementById('kpi-grid').innerHTML='<div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--muted)">⏳ Conectando con la base de datos...</div>';
+loadData();
 </script>
 </body>
 </html>
