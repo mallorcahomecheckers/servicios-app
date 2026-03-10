@@ -8,6 +8,7 @@
 <style>
 :root{--bg:#f0f2f5;--surface:#ffffff;--surface2:#f5f7fa;--border:#dde1ea;--accent:#2563eb;--accent2:#0ea5e9;--accent3:#ef4444;--text:#1e2a3a;--muted:#7a8a9e;--radius:10px;}
 *{box-sizing:border-box;margin:0;padding:0;}
+html,body{max-width:100%;overflow-x:hidden;}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;min-height:100vh;}
 .layout{display:flex;min-height:100vh;}
 .sidebar{width:235px;background:#1e2a3a;border-right:1px solid #2d3d52;padding:24px 16px;display:flex;flex-direction:column;gap:4px;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto;}
@@ -193,9 +194,10 @@ td{padding:11px 14px;white-space:nowrap;}
   .fact-filters .form-select{max-width:100%;}
   .fact-card-meta{flex-wrap:wrap;}
   .iva-config{flex-wrap:wrap;gap:8px;}
-  table{font-size:12px;}
-  td,thead th{padding:8px 10px;}
-  .price-summary{padding:12px 14px;}
+  /* Fix Android table overflow */
+  .table-wrap{overflow:hidden !important;}
+  table{table-layout:fixed;width:100% !important;max-width:100% !important;}
+  td,thead th{white-space:normal !important;word-break:break-word;overflow-wrap:break-word;}
   .extras-select-wrap{flex-direction:column;}
   .panel-header{flex-wrap:wrap;gap:8px;}
 }
