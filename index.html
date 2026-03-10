@@ -175,7 +175,7 @@ td{padding:11px 14px;white-space:nowrap;}
   .sidebar.open{transform:translateX(0);}
   .main{margin-left:0;padding:16px;padding-top:60px;}
   .kpi-grid{grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px;}
-  .kpi-value{font-size:22px;}
+  .kpi-value{font-size:20px;letter-spacing:-.5px;}
   .page-header{flex-wrap:wrap;gap:10px;margin-bottom:18px;}
   .page-title{font-size:20px;}
   .two-col{grid-template-columns:1fr;}
@@ -630,12 +630,10 @@ function renderTable(){
   const fProp=document.getElementById('filter-propiedad')?.value||'';
   const fFact=document.getElementById('filter-factura')?.value||'';
   const fCobro=document.getElementById('filter-cobro')?.value||'';
-  // Populate cliente filter
   const sel=document.getElementById('filter-cliente');
   const prev=sel.value;
   sel.innerHTML='<option value="">Todos los clientes</option>'+clientes.map(c=>`<option value="${c.id}">${c.nombre}</option>`).join('');
   sel.value=prev;
-  // Populate propiedad filter
   const selP=document.getElementById('filter-propiedad');
   const prevP=selP.value;
   selP.innerHTML='<option value="">Todas las propiedades</option>'+propiedades.map(p=>`<option value="${p.id}">${p.nombre}</option>`).join('');
@@ -645,24 +643,65 @@ function renderTable(){
     const txt=((c?.nombre||'')+(p?.nombre||'')+(s.empleado||'')).toLowerCase();
     return(!search||txt.includes(search))&&(!fCli||s.clienteId===fCli)&&(!fProp||s.propiedadId===fProp)&&(!fFact||s.estadoFactura===fFact)&&(!fCobro||s.estadoCobro===fCobro);
   });
-  const tbody=document.getElementById('tabla-body');
-  if(!data.length){tbody.innerHTML='<tr><td colspan="11"><div class="empty"><div class="empty-icon">📋</div>Sin resultados</div></td></tr>';return;}
-  tbody.innerHTML=data.map(s=>{
-    const c=getCliente(s.clienteId);const p=getPropiedad(s.propiedadId);
-    return `<tr>
-      <td>${fmtDate(s.fechaServicio)}</td><td>${fmtDate(s.fechaIngreso)}</td>
-      <td>${s.empleado||'—'}</td><td><strong>${c?.nombre||'—'}</strong></td>
-      <td style="color:var(--muted);max-width:160px;overflow:hidden;text-overflow:ellipsis">${p?.nombre||'—'}</td>
-      <td>${s.ocupacion?`<span class="badge badge-gray">${s.ocupacion}</span>`:'—'}</td>
-      <td>${s.tipoLimpieza?`<span class="badge badge-gray">${s.tipoLimpieza}</span>`:'—'}</td>
-      <td class="importe-cell">${fmt(calcBase(s))}</td>
-      <td>${bFact(s.estadoFactura)}</td><td>${bCobro(s.estadoCobro)}</td>
-      <td><div class="actions">
-        <button class="btn btn-ghost btn-sm" onclick="openServModal(${s._i})">✏️</button>
-        <button class="btn btn-danger btn-sm" onclick="delServ(${s._i})">🗑</button>
-      </div></td>
-    </tr>`;
-  }).join('');
+  const isMobile=window.innerWidth<=768;
+  if(isMobile){
+    // Render as cards on mobile
+    const container=document.getElementById('tabla-body');
+    const wrap=document.querySelector('.table-wrap');
+    wrap.style.background='transparent';wrap.style.border='none';wrap.style.borderRadius='0';
+    if(!data.length){container.innerHTML='<tr><td><div class="empty"><div class="empty-icon">📋</div>Sin resultados</div></td></tr>';renderKPIs();return;}
+    container.innerHTML=data.map(s=>{
+      const c=getCliente(s.clienteId);const p=getPropiedad(s.propiedadId);
+      return `<tr><td style="padding:0 0 10px 0;border:none;display:block">
+        <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div>
+              <div style="font-weight:700;font-size:14px;color:var(--text)">${c?.nombre||'—'}</div>
+              <div style="font-size:12px;color:var(--muted);margin-top:2px">${p?.nombre||'—'}</div>
+            </div>
+            <div style="font-weight:700;font-size:16px;color:var(--accent)">${fmt(calcBase(s))}</div>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+            <span style="font-size:11px;color:var(--muted)">📅 ${fmtDate(s.fechaServicio)}</span>
+            ${s.empleado?`<span style="font-size:11px;color:var(--muted)">· 👤 ${s.empleado}</span>`:''}
+            ${s.tipoLimpieza?`<span class="badge badge-gray" style="font-size:10px">${s.tipoLimpieza}</span>`:''}
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div style="display:flex;gap:5px;">${bFact(s.estadoFactura)}${bCobro(s.estadoCobro)}</div>
+            <div style="display:flex;gap:5px;">
+              <button class="btn btn-ghost btn-sm" onclick="openServModal(${s._i})">✏️</button>
+              <button class="btn btn-danger btn-sm" onclick="delServ(${s._i})">🗑</button>
+            </div>
+          </div>
+        </div>
+      </td></tr>`;
+    }).join('');
+    // Hide thead on mobile
+    document.querySelector('#view-servicios thead').style.display='none';
+  } else {
+    // Desktop table
+    const wrap=document.querySelector('.table-wrap');
+    wrap.style.background='';wrap.style.border='';wrap.style.borderRadius='';
+    document.querySelector('#view-servicios thead').style.display='';
+    const tbody=document.getElementById('tabla-body');
+    if(!data.length){tbody.innerHTML='<tr><td colspan="11"><div class="empty"><div class="empty-icon">📋</div>Sin resultados</div></td></tr>';renderKPIs();return;}
+    tbody.innerHTML=data.map(s=>{
+      const c=getCliente(s.clienteId);const p=getPropiedad(s.propiedadId);
+      return `<tr>
+        <td>${fmtDate(s.fechaServicio)}</td><td>${fmtDate(s.fechaIngreso)}</td>
+        <td>${s.empleado||'—'}</td><td><strong>${c?.nombre||'—'}</strong></td>
+        <td style="color:var(--muted);max-width:160px;overflow:hidden;text-overflow:ellipsis">${p?.nombre||'—'}</td>
+        <td>${s.ocupacion?`<span class="badge badge-gray">${s.ocupacion}</span>`:'—'}</td>
+        <td>${s.tipoLimpieza?`<span class="badge badge-gray">${s.tipoLimpieza}</span>`:'—'}</td>
+        <td class="importe-cell">${fmt(calcBase(s))}</td>
+        <td>${bFact(s.estadoFactura)}</td><td>${bCobro(s.estadoCobro)}</td>
+        <td><div class="actions">
+          <button class="btn btn-ghost btn-sm" onclick="openServModal(${s._i})">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="delServ(${s._i})">🗑</button>
+        </div></td>
+      </tr>`;
+    }).join('');
+  }
   renderKPIs();
 }
 
@@ -1216,6 +1255,7 @@ function closeSidebar(){
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('sidebar-overlay').classList.remove('open');
 }
+window.addEventListener('resize',()=>renderTable());
 </script>
 </body>
 </html>
