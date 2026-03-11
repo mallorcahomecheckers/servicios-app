@@ -6,1338 +6,992 @@
 <title>Gestión de Servicios</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0e0f13;--surface:#16181f;--surface2:#1e2029;--border:#2a2d38;--accent:#c8f04a;--accent2:#4af0b8;--accent3:#f04a7a;--text:#e8eaf0;--muted:#6b7080;--radius:10px;}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;min-height:100vh;}
-.layout{display:flex;min-height:100vh;}
-.sidebar{width:235px;background:var(--surface);border-right:1px solid var(--border);padding:24px 16px;display:flex;flex-direction:column;gap:4px;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto;}
-.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:var(--accent);letter-spacing:-.5px;margin-bottom:20px;padding:0 8px;}
-.logo span{color:var(--text);}
-.nav-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);padding:12px 12px 4px;}
-.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius);cursor:pointer;color:var(--muted);font-weight:500;transition:all .15s;border:none;background:none;font-family:inherit;font-size:14px;width:100%;text-align:left;}
-.nav-item:hover{background:var(--surface2);color:var(--text);}
-.nav-item.active{background:var(--accent);color:#0e0f13;}
-.main{margin-left:235px;flex:1;padding:32px;}
-.view{display:none;}.view.active{display:block;}
-.page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;}
-.page-title{font-family:'Syne',sans-serif;font-weight:700;font-size:26px;letter-spacing:-.5px;}
-.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
-.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;}
-.kpi-label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
-.kpi-value{font-family:'Syne',sans-serif;font-weight:700;font-size:28px;letter-spacing:-1px;}
-.kpi-value.green{color:var(--accent);}.kpi-value.teal{color:var(--accent2);}.kpi-value.red{color:var(--accent3);}
-.kpi-sub{font-size:12px;color:var(--muted);margin-top:4px;}
-.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:auto;}
-table{width:100%;border-collapse:collapse;font-size:13px;}
-thead th{background:var(--surface2);padding:12px 14px;text-align:left;color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.4px;white-space:nowrap;position:sticky;top:0;border-bottom:1px solid var(--border);}
-tbody tr{border-bottom:1px solid var(--border);transition:background .1s;}
-tbody tr:last-child{border-bottom:none;}
-tbody tr:hover{background:var(--surface2);}
-td{padding:11px 14px;white-space:nowrap;}
-.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;}
-.badge-green{background:rgba(200,240,74,.15);color:var(--accent);}
-.badge-teal{background:rgba(74,240,184,.15);color:var(--accent2);}
-.badge-red{background:rgba(240,74,122,.15);color:var(--accent3);}
-.badge-gray{background:rgba(107,112,128,.2);color:var(--muted);}
-.badge-yellow{background:rgba(255,200,50,.15);color:#ffc832;}
-.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:var(--radius);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s;}
-.btn-primary{background:var(--accent);color:#0e0f13;}.btn-primary:hover{opacity:.88;}
-.btn-ghost{background:var(--surface2);color:var(--text);border:1px solid var(--border);}.btn-ghost:hover{border-color:var(--muted);}
-.btn-sm{padding:6px 12px;font-size:12px;}
-.btn-danger{background:rgba(240,74,122,.15);color:var(--accent3);border:1px solid rgba(240,74,122,.3);}.btn-danger:hover{background:rgba(240,74,122,.25);}
-.btn-icon{padding:8px 10px;font-size:14px;line-height:1;}
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:999;align-items:center;justify-content:center;}
-.modal-overlay.open{display:flex;}
-.modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;width:760px;max-width:96vw;max-height:92vh;overflow-y:auto;padding:28px;}
-.modal-sm{width:500px;}
-.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;}
-.modal-title{font-family:'Syne',sans-serif;font-weight:700;font-size:18px;}
-.modal-close{background:var(--surface2);border:1px solid var(--border);color:var(--muted);border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-.form-group{display:flex;flex-direction:column;gap:5px;}
-.form-group.full{grid-column:1/-1;}
-.form-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);}
-.form-label .req{color:var(--accent3);margin-left:2px;}
-.form-input,.form-select,.form-textarea{background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-family:inherit;font-size:13px;transition:border-color .15s;width:100%;}
-.form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:var(--accent);}
-.form-select option{background:var(--surface2);}
-.form-textarea{resize:vertical;min-height:60px;}
-.input-with-btn{display:flex;gap:6px;}
-.input-with-btn .form-select,.input-with-btn .form-input{flex:1;}
-.section-divider{grid-column:1/-1;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent);padding-top:6px;border-top:1px solid var(--border);margin-top:4px;}
-.modal-footer{display:flex;justify-content:flex-end;gap:10px;margin-top:22px;padding-top:18px;border-top:1px solid var(--border);}
-.filters{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
-.filters .form-input{max-width:220px;}.filters .form-select{max-width:170px;}
-.empty{text-align:center;padding:50px;color:var(--muted);}
-.empty-icon{font-size:36px;margin-bottom:10px;}
-.actions{display:flex;gap:6px;}
-.importe-cell{font-weight:600;font-variant-numeric:tabular-nums;}
+  :root {
+    --bg: #0e0f13;
+    --surface: #16181f;
+    --surface2: #1e2029;
+    --border: #2a2d38;
+    --accent: #c8f04a;
+    --accent2: #4af0b8;
+    --accent3: #f04a7a;
+    --text: #e8eaf0;
+    --muted: #6b7080;
+    --radius: 10px;
+  }
 
-/* PRECIO LIMPIEZA */
-.precio-box{grid-column:1/-1;background:var(--surface2);border:1px solid rgba(74,240,184,.25);border-radius:9px;padding:14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.precio-box.hidden{display:none;}
-.precio-box-title{grid-column:1/-1;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--accent2);margin-bottom:2px;}
-.precio-auto-hint{grid-column:1/-1;font-size:12px;color:var(--accent);background:rgba(200,240,74,.08);border-radius:6px;padding:6px 10px;}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* EXTRAS */
-.extras-section{grid-column:1/-1;display:flex;flex-direction:column;gap:10px;}
-.extras-select-wrap{display:flex;gap:10px;align-items:flex-start;}
-.extras-select-wrap select{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:8px 12px;color:var(--text);font-family:inherit;font-size:13px;min-height:130px;}
-.extras-select-wrap select option{padding:6px;font-size:13px;}
-.extras-select-wrap select option:checked{background:var(--accent);color:#0e0f13;}
-.extras-hint{font-size:11px;color:var(--muted);margin-top:2px;}
-.extras-selected{display:flex;flex-direction:column;gap:7px;margin-top:2px;}
-.extra-row{display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--accent);border-radius:8px;padding:9px 14px;}
-.extra-row-label{flex:1;font-size:13px;font-weight:500;display:flex;align-items:center;gap:7px;}
-.extra-row-price{display:flex;align-items:center;gap:6px;}
-.extra-row-price input{width:90px;text-align:right;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--text);font-family:inherit;font-size:13px;}
-.extra-row-price input:focus{outline:none;border-color:var(--accent);}
-.extra-row-price .currency{color:var(--muted);font-size:13px;}
-.extra-row-subtotal{font-weight:700;font-size:13px;color:var(--accent);min-width:70px;text-align:right;}
-.extra-row-remove{background:none;border:none;color:var(--accent3);cursor:pointer;font-size:16px;padding:0 4px;line-height:1;}
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    min-height: 100vh;
+  }
 
-/* RESUMEN PRECIO */
-.price-summary{grid-column:1/-1;background:rgba(200,240,74,.07);border:1px solid rgba(200,240,74,.2);border-radius:9px;padding:16px 18px;display:flex;flex-direction:column;gap:7px;}
-.price-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;}
-.price-row .label{color:var(--muted);}
-.price-row .val{font-weight:600;}
-.price-row.subtotal{padding-top:6px;border-top:1px dashed rgba(200,240,74,.15);}
-.price-row.iva-row .val{color:var(--muted);}
-.price-row.total-row{font-family:'Syne',sans-serif;font-weight:700;font-size:18px;color:var(--accent);padding-top:8px;border-top:1px solid rgba(200,240,74,.25);margin-top:2px;}
+  /* SIDEBAR */
+  .layout { display: flex; min-height: 100vh; }
 
-/* MAESTROS */
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
-.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
-.panel-header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;background:var(--surface2);border-bottom:1px solid var(--border);}
-.panel-title{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;}
-.list-item{display:flex;justify-content:space-between;align-items:center;padding:11px 20px;border-bottom:1px solid var(--border);transition:background .1s;}
-.list-item:last-child{border-bottom:none;}
-.list-item:hover{background:var(--surface2);}
-.list-item-info{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0;}
-.list-item-name{font-weight:500;font-size:13px;}
-.list-item-sub{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.prop-tag{font-size:11px;background:rgba(200,240,74,.1);color:var(--accent);padding:2px 8px;border-radius:10px;white-space:nowrap;margin-right:4px;}
-.price-pill{font-size:11px;background:rgba(74,240,184,.1);color:var(--accent2);padding:2px 8px;border-radius:10px;white-space:nowrap;margin-right:4px;}
+  .sidebar {
+    width: 220px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 100;
+  }
 
-/* FACTURACIÓN */
-.iva-config{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 18px;margin-bottom:18px;font-size:13px;flex-wrap:wrap;}
-.iva-config label{color:var(--muted);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
-.iva-config input{width:70px;text-align:center;}
-.fact-filters{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;}
-.fact-filters .form-select{max-width:200px;}
-.fact-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:14px;overflow:hidden;}
-.fact-card-header{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:var(--surface2);border-bottom:1px solid var(--border);cursor:pointer;user-select:none;gap:12px;}
-.fact-card-title{font-weight:600;font-size:14px;flex:1;}
-.fact-card-meta{display:flex;gap:10px;align-items:center;font-size:12px;flex-shrink:0;}
-.fact-card-body{padding:18px 20px;display:none;}
-.fact-card-body.open{display:block;}
-.fact-lines{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px;}
-.fact-lines td,.fact-lines th{padding:8px 10px;}
-.fact-lines thead th{background:var(--surface2);color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.4px;font-weight:600;}
-.fact-lines tbody tr{border-bottom:1px solid var(--border);}
-.fact-lines tbody tr:last-child{border-bottom:none;}
-.fact-totals{display:flex;flex-direction:column;gap:5px;align-items:flex-end;}
-.fact-total-row{display:flex;gap:24px;justify-content:flex-end;font-size:13px;}
-.fact-total-row .lbl{color:var(--muted);}
-.fact-total-row .val{min-width:90px;text-align:right;font-weight:600;}
-.fact-total-row.grand{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:var(--accent);padding-top:6px;border-top:1px solid var(--border);margin-top:4px;}
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+    margin-bottom: 24px;
+    padding: 0 8px;
+  }
+  .logo span { color: var(--text); }
 
-/* PROP MODAL PRICES */
-.prop-prices-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;grid-column:1/-1;background:rgba(74,240,184,.05);border:1px solid rgba(74,240,184,.2);border-radius:8px;padding:12px 14px;}
-.prop-prices-title{grid-column:1/-1;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--accent2);margin-bottom:2px;}
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    color: var(--muted);
+    font-weight: 500;
+    transition: all 0.15s;
+    border: none;
+    background: none;
+    font-family: inherit;
+    font-size: 14px;
+    width: 100%;
+    text-align: left;
+  }
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active { background: var(--accent); color: #0e0f13; }
+  .nav-item .icon { font-size: 16px; }
 
-/* RESUMEN */
-.resumen-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px;}
-.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;}
-.chart-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:16px;}
-.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
-.bar-label{width:110px;font-size:11px;text-align:right;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.bar-track{flex:1;height:8px;background:var(--surface2);border-radius:4px;overflow:hidden;}
-.bar-fill{height:100%;border-radius:4px;background:var(--accent);transition:width .5s;}
-.bar-fill.teal{background:var(--accent2);}
-.bar-val{width:60px;font-size:12px;font-weight:600;}
-.list-stat{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);}
-.list-stat:last-child{border:none;}
-.list-stat-val{font-weight:600;font-size:13px;color:var(--accent);}
+  /* MAIN */
+  .main {
+    margin-left: 220px;
+    flex: 1;
+    padding: 32px;
+  }
 
-:root{--bg:#f0f2f5;--surface:#ffffff;--surface2:#f5f7fa;--border:#dde1ea;--accent:#2563eb;--accent2:#0ea5e9;--accent3:#ef4444;--text:#1e2a3a;--muted:#7a8a9e;--radius:10px;}
-.bar-track{flex:1;height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden;}
-.bar-fill{height:100%;border-radius:4px;background:var(--accent);transition:width .5s;}
-.bar-fill.teal{background:var(--accent2);}
-.bar-val{width:60px;font-size:12px;font-weight:600;}
-.list-stat{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);}
-.list-stat:last-child{border:none;}
-.list-stat-val{font-weight:600;font-size:13px;color:var(--accent);}
+  /* VIEWS */
+  .view { display: none; }
+  .view.active { display: block; }
 
-::-webkit-scrollbar{width:6px;height:6px;}
-::-webkit-scrollbar-track{background:transparent;}
-::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px;}
+  /* PAGE HEADER */
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+  }
+  .page-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 26px;
+    letter-spacing: -0.5px;
+  }
 
-/* ── RESPONSIVE MOBILE ── */
-.mobile-nav-toggle{display:none;position:fixed;top:12px;left:12px;z-index:200;background:#1e2a3a;border:none;border-radius:8px;padding:10px 12px;cursor:pointer;font-size:18px;color:#e2e8f0;}
-.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:99;}
-.sidebar-overlay.open{display:block;}
-html,body{max-width:100%;overflow-x:hidden;}
+  /* KPI CARDS */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .kpi-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+  .kpi-label {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .kpi-value {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 28px;
+    letter-spacing: -1px;
+  }
+  .kpi-value.green { color: var(--accent); }
+  .kpi-value.teal  { color: var(--accent2); }
+  .kpi-value.red   { color: var(--accent3); }
+  .kpi-sub {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
 
-@media(max-width:768px){
-  .mobile-nav-toggle{display:flex;align-items:center;justify-content:center;}
-  .sidebar{transform:translateX(-100%);transition:transform .25s ease;z-index:150;}
-  .sidebar.open{transform:translateX(0);}
-  .main{margin-left:0;padding:16px;padding-top:60px;}
-  .kpi-grid{grid-template-columns:repeat(2,1fr)!important;gap:10px;margin-bottom:18px;}
-  .kpi-value{font-size:20px;letter-spacing:-.5px;}
-  .page-header{flex-wrap:wrap;gap:10px;margin-bottom:18px;}
-  .page-title{font-size:20px;}
-  .two-col{grid-template-columns:1fr;}
-  .resumen-grid{grid-template-columns:1fr;}
-  .form-grid{grid-template-columns:1fr;}
-  .form-group.full{grid-column:1;}
-  .section-divider{grid-column:1;}
-  .precio-box{grid-template-columns:1fr;}
-  .prop-prices-grid{grid-template-columns:1fr;}
-  .modal{padding:18px;width:96vw;}
-  .modal-sm{width:96vw;}
-  .filters{flex-direction:column;align-items:stretch;}
-  .filters .form-input,.filters .form-select{max-width:100%;}
-  .fact-filters{flex-direction:column;}
-  .fact-filters .form-select{max-width:100%;}
-  .iva-config{flex-wrap:wrap;gap:8px;}
-  .table-wrap{overflow:hidden!important;}
-  table{table-layout:fixed;width:100%!important;max-width:100%!important;}
-  td,thead th{white-space:normal!important;word-break:break-word;}
-  .extras-select-wrap{flex-direction:column;}
-  .panel-header{flex-wrap:wrap;gap:8px;}
-}
+  /* TABLE */
+  .table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  thead th {
+    background: var(--surface2);
+    padding: 12px 14px;
+    text-align: left;
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    border-bottom: 1px solid var(--border);
+  }
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--surface2); }
+  td {
+    padding: 11px 14px;
+    white-space: nowrap;
+  }
+
+  /* BADGES */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+  }
+  .badge-green  { background: rgba(200,240,74,0.15); color: var(--accent); }
+  .badge-teal   { background: rgba(74,240,184,0.15); color: var(--accent2); }
+  .badge-red    { background: rgba(240,74,122,0.15); color: var(--accent3); }
+  .badge-gray   { background: rgba(107,112,128,0.2); color: var(--muted); }
+  .badge-yellow { background: rgba(255,200,50,0.15); color: #ffc832; }
+
+  /* CHECK ICONS */
+  .check { color: var(--accent); font-size: 15px; }
+  .dash  { color: var(--border); font-size: 15px; }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 18px;
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+  }
+  .btn-primary { background: var(--accent); color: #0e0f13; }
+  .btn-primary:hover { opacity: 0.88; }
+  .btn-ghost {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { border-color: var(--muted); }
+  .btn-sm { padding: 6px 12px; font-size: 12px; }
+  .btn-danger { background: rgba(240,74,122,0.15); color: var(--accent3); border: 1px solid rgba(240,74,122,0.3); }
+  .btn-danger:hover { background: rgba(240,74,122,0.25); }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 999;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    width: 680px;
+    max-width: 95vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 28px;
+  }
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 22px;
+  }
+  .modal-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+  }
+  .modal-close {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 6px;
+    width: 28px; height: 28px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* FORM */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .form-group { display: flex; flex-direction: column; gap: 5px; }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--muted);
+  }
+  .form-input, .form-select, .form-textarea {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 9px 12px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 13px;
+    transition: border-color 0.15s;
+    width: 100%;
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .form-select option { background: var(--surface2); }
+  .form-textarea { resize: vertical; min-height: 70px; }
+
+  .section-divider {
+    grid-column: 1 / -1;
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--accent);
+    padding-top: 6px;
+    border-top: 1px solid var(--border);
+    margin-top: 4px;
+  }
+
+  /* CHECKBOX ROW */
+  .checks-row {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    cursor: pointer;
+    user-select: none;
+    font-size: 13px;
+    color: var(--text);
+  }
+  .check-item input[type=checkbox] {
+    accent-color: var(--accent);
+    width: 15px; height: 15px;
+    cursor: pointer;
+  }
+
+  /* MODAL FOOTER */
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* FILTERS */
+  .filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .filters .form-input { max-width: 220px; }
+  .filters .form-select { max-width: 160px; }
+
+  /* EMPTY STATE */
+  .empty {
+    text-align: center;
+    padding: 50px;
+    color: var(--muted);
+  }
+  .empty-icon { font-size: 36px; margin-bottom: 10px; }
+
+  /* ACTION BUTTONS IN TABLE */
+  .actions { display: flex; gap: 6px; }
+
+  /* TOTALS ROW */
+  .total-row td { font-weight: 700; color: var(--accent); background: rgba(200,240,74,0.06); }
+
+  /* RESUMEN */
+  .resumen-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 20px;
+  }
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+  .chart-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 16px;
+  }
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .bar-label { width: 90px; font-size: 12px; text-align: right; color: var(--muted); }
+  .bar-track { flex: 1; height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; background: var(--accent); transition: width 0.5s; }
+  .bar-fill.teal { background: var(--accent2); }
+  .bar-fill.red  { background: var(--accent3); }
+  .bar-val { width: 50px; font-size: 12px; font-weight: 600; }
+
+  .list-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .list-stat:last-child { border: none; }
+  .list-stat-name { font-size: 13px; }
+  .list-stat-val { font-weight: 600; font-size: 13px; color: var(--accent); }
+
+  .importe-cell { font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 </style>
 </head>
 <body>
-<button class="mobile-nav-toggle" onclick="toggleSidebar()" id="nav-toggle">☰</button>
-<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
 <div class="layout">
-<aside class="sidebar" id="sidebar" style="background:#1e2a3a;border-right:1px solid #2d3d52;">
-  <div class="logo" style="color:#60a5fa;">servi<span style="color:#e2e8f0;">gestión</span></div>
-  <div class="nav-section" style="color:#64748b;">Principal</div>
-  <button class="nav-item active" onclick="showView('servicios',this);closeSidebar()"><span>🗂</span> Servicios</button>
-  <button class="nav-item" onclick="showView('facturacion',this);closeSidebar()"><span>🧾</span> Facturación</button>
-  <button class="nav-item" onclick="showView('cobros',this);closeSidebar()"><span>💰</span> Cobros</button>
-  <button class="nav-item" onclick="showView('resumen',this);closeSidebar()"><span>📊</span> Resumen</button>
-  <div class="nav-section" style="color:#64748b;">Maestros</div>
-  <button class="nav-item" onclick="showView('maestros',this);closeSidebar()"><span>👥</span> Clientes &amp; Prop.</button>
-</aside>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo">servi<span>gestión</span></div>
+    <button class="nav-item active" onclick="showView('servicios')">
+      <span class="icon">🗂</span> Servicios
+    </button>
+    <button class="nav-item" onclick="showView('resumen')">
+      <span class="icon">📊</span> Resumen
+    </button>
+    <button class="nav-item" onclick="showView('cobros')">
+      <span class="icon">💰</span> Cobros
+    </button>
+  </aside>
 
-<main class="main">
+  <main class="main">
 
-<!-- SERVICIOS -->
-<div class="view active" id="view-servicios">
-  <div class="page-header">
-    <div class="page-title">Servicios</div>
-    <button class="btn btn-primary" onclick="openServModal()">+ Nuevo servicio</button>
-  </div>
-  <div class="kpi-grid" id="kpi-grid"></div>
-  <div class="filters">
-    <input class="form-input" id="filter-search" placeholder="🔍  Buscar…" oninput="renderTable()">
-    <select class="form-select" id="filter-mes" onchange="renderTable()"><option value="">Todos los meses</option></select>
-    <select class="form-select" id="filter-cliente" onchange="renderTable()"><option value="">Todos los clientes</option></select>
-    <select class="form-select" id="filter-propiedad" onchange="renderTable()" style="max-width:220px"><option value="">Todas las propiedades</option></select>
-    <select class="form-select" id="filter-factura" onchange="renderTable()">
-      <option value="">Estado factura</option><option>Facturado</option><option>Pendiente</option>
-    </select>
-    <select class="form-select" id="filter-cobro" onchange="renderTable()">
-      <option value="">Estado cobro</option><option>Cobrado</option><option>Pendiente</option>
-    </select>
-  </div>
-  <div class="table-wrap">
-    <table>
-      <thead><tr>
-        <th>F.Servicio</th><th>F.Ingreso</th><th>Empleado</th><th>Cliente</th>
-        <th>Propiedad</th><th>Ocupación</th><th>Tipo limpieza</th>
-        <th>Base s/IVA</th><th>Factura</th><th>Cobro</th><th></th>
-      </tr></thead>
-      <tbody id="tabla-body"></tbody>
-    </table>
-  </div>
-</div>
-
-<!-- FACTURACIÓN -->
-<div class="view" id="view-facturacion">
-  <div class="page-header"><div class="page-title">Facturación</div></div>
-  <div class="kpi-grid" id="kpi-fact"></div>
-  <div class="iva-config">
-    <label>IVA %</label>
-    <input type="number" class="form-input" id="iva-pct" value="21" min="0" max="100" step="0.1" oninput="saveIva();renderFacturacion();">
-    <span style="color:var(--muted);font-size:13px;">% aplicado sobre base imponible (sin IVA)</span>
-  </div>
-  <div class="fact-filters">
-    <select class="form-select" id="fact-filter-cliente" onchange="renderFacturacion()"><option value="">Todos los clientes</option></select>
-    <select class="form-select" id="fact-filter-estado" onchange="renderFacturacion()">
-      <option value="">Todos los estados</option><option>Pendiente</option><option>Facturado</option>
-    </select>
-  </div>
-  <div id="fact-list"></div>
-</div>
-
-<!-- COBROS -->
-<div class="view" id="view-cobros">
-  <div class="page-header"><div class="page-title">Gestión de Cobros</div></div>
-  <div class="table-wrap">
-    <table>
-      <thead><tr><th>F.Servicio</th><th>Cliente</th><th>Propiedad</th><th>Empleado</th><th>Base s/IVA</th><th>IVA</th><th>Total c/IVA</th><th>Factura</th><th>Cobro</th><th>Acciones</th></tr></thead>
-      <tbody id="cobros-body"></tbody>
-    </table>
-  </div>
-</div>
-
-<!-- RESUMEN -->
-<div class="view" id="view-resumen">
-  <div class="page-header"><div class="page-title">Resumen</div></div>
-  <div class="kpi-grid" id="kpi-resumen"></div>
-  <div class="resumen-grid" id="resumen-charts"></div>
-</div>
-
-<!-- MAESTROS -->
-<div class="view" id="view-maestros">
-  <div class="page-header"><div class="page-title">Clientes &amp; Propiedades</div></div>
-  <div class="two-col">
-    <div class="panel">
-      <div class="panel-header"><div class="panel-title">👤 Clientes</div><button class="btn btn-primary btn-sm" onclick="openClienteModal(false)">+ Agregar</button></div>
-      <div id="lista-clientes"></div>
-    </div>
-    <div class="panel">
-      <div class="panel-header"><div class="panel-title">🏠 Propiedades</div><button class="btn btn-primary btn-sm" onclick="openPropModal(false)">+ Agregar</button></div>
-      <div id="lista-propiedades"></div>
-    </div>
-  </div>
-</div>
-
-</main>
-</div>
-
-<!-- ══════════ MODAL SERVICIO ══════════ -->
-<div class="modal-overlay" id="modal-servicio">
-<div class="modal">
-  <div class="modal-header">
-    <div class="modal-title" id="serv-modal-title">Nuevo servicio</div>
-    <button class="modal-close" onclick="closeServModal()">✕</button>
-  </div>
-  <div class="form-grid">
-    <div class="section-divider">Datos generales</div>
-    <div class="form-group">
-      <label class="form-label">Fecha de servicio <span class="req">*</span></label>
-      <input type="date" class="form-input" id="f-fecha-servicio">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Fecha de ingreso <span class="req">*</span></label>
-      <input type="date" class="form-input" id="f-fecha-ingreso">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Ocupación</label>
-      <input type="text" class="form-input" id="f-ocupacion" placeholder="Turistas, Propietario…">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Empleado</label>
-      <input type="text" class="form-input" id="f-empleado" placeholder="Nombre empleado">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Cliente <span class="req">*</span></label>
-      <div class="input-with-btn">
-        <select class="form-select" id="f-cliente" onchange="onClienteChange()"><option value="">— seleccionar —</option></select>
-        <button class="btn btn-ghost btn-icon" onclick="openClienteModal(true)" title="Nuevo cliente">＋</button>
+    <!-- ===== VIEW: SERVICIOS ===== -->
+    <div class="view active" id="view-servicios">
+      <div class="page-header">
+        <div class="page-title">Servicios</div>
+        <button class="btn btn-primary" onclick="openModal()">+ Nuevo servicio</button>
       </div>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Propiedad</label>
-      <div class="input-with-btn">
-        <select class="form-select" id="f-propiedad" onchange="onPropiedadChange()"><option value="">— seleccionar —</option></select>
-        <button class="btn btn-ghost btn-icon" onclick="openPropModal(true)" title="Nueva propiedad">＋</button>
+
+      <!-- KPIs -->
+      <div class="kpi-grid" id="kpi-grid"></div>
+
+      <!-- FILTERS -->
+      <div class="filters">
+        <input class="form-input" id="filter-search" placeholder="🔍  Buscar cliente, empleado…" oninput="renderTable()">
+        <select class="form-select" id="filter-factura" onchange="renderTable()">
+          <option value="">Estado factura</option>
+          <option>Facturado</option>
+          <option>Pendiente</option>
+        </select>
+        <select class="form-select" id="filter-cobro" onchange="renderTable()">
+          <option value="">Estado cobro</option>
+          <option>Cobrado</option>
+          <option>Pendiente</option>
+        </select>
+      </div>
+
+      <!-- TABLE -->
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Empleado</th>
+              <th>Cliente</th>
+              <th>Propiedad</th>
+              <th>Servicios</th>
+              <th>Tipo limpieza</th>
+              <th>Horas</th>
+              <th>Importe</th>
+              <th>Factura</th>
+              <th>Cobro</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="tabla-body"></tbody>
+        </table>
       </div>
     </div>
 
-    <div class="section-divider">Limpieza</div>
-    <div class="form-group">
-      <label class="form-label">Tipo de limpieza</label>
-      <select class="form-select" id="f-tipo-limpieza" onchange="onTipoLimpiezaChange()">
-        <option value="">— ninguna —</option>
-        <option value="Normal">Normal</option>
-        <option value="Intermedia">Intermedia</option>
-        <option value="Profunda">Profunda</option>
-        <option value="Inicial/Obra">Inicial / Obra</option>
-        <option value="Check">Check</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Arreglos</label>
-      <select class="form-select" id="f-arreglos"><option value="">— ninguno —</option><option>Sí</option><option>No</option></select>
-    </div>
-    <div class="form-group full">
-      <label class="form-label">Detalle arreglos</label>
-      <input type="text" class="form-input" id="f-detalle-arreglos" placeholder="Descripción">
+    <!-- ===== VIEW: RESUMEN ===== -->
+    <div class="view" id="view-resumen">
+      <div class="page-header">
+        <div class="page-title">Resumen</div>
+      </div>
+      <div class="kpi-grid" id="kpi-resumen"></div>
+      <div class="resumen-grid" id="resumen-charts"></div>
     </div>
 
-    <!-- PRECIO LIMPIEZA DINÁMICO -->
-    <div class="precio-box hidden" id="precio-box">
-      <div class="precio-box-title" id="precio-box-title">Precio limpieza</div>
-      <div id="pw-hint" class="precio-auto-hint" style="display:none"></div>
-      <!-- Normal/Intermedia: precio fijo editable -->
-      <div class="form-group full" id="pw-precio-fijo" style="display:none">
-        <label class="form-label">Precio limpieza (€ sin IVA)</label>
-        <input type="number" class="form-input" id="f-precio-limpieza" min="0" step="0.01" placeholder="0.00" oninput="recalcTotal()">
+    <!-- ===== VIEW: COBROS ===== -->
+    <div class="view" id="view-cobros">
+      <div class="page-header">
+        <div class="page-title">Gestión de Cobros</div>
       </div>
-      <!-- Profunda: precio manual -->
-      <div class="form-group full" id="pw-precio-profunda" style="display:none">
-        <label class="form-label">Precio limpieza profunda (€ sin IVA)</label>
-        <input type="number" class="form-input" id="f-precio-profunda" min="0" step="0.01" placeholder="0.00" oninput="recalcTotal()">
-      </div>
-      <!-- Inicial/Obra y Check: horas × tarifa -->
-      <div class="form-group" id="pw-horas" style="display:none">
-        <label class="form-label">Horas</label>
-        <input type="number" class="form-input" id="f-horas" min="0" step="0.5" placeholder="0" oninput="recalcTotal()">
-      </div>
-      <div class="form-group" id="pw-tarifa" style="display:none">
-        <label class="form-label">Tarifa / hora (€)</label>
-        <input type="number" class="form-input" id="f-tarifa" min="0" step="0.01" placeholder="0.00" oninput="recalcTotal()">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Cliente</th>
+              <th>Propiedad</th>
+              <th>Empleado</th>
+              <th>Importe</th>
+              <th>Factura</th>
+              <th>Cobro</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="cobros-body"></tbody>
+        </table>
       </div>
     </div>
 
-    <div class="section-divider">Servicios extra</div>
-    <div class="extras-section" id="extras-section">
+  </main>
+</div>
+
+<!-- ===== MODAL NUEVO SERVICIO ===== -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">Nuevo servicio</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="form-grid">
+      <div class="section-divider">Datos generales</div>
+
+      <div class="form-group">
+        <label class="form-label">Fecha *</label>
+        <input type="date" class="form-input" id="f-fecha">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Empleado *</label>
+        <input type="text" class="form-input" id="f-empleado" placeholder="Nombre empleado">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Cliente *</label>
+        <input type="text" class="form-input" id="f-cliente" placeholder="Nombre cliente">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Propiedad</label>
+        <input type="text" class="form-input" id="f-propiedad" placeholder="Dirección / referencia">
+      </div>
+
+      <div class="section-divider">Servicios realizados</div>
+
+      <div class="checks-row">
+        <label class="check-item"><input type="checkbox" id="f-bbq"> BBQ</label>
+        <label class="check-item"><input type="checkbox" id="f-cristales"> Cristales</label>
+        <label class="check-item"><input type="checkbox" id="f-basura"> Basura</label>
+        <label class="check-item"><input type="checkbox" id="f-limpieza"> Limpieza</label>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Tipo limpieza</label>
+        <select class="form-select" id="f-tipo-limpieza">
+          <option value="">— ninguna —</option>
+          <option>Normal</option>
+          <option>Intermedia</option>
+          <option>Profunda</option>
+          <option>Check</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Arreglos</label>
+        <select class="form-select" id="f-arreglos">
+          <option value="">— ninguno —</option>
+          <option>Sí</option>
+          <option>No</option>
+        </select>
+      </div>
       <div class="form-group full">
-        <label class="form-label">Agregar servicio extra</label>
-        <div class="input-with-btn">
-          <select id="extras-select" class="form-select" onchange="onExtrasSelectChange(this)">
-            <option value="">— seleccionar servicio —</option>
-          </select>
-        </div>
-      </div>
-      <div class="extras-selected" id="extras-selected"></div>
-    </div>
-
-    <div class="section-divider">Resumen de precios</div>
-    <div class="price-summary">
-      <div class="price-row"><span class="label">Limpieza</span><span class="val" id="ps-limpieza">—</span></div>
-      <div class="price-row"><span class="label">Servicios extra</span><span class="val" id="ps-extras">—</span></div>
-      <div class="price-row subtotal"><span class="label">Base imponible (sin IVA)</span><span class="val" id="ps-base">—</span></div>
-      <div class="price-row iva-row"><span class="label">IVA (<span id="ps-iva-pct">21</span>%)</span><span class="val" id="ps-iva">—</span></div>
-      <div class="price-row total-row"><span>TOTAL</span><span id="ps-total">—</span></div>
-    </div>
-
-    <div class="section-divider">Estado</div>
-    <div class="form-group">
-      <label class="form-label">Estado factura</label>
-      <select class="form-select" id="f-estado-factura"><option>Pendiente</option><option>Facturado</option></select>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Estado cobro</label>
-      <select class="form-select" id="f-estado-cobro"><option>Pendiente</option><option>Cobrado</option></select>
-    </div>
-    <div class="form-group full">
-      <label class="form-label">Observaciones</label>
-      <textarea class="form-textarea" id="f-observaciones" placeholder="Notas adicionales…"></textarea>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button class="btn btn-ghost" onclick="closeServModal()">Cancelar</button>
-    <button class="btn btn-primary" onclick="guardarServicio()">Guardar servicio</button>
-  </div>
-</div>
-</div>
-
-<!-- ══════════ MODAL CLIENTE ══════════ -->
-<div class="modal-overlay" id="modal-cliente">
-<div class="modal modal-sm">
-  <div class="modal-header">
-    <div class="modal-title" id="cli-modal-title">Nuevo cliente</div>
-    <button class="modal-close" onclick="closeClienteModal()">✕</button>
-  </div>
-  <div class="form-grid">
-    <div class="form-group full"><label class="form-label">Nombre <span class="req">*</span></label><input type="text" class="form-input" id="cli-nombre" placeholder="Nombre del cliente"></div>
-    <div class="form-group"><label class="form-label">Teléfono</label><input type="text" class="form-input" id="cli-telefono"></div>
-    <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="cli-email"></div>
-    <div class="form-group full"><label class="form-label">Notas</label><textarea class="form-textarea" id="cli-notas" style="min-height:55px"></textarea></div>
-  </div>
-  <div class="modal-footer">
-    <button class="btn btn-ghost" onclick="closeClienteModal()">Cancelar</button>
-    <button class="btn btn-primary" onclick="guardarCliente()">Guardar</button>
-  </div>
-</div>
-</div>
-
-<!-- ══════════ MODAL PROPIEDAD ══════════ -->
-<div class="modal-overlay" id="modal-prop">
-<div class="modal modal-sm">
-  <div class="modal-header">
-    <div class="modal-title" id="prop-modal-title">Nueva propiedad</div>
-    <button class="modal-close" onclick="closePropModal()">✕</button>
-  </div>
-  <div class="form-grid">
-    <div class="form-group full"><label class="form-label">Código / Nombre <span class="req">*</span></label><input type="text" class="form-input" id="prop-nombre" placeholder="Ej: ES0087A - Alcudia Garden"></div>
-    <div class="form-group full"><label class="form-label">Dirección</label><input type="text" class="form-input" id="prop-direccion" placeholder="Calle, número, piso…"></div>
-    <div class="form-group full"><label class="form-label">Cliente asociado</label><select class="form-select" id="prop-cliente"><option value="">— sin cliente —</option></select></div>
-
-    <!-- PRECIOS POR TIPO -->
-    <div class="prop-prices-grid">
-      <div class="prop-prices-title">💶 Precios fijos por tipo de limpieza (sin IVA)</div>
-      <div class="form-group">
-        <label class="form-label">Normal (€)</label>
-        <input type="number" class="form-input" id="prop-precio-normal" min="0" step="0.01" placeholder="0.00">
+        <label class="form-label">Detalle arreglos</label>
+        <input type="text" class="form-input" id="f-detalle-arreglos" placeholder="Descripción">
       </div>
       <div class="form-group">
-        <label class="form-label">Intermedia (€)</label>
-        <input type="number" class="form-input" id="prop-precio-intermedia" min="0" step="0.01" placeholder="0.00">
+        <label class="form-label">Servicio extra</label>
+        <input type="text" class="form-input" id="f-servicio-extra" placeholder="Tipo servicio extra">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Detalle extra</label>
+        <input type="text" class="form-input" id="f-detalle-extra" placeholder="Descripción">
+      </div>
+
+      <div class="section-divider">Facturación</div>
+
+      <div class="form-group">
+        <label class="form-label">Horas</label>
+        <input type="number" class="form-input" id="f-horas" min="0" step="0.5" placeholder="0" oninput="calcularImporte()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tarifa/hora (€)</label>
+        <input type="number" class="form-input" id="f-tarifa" min="0" step="0.01" placeholder="0.00" oninput="calcularImporte()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Precio cerrado (€)</label>
+        <input type="number" class="form-input" id="f-precio-cerrado" min="0" step="0.01" placeholder="0.00" oninput="calcularImporte()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Importe total (€)</label>
+        <input type="number" class="form-input" id="f-importe" min="0" step="0.01" placeholder="0.00" readonly style="opacity:0.6">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Estado factura</label>
+        <select class="form-select" id="f-estado-factura">
+          <option>Pendiente</option>
+          <option>Facturado</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Estado cobro</label>
+        <select class="form-select" id="f-estado-cobro">
+          <option>Pendiente</option>
+          <option>Cobrado</option>
+        </select>
+      </div>
+      <div class="form-group full">
+        <label class="form-label">Observaciones</label>
+        <textarea class="form-textarea" id="f-observaciones" placeholder="Notas adicionales…"></textarea>
       </div>
     </div>
-
-    <div class="form-group full"><label class="form-label">Notas</label><textarea class="form-textarea" id="prop-notas" placeholder="Acceso, código…" style="min-height:50px"></textarea></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarServicio()">Guardar servicio</button>
+    </div>
   </div>
-  <div class="modal-footer">
-    <button class="btn btn-ghost" onclick="closePropModal()">Cancelar</button>
-    <button class="btn btn-primary" onclick="guardarPropiedad()">Guardar</button>
-  </div>
-</div>
 </div>
 
 <script>
-// ══════════════════════════════════════
-// DATA
-// ══════════════════════════════════════
-let servicios=[], clientes=[], propiedades=[];
-let editServIdx=-1, editCliIdx=-1, editPropIdx=-1, fromServ=false;
+// ─── DATA ────────────────────────────────────────────────────────────────────
+let servicios = JSON.parse(localStorage.getItem('serv_app') || '[]');
+let editIndex = -1;
 
-const EXTRAS_CAT=[
-  {key:'cristales',  label:'Cristales',  icon:'🪟', defaultPrice:0},
-  {key:'chimenea',   label:'Chimenea',   icon:'🔥', defaultPrice:25},
-  {key:'basura',     label:'Basura',     icon:'🗑', defaultPrice:25},
-  {key:'lavanderia', label:'Lavandería', icon:'👕', defaultPrice:25},
-  {key:'dog',        label:'Dog',        icon:'🐕', defaultPrice:25},
-  {key:'bbq',        label:'BBQ',        icon:'🍖', defaultPrice:25},
-  {key:'compras',    label:'Compras',    icon:'🛒', defaultPrice:25, hasImporte:true},
-];
+// Demo data if empty
+if (servicios.length === 0) {
+  servicios = [
+    { fecha:'2025-03-01', empleado:'María García', cliente:'Casa Sol', propiedad:'Calle Mayor 10', bbq:false, cristales:true, basura:true, limpieza:true, tipoLimpieza:'Normal', arreglos:'No', detalleArreglos:'', servicioExtra:'', detalleExtra:'', horas:3, tarifa:15, precioCerrado:0, importe:45, estadoFactura:'Facturado', estadoCobro:'Cobrado', observaciones:'' },
+    { fecha:'2025-03-05', empleado:'Pedro López', cliente:'Villa Azul', propiedad:'Av. Mediterráneo 34', bbq:true, cristales:false, basura:true, limpieza:true, tipoLimpieza:'Profunda', arreglos:'Sí', detalleArreglos:'Grifo roto baño', servicioExtra:'', detalleExtra:'', horas:5, tarifa:15, precioCerrado:0, importe:75, estadoFactura:'Facturado', estadoCobro:'Pendiente', observaciones:'Cliente pide factura detallada' },
+    { fecha:'2025-03-08', empleado:'María García', cliente:'Piso Centro', propiedad:'Plaza España 2, 3B', bbq:false, cristales:false, basura:false, limpieza:true, tipoLimpieza:'Intermedia', arreglos:'No', detalleArreglos:'', servicioExtra:'Plancha', detalleExtra:'Sábanas y manteles', horas:0, tarifa:0, precioCerrado:120, importe:120, estadoFactura:'Pendiente', estadoCobro:'Pendiente', observaciones:'' },
+    { fecha:'2025-03-10', empleado:'Ana Martínez', cliente:'Casa Sol', propiedad:'Calle Mayor 10', bbq:false, cristales:true, basura:true, limpieza:true, tipoLimpieza:'Check', arreglos:'No', detalleArreglos:'', servicioExtra:'', detalleExtra:'', horas:2, tarifa:15, precioCerrado:0, importe:30, estadoFactura:'Pendiente', estadoCobro:'Pendiente', observaciones:'' },
+    { fecha:'2025-03-12', empleado:'Pedro López', cliente:'Apto Playa', propiedad:'Paseo Marítimo 7, 1A', bbq:true, cristales:true, basura:true, limpieza:true, tipoLimpieza:'Normal', arreglos:'Sí', detalleArreglos:'Pintura terraza', servicioExtra:'Jardinería', detalleExtra:'Riego plantas', horas:6, tarifa:18, precioCerrado:0, importe:108, estadoFactura:'Facturado', estadoCobro:'Cobrado', observaciones:'' },
+  ];
+  save();
+}
 
-// Real property data: { code, name, precioNormal, precioIntermedia }
-const PROP_DATA=[
-  {code:'ES0087A',  name:'Alcudia Garden & Beach',              precioNormal:184.54, precioIntermedia:0},
-  {code:'ES0197A',  name:'Moderne Villa mit Meerblick in Bonaire',precioNormal:252.73,precioIntermedia:0},
-  {code:'ES0220A',  name:'Alcanada Villa',                       precioNormal:312.40, precioIntermedia:0},
-  {code:'ES0235A',  name:'Casita del Sol',                       precioNormal:198.34, precioIntermedia:0},
-  {code:'ES0236A',  name:'Traumhaftes Landhaus mit Pool Muro',   precioNormal:330.00, precioIntermedia:0},
-  {code:'ES0282A',  name:'Neubau-Apartment in Cala Major',       precioNormal:110.99, precioIntermedia:0},
-  {code:'ES0305A',  name:'Santa Ponsa Penthouse',                precioNormal:174.05, precioIntermedia:0},
-  {code:'ES0385A',  name:'Bonaire Neubauvilla 2.0',              precioNormal:214.20, precioIntermedia:0},
-  {code:'ES0405A',  name:'Santa Ponsa Terrassenwohnung',         precioNormal:153.14, precioIntermedia:0},
-  {code:'ES0434A',  name:'Finca Romero',                         precioNormal:299.25, precioIntermedia:0},
-  {code:'ES0488A',  name:'Santanyí Townhouse',                   precioNormal:164.87, precioIntermedia:0},
-  {code:'ES0525A',  name:'Santa Ponsa Terraza al Mar',           precioNormal:214.90, precioIntermedia:0},
-  {code:'ES0583A',  name:'Villa Nou',                            precioNormal:300.00, precioIntermedia:0},
-  {code:'ES0612A',  name:'La Mola Mar',                          precioNormal:174.05, precioIntermedia:0},
-  {code:'ES0615A',  name:'La Marina',                            precioNormal:169.16, precioIntermedia:0},
-  {code:'ES0635A',  name:'Porto Sol',                            precioNormal:248.00, precioIntermedia:0},
-];
+function save() {
+  localStorage.setItem('serv_app', JSON.stringify(servicios));
+}
 
-function uid(){ return Date.now().toString(36)+Math.random().toString(36).substr(2,5); }
-function getIva(){ return parseFloat(document.getElementById('iva-pct')?.value||localStorage.getItem('sg_iva')||21)||21; }
-function saveIva(){ localStorage.setItem('sg_iva', document.getElementById('iva-pct')?.value||21); }
+// ─── NAV ─────────────────────────────────────────────────────────────────────
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  event.currentTarget.classList.add('active');
+  if (name === 'resumen') renderResumen();
+  if (name === 'cobros') renderCobros();
+  if (name === 'servicios') renderKPIs();
+}
 
-function loadData(){
-  try{ servicios   =JSON.parse(localStorage.getItem('sg_servicios')||'[]'); }catch(e){ servicios=[]; }
-  try{ clientes    =JSON.parse(localStorage.getItem('sg_clientes') ||'[]'); }catch(e){ clientes=[]; }
-  try{ propiedades =JSON.parse(localStorage.getItem('sg_props')    ||'[]'); }catch(e){ propiedades=[]; }
+// ─── KPIs ─────────────────────────────────────────────────────────────────────
+function renderKPIs() {
+  const total = servicios.length;
+  const totalImporte = servicios.reduce((s,x) => s + (x.importe||0), 0);
+  const cobrado = servicios.filter(x => x.estadoCobro === 'Cobrado').reduce((s,x) => s + (x.importe||0), 0);
+  const pendiente = totalImporte - cobrado;
+  const grid = document.getElementById('kpi-grid');
+  grid.innerHTML = `
+    <div class="kpi-card">
+      <div class="kpi-label">Total servicios</div>
+      <div class="kpi-value">${total}</div>
+      <div class="kpi-sub">registros</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Facturado total</div>
+      <div class="kpi-value green">${fmt(totalImporte)}</div>
+      <div class="kpi-sub">importe acumulado</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Cobrado</div>
+      <div class="kpi-value teal">${fmt(cobrado)}</div>
+      <div class="kpi-sub">recibido</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Pendiente cobro</div>
+      <div class="kpi-value red">${fmt(pendiente)}</div>
+      <div class="kpi-sub">por cobrar</div>
+    </div>
+  `;
+}
 
-  // Always enforce default prices: 25€ for all extras except cristales=0
-  // User edits during a session are kept in _selectedExtras, not in EXTRAS_CAT
-  localStorage.removeItem('sg_extra_prices');
-  EXTRAS_CAT.forEach(e=>{ e.defaultPrice = e.key==='cristales' ? 0 : 25; });
+// ─── TABLE ────────────────────────────────────────────────────────────────────
+function renderTable() {
+  const search = document.getElementById('filter-search').value.toLowerCase();
+  const filtFact = document.getElementById('filter-factura').value;
+  const filtCobro = document.getElementById('filter-cobro').value;
 
-  // Always sync official PROP_DATA into stored properties (preserving user edits)
-  let _changed=false;
-  PROP_DATA.forEach(pd=>{
-    const existing=propiedades.find(p=>p.nombre&&p.nombre.startsWith(pd.code));
-    if(!existing){
-      propiedades.push({id:uid(),nombre:pd.code+' - '+pd.name,direccion:'',clienteId:'',notas:'',precioNormal:pd.precioNormal,precioIntermedia:0});
-      _changed=true;
-    } else {
-      if(!existing.precioNormal){existing.precioNormal=pd.precioNormal;_changed=true;}
-    }
+  let data = servicios.filter((s, i) => {
+    s._idx = i;
+    const text = (s.cliente + s.empleado + s.propiedad).toLowerCase();
+    return (!search || text.includes(search))
+      && (!filtFact || s.estadoFactura === filtFact)
+      && (!filtCobro || s.estadoCobro === filtCobro);
   });
-  propiedades.sort((a,b)=>a.nombre.localeCompare(b.nombre));
-  if(_changed) saveProps();
 
-  // Always reset clients to official list
-  const _oficialClientes=['Myne','Barbara','Thies','Kim','Anna','Ines','Bianka','Tony'];
-  // Check if list matches - if not, reseed
-  const _nombres=clientes.map(c=>c.nombre);
-  const _match=_oficialClientes.every(n=>_nombres.includes(n)) && clientes.length===_oficialClientes.length;
-  if(!_match){
-    clientes=_oficialClientes.map(n=>({id:uid(),nombre:n,telefono:'',email:'',notas:''}));
-    saveClientes();
+  const tbody = document.getElementById('tabla-body');
+  if (data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="11"><div class="empty"><div class="empty-icon">📋</div>Sin resultados</div></td></tr>';
+    return;
   }
 
-  if(!servicios.length){
-    const p0=propiedades[0]; const p1=propiedades[1];
-    servicios=[
-      {fechaServicio:'2025-03-01',fechaIngreso:'2025-03-01',ocupacion:'Turistas',   empleado:'María García',clienteId:clientes[0].id,propiedadId:p0.id,tipoLimpieza:'Normal',   precioLimpieza:p0.precioNormal,precioIntermedia:0,horas:0,tarifa:0,extras:[],arreglos:'No',detalleArreglos:'',estadoFactura:'Facturado',estadoCobro:'Cobrado',  observaciones:''},
-      {fechaServicio:'2025-03-05',fechaIngreso:'2025-03-04',ocupacion:'Propietario',empleado:'Pedro López', clienteId:clientes[0].id,propiedadId:p1.id,tipoLimpieza:'Profunda', precioLimpieza:0,precioIntermedia:0,horas:0,tarifa:0,extras:[{key:'cristales',label:'Cristales',icon:'🪟',precio:30},{key:'bbq',label:'BBQ',icon:'🍖',precio:25}],arreglos:'No',detalleArreglos:'',estadoFactura:'Pendiente',estadoCobro:'Pendiente',observaciones:''},
-      {fechaServicio:'2025-03-08',fechaIngreso:'2025-03-07',ocupacion:'',           empleado:'María García',clienteId:'',            propiedadId:p0.id,tipoLimpieza:'Inicial/Obra',precioLimpieza:0,precioIntermedia:0,horas:6,tarifa:20,extras:[{key:'lavanderia',label:'Lavandería',icon:'👕',precio:25}],arreglos:'No',detalleArreglos:'',estadoFactura:'Pendiente',estadoCobro:'Pendiente',observaciones:''},
-    ];
-    saveServicios();
-  }
-}
-
-function saveServicios(){ _fbSave('servicios', servicios); }
-function saveClientes() { _fbSave('clientes',  clientes);  }
-function saveProps()    { _fbSave('propiedades', propiedades); }
-function getCliente(id)   { return clientes.find(c=>c.id===id)||null; }
-function getPropiedad(id) { return propiedades.find(p=>p.id===id)||null; }
-
-// Firebase helpers (usamos window.db que se define en el script de Firebase más abajo)
-function _fbSave(col, arr){
-  if(!window.db) return;
-  arr.forEach(item=>{
-    if(!item.id) item.id=uid();
-    window.db.collection(col).doc(item.id).set(item);
-  });
-}
-function _fbDelete(col, id){
-  if(!window.db) return;
-  window.db.collection(col).doc(id).delete();
-}
-
-async function loadData(){
-  if(!window.db){ setTimeout(loadData, 300); return; }
-  const [sSnap,cSnap,pSnap] = await Promise.all([
-    window.db.collection('servicios').get(),
-    window.db.collection('clientes').get(),
-    window.db.collection('propiedades').get()
-  ]);
-  servicios   = sSnap.docs.map(d=>d.data());
-  clientes    = cSnap.docs.map(d=>d.data());
-  propiedades = pSnap.docs.map(d=>d.data());
-
-  // Seed clientes si vacío
-  if(!clientes.length){
-    const nombres=['Myne','Barbara','Thies','Kim','Anna','Ines','Bianka','Tony'];
-    clientes=nombres.map(n=>({id:uid(),nombre:n,telefono:'',email:'',notas:''}));
-    saveClientes();
-  }
-  // Seed propiedades si vacío
-  if(!propiedades.length){
-    propiedades=PROP_DATA.map(p=>({id:uid(),nombre:p.code+' - '+p.name,direccion:p.name,clienteId:'',notas:'',precioNormal:p.precioNormal,precioIntermedia:0}));
-    saveProps();
-  }
-
-  EXTRAS_CAT.forEach(e=>{ e.defaultPrice = e.key==='cristales' ? 0 : 25; });
-
-  renderTable(); renderKPIs(); renderMaestros();
-  renderFacturacion(); renderCobros(); renderResumen();
-
-  // Listeners en tiempo real
-  window.db.collection('servicios').onSnapshot(snap=>{
-    servicios=snap.docs.map(d=>d.data());
-    renderTable(); renderKPIs(); renderFacturacion(); renderCobros(); renderResumen();
-  });
-  window.db.collection('clientes').onSnapshot(snap=>{
-    clientes=snap.docs.map(d=>d.data());
-    renderTable(); renderMaestros(); renderFacturacion();
-  });
-  window.db.collection('propiedades').onSnapshot(snap=>{
-    propiedades=snap.docs.map(d=>d.data());
-    renderTable(); renderMaestros();
-  });
-}
-
-function calcBase(s){
-  let lim=0;
-  if(s.tipoLimpieza==='Inicial/Obra'||s.tipoLimpieza==='Check'){
-    lim=(parseFloat(s.horas)||0)*(parseFloat(s.tarifa)||0);
-  } else {
-    lim=parseFloat(s.precioLimpieza)||0;
-  }
-  const extras=(s.extras||[]).reduce((a,e)=>a+(parseFloat(e.precio)||0)+(parseFloat(e.importe)||0),0);
-  return lim+extras;
-}
-function calcIvaAmt(s){ return calcBase(s)*getIva()/100; }
-function calcTotal(s){ return calcBase(s)+calcIvaAmt(s); }
-
-// ══════════════════════════════════════
-// NAV
-// ══════════════════════════════════════
-function showView(name,btn){
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('view-'+name).classList.add('active');
-  if(btn) btn.classList.add('active');
-  ({resumen:renderResumen,cobros:renderCobros,maestros:renderMaestros,facturacion:renderFacturacion,servicios:()=>{renderTable();renderKPIs();}})[name]?.();
-}
-
-// ══════════════════════════════════════
-// KPIs
-// ══════════════════════════════════════
-function renderKPIs(){
-  const ti=servicios.reduce((a,s)=>a+calcBase(s),0);
-  const co=servicios.filter(s=>s.estadoCobro==='Cobrado').reduce((a,s)=>a+calcBase(s),0);
-  document.getElementById('kpi-grid').innerHTML=`
-    <div class="kpi-card"><div class="kpi-label">Total servicios</div><div class="kpi-value">${servicios.length}</div><div class="kpi-sub">registros</div></div>
-    <div class="kpi-card"><div class="kpi-label">Base total s/IVA</div><div class="kpi-value green">${fmt(ti)}</div><div class="kpi-sub">acumulado</div></div>
-    <div class="kpi-card"><div class="kpi-label">Cobrado</div><div class="kpi-value teal">${fmt(co)}</div><div class="kpi-sub">recibido</div></div>
-    <div class="kpi-card"><div class="kpi-label">Pendiente</div><div class="kpi-value red">${fmt(ti-co)}</div><div class="kpi-sub">por cobrar</div></div>`;
-}
-
-// ══════════════════════════════════════
-// TABLE
-// ══════════════════════════════════════
-function renderTable(){
-  const search=(document.getElementById('filter-search')?.value||'').toLowerCase();
-  const fMes=document.getElementById('filter-mes')?.value||'';
-  const fCli=document.getElementById('filter-cliente')?.value||'';
-  const fProp=document.getElementById('filter-propiedad')?.value||'';
-  const fFact=document.getElementById('filter-factura')?.value||'';
-  const fCobro=document.getElementById('filter-cobro')?.value||'';
-  const selM=document.getElementById('filter-mes');
-  const prevM=selM.value;
-  const meses=[...new Set(servicios.map(s=>s.fechaServicio?.substring(0,7)).filter(Boolean))].sort().reverse();
-  selM.innerHTML='<option value="">Todos los meses</option>'+meses.map(m=>{
-    const [y,mo]=m.split('-');
-    const label=new Date(y,mo-1,1).toLocaleDateString('es-ES',{month:'long',year:'numeric'});
-    return `<option value="${m}">${label.charAt(0).toUpperCase()+label.slice(1)}</option>`;
-  }).join('');
-  selM.value=prevM;
-  const sel=document.getElementById('filter-cliente');
-  const prev=sel.value;
-  sel.innerHTML='<option value="">Todos los clientes</option>'+clientes.map(c=>`<option value="${c.id}">${c.nombre}</option>`).join('');
-  sel.value=prev;
-  const selP=document.getElementById('filter-propiedad');
-  const prevP=selP.value;
-  selP.innerHTML='<option value="">Todas las propiedades</option>'+propiedades.map(p=>`<option value="${p.id}">${p.nombre}</option>`).join('');
-  selP.value=prevP;
-  const data=servicios.map((s,i)=>({...s,_i:i})).filter(s=>{
-    const c=getCliente(s.clienteId);const p=getPropiedad(s.propiedadId);
-    const txt=((c?.nombre||'')+(p?.nombre||'')+(s.empleado||'')).toLowerCase();
-    const mesOk=!fMes||(s.fechaServicio&&s.fechaServicio.startsWith(fMes));
-    return mesOk&&(!search||txt.includes(search))&&(!fCli||s.clienteId===fCli)&&(!fProp||s.propiedadId===fProp)&&(!fFact||s.estadoFactura===fFact)&&(!fCobro||s.estadoCobro===fCobro);
-  });
-  const tbody=document.getElementById('tabla-body');
-  const isMobile=window.innerWidth<=768||/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  if(isMobile){
-    document.querySelector('.table-wrap').style.cssText='background:transparent;border:none;border-radius:0;';
-    document.querySelector('#view-servicios thead').style.display='none';
-    if(!data.length){tbody.innerHTML='<tr><td style="border:none;display:block"><div class="empty"><div class="empty-icon">📋</div>Sin resultados</div></td></tr>';renderKPIs();return;}
-    tbody.innerHTML=data.map(s=>{
-      const c=getCliente(s.clienteId);const p=getPropiedad(s.propiedadId);
-      return `<tr><td style="padding:0 0 10px 0;border:none;display:block">
-        <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;">
-          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-            <div><div style="font-weight:700;font-size:14px">${c?.nombre||'—'}</div>
-            <div style="font-size:12px;color:var(--muted);margin-top:2px">${p?.nombre||'—'}</div></div>
-            <div style="font-weight:700;font-size:16px;color:var(--accent)">${fmt(calcBase(s))}</div>
-          </div>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
-            <span style="font-size:11px;color:var(--muted)">📅 ${fmtDate(s.fechaServicio)}</span>
-            ${s.empleado?`<span style="font-size:11px;color:var(--muted)">· 👤 ${s.empleado}</span>`:''}
-            ${s.tipoLimpieza?`<span class="badge badge-gray" style="font-size:10px">${s.tipoLimpieza}</span>`:''}
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center;">
-            <div style="display:flex;gap:5px;">${bFact(s.estadoFactura)}${bCobro(s.estadoCobro)}</div>
-            <div style="display:flex;gap:5px;">
-              <button class="btn btn-ghost btn-sm" onclick="openServModal(${s._i})">✏️</button>
-              <button class="btn btn-danger btn-sm" onclick="delServ(${s._i})">🗑</button>
-            </div>
-          </div>
+  tbody.innerHTML = data.map(s => `
+    <tr>
+      <td>${fmtDate(s.fecha)}</td>
+      <td>${s.empleado}</td>
+      <td><strong>${s.cliente}</strong></td>
+      <td style="color:var(--muted)">${s.propiedad}</td>
+      <td>${serviciosIcons(s)}</td>
+      <td>${s.tipoLimpieza ? `<span class="badge badge-gray">${s.tipoLimpieza}</span>` : '—'}</td>
+      <td>${s.horas ? s.horas + 'h' : '—'}</td>
+      <td class="importe-cell">${fmt(s.importe)}</td>
+      <td>${badgeFact(s.estadoFactura)}</td>
+      <td>${badgeCobro(s.estadoCobro)}</td>
+      <td>
+        <div class="actions">
+          <button class="btn btn-ghost btn-sm" onclick="editarServicio(${s._idx})">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="eliminar(${s._idx})">🗑</button>
         </div>
-      </td></tr>`;
-    }).join('');
-  } else {
-    document.querySelector('.table-wrap').style.cssText='';
-    document.querySelector('#view-servicios thead').style.display='';
-    if(!data.length){tbody.innerHTML='<tr><td colspan="11"><div class="empty"><div class="empty-icon">📋</div>Sin resultados</div></td></tr>';renderKPIs();return;}
-    tbody.innerHTML=data.map(s=>{
-      const c=getCliente(s.clienteId);const p=getPropiedad(s.propiedadId);
-      return `<tr>
-        <td>${fmtDate(s.fechaServicio)}</td><td>${fmtDate(s.fechaIngreso)}</td>
-        <td>${s.empleado||'—'}</td><td><strong>${c?.nombre||'—'}</strong></td>
-        <td style="color:var(--muted);max-width:160px;overflow:hidden;text-overflow:ellipsis">${p?.nombre||'—'}</td>
-        <td>${s.ocupacion?`<span class="badge badge-gray">${s.ocupacion}</span>`:'—'}</td>
-        <td>${s.tipoLimpieza?`<span class="badge badge-gray">${s.tipoLimpieza}</span>`:'—'}</td>
-        <td class="importe-cell">${fmt(calcBase(s))}</td>
-        <td>${bFact(s.estadoFactura)}</td><td>${bCobro(s.estadoCobro)}</td>
-        <td><div class="actions">
-          <button class="btn btn-ghost btn-sm" onclick="openServModal(${s._i})">✏️</button>
-          <button class="btn btn-danger btn-sm" onclick="delServ(${s._i})">🗑</button>
-        </div></td>
-      </tr>`;
-    }).join('');
-  }
+      </td>
+    </tr>
+  `).join('');
+
   renderKPIs();
 }
 
-function bFact(v){ return v==='Facturado'?`<span class="badge badge-green">✓ Facturado</span>`:`<span class="badge badge-yellow">⏳ Pendiente</span>`; }
-function bCobro(v){ return v==='Cobrado'?`<span class="badge badge-teal">✓ Cobrado</span>`:`<span class="badge badge-red">⏳ Pendiente</span>`; }
-
-// ══════════════════════════════════════
-// SERVICIO MODAL
-// ══════════════════════════════════════
-function openServModal(idx=-1){
-  editServIdx=idx;
-  document.getElementById('serv-modal-title').textContent=idx===-1?'Nuevo servicio':'Editar servicio';
-  fillCliSel('f-cliente','');
-  buildExtrasGrid(idx===-1?[]:servicios[idx].extras||[]);
-  if(idx===-1) clearServForm(); else fillServForm(servicios[idx]);
-  document.getElementById('modal-servicio').classList.add('open');
-}
-function closeServModal(){ document.getElementById('modal-servicio').classList.remove('open'); editServIdx=-1; }
-
-// Holds currently selected extras: [{key,label,icon,precio}]
-let _selectedExtras=[];
-
-function buildExtrasGrid(savedExtras){
-  _selectedExtras=savedExtras.map(e=>({...e}));
-  renderExtrasSelect();
-  renderExtrasSelected();
+function serviciosIcons(s) {
+  let out = '';
+  if (s.bbq) out += '<span title="BBQ">🔥</span> ';
+  if (s.cristales) out += '<span title="Cristales">🪟</span> ';
+  if (s.basura) out += '<span title="Basura">🗑</span> ';
+  if (s.limpieza) out += '<span title="Limpieza">🧹</span> ';
+  if (s.servicioExtra) out += `<span title="Extra: ${s.servicioExtra}">⭐</span> `;
+  return out || '<span style="color:var(--muted)">—</span>';
 }
 
-function renderExtrasSelect(){
-  const sel=document.getElementById('extras-select');
-  if(!sel) return;
-  // Only show extras not yet added
-  const available=EXTRAS_CAT.filter(e=>!_selectedExtras.some(x=>x.key===e.key));
-  sel.innerHTML='<option value="">— seleccionar servicio —</option>'+
-    available.map(e=>`<option value="${e.key}">${e.icon} ${e.label}${e.defaultPrice?' ('+fmt(e.defaultPrice)+')':''}</option>`).join('');
+function badgeFact(v) {
+  if (v === 'Facturado') return `<span class="badge badge-green">✓ Facturado</span>`;
+  return `<span class="badge badge-yellow">⏳ Pendiente</span>`;
+}
+function badgeCobro(v) {
+  if (v === 'Cobrado') return `<span class="badge badge-teal">✓ Cobrado</span>`;
+  return `<span class="badge badge-red">⏳ Pendiente</span>`;
 }
 
-function onExtrasSelectChange(sel){
-  const key=sel.value;
-  if(!key) return;
-  const cat=EXTRAS_CAT.find(e=>e.key===key);
-  if(cat && !_selectedExtras.find(x=>x.key===key)){
-    _selectedExtras.push({key:cat.key,label:cat.label,icon:cat.icon,precio:cat.defaultPrice||0});
+// ─── MODAL ────────────────────────────────────────────────────────────────────
+function openModal(idx = -1) {
+  editIndex = idx;
+  const modal = document.getElementById('modal-overlay');
+  const title = document.getElementById('modal-title');
+
+  if (idx === -1) {
+    title.textContent = 'Nuevo servicio';
+    clearForm();
+    document.getElementById('f-fecha').value = new Date().toISOString().slice(0,10);
+  } else {
+    title.textContent = 'Editar servicio';
+    fillForm(servicios[idx]);
   }
-  renderExtrasSelected();
-  renderExtrasSelect();
-  sel.value=''; // reset dropdown
-  recalcTotal();
+  modal.classList.add('open');
 }
 
-function renderExtrasSelected(){
-  const cont=document.getElementById('extras-selected');
-  if(!cont) return;
-  if(!_selectedExtras.length){cont.innerHTML='';return;}
-  cont.innerHTML=_selectedExtras.map((e,i)=>{
-    const cat=EXTRAS_CAT.find(x=>x.key===e.key);
-    const isCompras=e.key==='compras';
-    return `<div class="extra-row" style="flex-wrap:wrap;gap:8px">
-      <div class="extra-row-label" style="width:100%;justify-content:space-between">
-        <span style="display:flex;align-items:center;gap:7px"><span>${e.icon}</span><span>${e.label}</span></span>
-        <button class="extra-row-remove" onclick="removeExtra(${i})" title="Quitar">✕</button>
-      </div>
-      <div class="extra-row-price" style="flex:1">
-        <span style="font-size:11px;color:var(--muted);margin-right:4px">Tarifa</span>
-        <input type="number" value="${e.precio!=null?e.precio:''}" min="0" step="0.01" placeholder="0.00"
-          oninput="onExtraPriceChange(${i},this.value,'precio')">
-        <span class="currency">€</span>
-      </div>
-      ${isCompras?`<div class="extra-row-price" style="flex:1">
-        <span style="font-size:11px;color:var(--muted);margin-right:4px">Importe compra</span>
-        <input type="number" value="${e.importe!=null?e.importe:''}" min="0" step="0.01" placeholder="0.00"
-          oninput="onExtraPriceChange(${i},this.value,'importe')">
-        <span class="currency">€</span>
-      </div>`:''}
-      <div class="extra-row-subtotal">${isCompras?(e.precio||0)+(e.importe||0)>0?fmt((e.precio||0)+(e.importe||0)):'—':e.precio>0?fmt(e.precio):'—'}</div>
-    </div>`;
-  }).join('');
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  editIndex = -1;
 }
 
-function onExtraPriceChange(idx,val,field='precio'){
-  const p=parseFloat(val)||0;
-  _selectedExtras[idx][field]=p;
-  // update subtotal display
-  const rows=document.querySelectorAll('.extra-row');
-  if(rows[idx]){
-    const e=_selectedExtras[idx];
-    const sub=e.key==='compras'?(e.precio||0)+(e.importe||0):e.precio||0;
-    rows[idx].querySelector('.extra-row-subtotal').textContent=sub>0?fmt(sub):'—';
-  }
-  if(field==='precio'){
-    const cat=EXTRAS_CAT.find(e=>e.key===_selectedExtras[idx].key);
-    if(cat) cat.defaultPrice=p;
-  }
-  recalcTotal();
+function clearForm() {
+  ['f-fecha','f-empleado','f-cliente','f-propiedad','f-detalle-arreglos','f-servicio-extra','f-detalle-extra','f-horas','f-tarifa','f-precio-cerrado','f-importe','f-observaciones'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  ['f-bbq','f-cristales','f-basura','f-limpieza'].forEach(id => document.getElementById(id).checked = false);
+  document.getElementById('f-tipo-limpieza').value = '';
+  document.getElementById('f-arreglos').value = '';
+  document.getElementById('f-estado-factura').value = 'Pendiente';
+  document.getElementById('f-estado-cobro').value = 'Pendiente';
 }
 
-function removeExtra(idx){
-  _selectedExtras.splice(idx,1);
-  renderExtrasSelect();
-  renderExtrasSelected();
-  recalcTotal();
+function fillForm(s) {
+  document.getElementById('f-fecha').value = s.fecha || '';
+  document.getElementById('f-empleado').value = s.empleado || '';
+  document.getElementById('f-cliente').value = s.cliente || '';
+  document.getElementById('f-propiedad').value = s.propiedad || '';
+  document.getElementById('f-bbq').checked = !!s.bbq;
+  document.getElementById('f-cristales').checked = !!s.cristales;
+  document.getElementById('f-basura').checked = !!s.basura;
+  document.getElementById('f-limpieza').checked = !!s.limpieza;
+  document.getElementById('f-tipo-limpieza').value = s.tipoLimpieza || '';
+  document.getElementById('f-arreglos').value = s.arreglos || '';
+  document.getElementById('f-detalle-arreglos').value = s.detalleArreglos || '';
+  document.getElementById('f-servicio-extra').value = s.servicioExtra || '';
+  document.getElementById('f-detalle-extra').value = s.detalleExtra || '';
+  document.getElementById('f-horas').value = s.horas || '';
+  document.getElementById('f-tarifa').value = s.tarifa || '';
+  document.getElementById('f-precio-cerrado').value = s.precioCerrado || '';
+  document.getElementById('f-importe').value = s.importe || '';
+  document.getElementById('f-estado-factura').value = s.estadoFactura || 'Pendiente';
+  document.getElementById('f-estado-cobro').value = s.estadoCobro || 'Pendiente';
+  document.getElementById('f-observaciones').value = s.observaciones || '';
 }
 
-function saveExtraDefault(key,val){
-  const cat=EXTRAS_CAT.find(e=>e.key===key); if(cat) cat.defaultPrice=val;
-}
-function getExtrasFromForm(){
-  return _selectedExtras.map(e=>({
-    key:e.key,label:e.label,icon:e.icon,
-    precio:e.precio||0,
-    importe:e.importe||0,
-  }));
+function calcularImporte() {
+  const horas = parseFloat(document.getElementById('f-horas').value) || 0;
+  const tarifa = parseFloat(document.getElementById('f-tarifa').value) || 0;
+  const cerrado = parseFloat(document.getElementById('f-precio-cerrado').value) || 0;
+  const importe = cerrado > 0 ? cerrado : horas * tarifa;
+  document.getElementById('f-importe').value = importe > 0 ? importe.toFixed(2) : '';
 }
 
-function onTipoLimpiezaChange(){
-  const tipo=document.getElementById('f-tipo-limpieza').value;
-  const propId=document.getElementById('f-propiedad').value;
-  const prop=getPropiedad(propId);
-  const box=document.getElementById('precio-box');
-  const pfijo=document.getElementById('pw-precio-fijo');
-  const pprofunda=document.getElementById('pw-precio-profunda');
-  const phoras=document.getElementById('pw-horas');
-  const ptarifa=document.getElementById('pw-tarifa');
-  const phint=document.getElementById('pw-hint');
-  const ptitle=document.getElementById('precio-box-title');
-  [pfijo,pprofunda,phoras,ptarifa].forEach(el=>el.style.display='none');
-  phint.style.display='none';
-  if(!tipo){ box.classList.add('hidden'); recalcTotal(); return; }
-  box.classList.remove('hidden');
-  if(tipo==='Normal'){
-    ptitle.textContent='Precio Limpieza Normal';
-    pfijo.style.display='';
-    const autoPrice=prop?.precioNormal||0;
-    if(autoPrice){
-      phint.style.display='';
-      phint.textContent=`💡 Precio fijo de esta propiedad: ${fmt(autoPrice)}`;
-      const el=document.getElementById('f-precio-limpieza');
-      if(!el.value||parseFloat(el.value)===0) el.value=autoPrice;
-    }
-  } else if(tipo==='Intermedia'){
-    ptitle.textContent='Precio Limpieza Intermedia';
-    pfijo.style.display='';
-    const autoPrice=prop?.precioIntermedia||0;
-    if(autoPrice){
-      phint.style.display='';
-      phint.textContent=`💡 Precio fijo de esta propiedad: ${fmt(autoPrice)}`;
-      const el=document.getElementById('f-precio-limpieza');
-      if(!el.value||parseFloat(el.value)===0) el.value=autoPrice;
-    }
-  } else if(tipo==='Profunda'){
-    ptitle.textContent='Precio Limpieza Profunda (manual)';
-    pprofunda.style.display='';
-  } else if(tipo==='Inicial/Obra'||tipo==='Check'){
-    ptitle.textContent=`Precio ${tipo} (horas × tarifa)`;
-    phoras.style.display=''; ptarifa.style.display='';
-  }
-  recalcTotal();
-}
+function guardarServicio() {
+  const cliente = document.getElementById('f-cliente').value.trim();
+  const empleado = document.getElementById('f-empleado').value.trim();
+  if (!cliente || !empleado) { alert('Cliente y empleado son obligatorios.'); return; }
 
-function onPropiedadChange(){
-  // When property changes, re-apply price if tipo is Normal or Intermedia
-  const tipo=document.getElementById('f-tipo-limpieza').value;
-  if(tipo==='Normal'||tipo==='Intermedia') onTipoLimpiezaChange();
-}
-
-function recalcTotal(){
-  const tipo=document.getElementById('f-tipo-limpieza').value;
-  let lim=0;
-  if(tipo==='Inicial/Obra'||tipo==='Check'){
-    lim=(parseFloat(document.getElementById('f-horas')?.value)||0)*(parseFloat(document.getElementById('f-tarifa')?.value)||0);
-  } else if(tipo==='Profunda'){
-    lim=parseFloat(document.getElementById('f-precio-profunda')?.value)||0;
-  } else if(tipo==='Normal'||tipo==='Intermedia'){
-    lim=parseFloat(document.getElementById('f-precio-limpieza')?.value)||0;
-  }
-  const extras=_selectedExtras||[];
-  const extTotal=extras.reduce((a,e)=>a+(e.precio||0)+(e.importe||0),0);
-  const base=lim+extTotal;
-  const ivaPct=getIva();
-  const ivaAmt=base*ivaPct/100;
-  document.getElementById('ps-limpieza').textContent=lim?fmt(lim):'—';
-  document.getElementById('ps-extras').textContent=extTotal?fmt(extTotal):'—';
-  document.getElementById('ps-base').textContent=fmt(base);
-  document.getElementById('ps-iva-pct').textContent=ivaPct;
-  document.getElementById('ps-iva').textContent=fmt(ivaAmt);
-  document.getElementById('ps-total').textContent=fmt(base+ivaAmt);
-}
-
-function fillCliSel(selId,selVal){
-  const el=document.getElementById(selId);
-  el.innerHTML='<option value="">— seleccionar —</option>'+clientes.map(c=>`<option value="${c.id}">${c.nombre}</option>`).join('');
-  if(selVal) el.value=selVal;
-}
-function fillPropSel(clienteId,selVal){
-  const el=document.getElementById('f-propiedad');
-  // Always show ALL properties regardless of client
-  el.innerHTML='<option value="">— seleccionar —</option>'+propiedades.map(p=>`<option value="${p.id}">${p.nombre}</option>`).join('');
-  if(selVal) el.value=selVal;
-}
-function onClienteChange(){
-  // Changing client does NOT reset the property dropdown
-  fillPropSel('', document.getElementById('f-propiedad').value);
-}
-
-function clearServForm(){
-  const t=new Date().toISOString().slice(0,10);
-  document.getElementById('f-fecha-servicio').value=t;
-  document.getElementById('f-fecha-ingreso').value=t;
-  ['f-ocupacion','f-empleado','f-detalle-arreglos','f-observaciones'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('f-cliente').value='';
-  fillPropSel('','');
-  document.getElementById('f-tipo-limpieza').value='';
-  document.getElementById('f-arreglos').value='';
-  document.getElementById('f-estado-factura').value='Pendiente';
-  document.getElementById('f-estado-cobro').value='Pendiente';
-  ['f-precio-limpieza','f-precio-profunda','f-horas','f-tarifa'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  onTipoLimpiezaChange(); recalcTotal();
-}
-
-function fillServForm(s){
-  document.getElementById('f-fecha-servicio').value=s.fechaServicio||'';
-  document.getElementById('f-fecha-ingreso').value=s.fechaIngreso||'';
-  document.getElementById('f-ocupacion').value=s.ocupacion||'';
-  document.getElementById('f-empleado').value=s.empleado||'';
-  fillCliSel('f-cliente',s.clienteId||'');
-  fillPropSel('',s.propiedadId||'');
-  document.getElementById('f-tipo-limpieza').value=s.tipoLimpieza||'';
-  document.getElementById('f-arreglos').value=s.arreglos||'';
-  document.getElementById('f-detalle-arreglos').value=s.detalleArreglos||'';
-  document.getElementById('f-estado-factura').value=s.estadoFactura||'Pendiente';
-  document.getElementById('f-estado-cobro').value=s.estadoCobro||'Pendiente';
-  document.getElementById('f-observaciones').value=s.observaciones||'';
-  onTipoLimpiezaChange();
-  const tipo=s.tipoLimpieza||'';
-  if(tipo==='Inicial/Obra'||tipo==='Check'){
-    const h=document.getElementById('f-horas');if(h)h.value=s.horas||'';
-    const t=document.getElementById('f-tarifa');if(t)t.value=s.tarifa||'';
-  } else if(tipo==='Profunda'){
-    const p=document.getElementById('f-precio-profunda');if(p)p.value=s.precioLimpieza||'';
-  } else if(tipo==='Normal'||tipo==='Intermedia'){
-    const p=document.getElementById('f-precio-limpieza');if(p)p.value=s.precioLimpieza||'';
-  }
-  buildExtrasGrid(s.extras||[]);
-  recalcTotal();
-}
-
-function guardarServicio(){
-  const fs=document.getElementById('f-fecha-servicio').value;
-  const fi=document.getElementById('f-fecha-ingreso').value;
-  const cli=document.getElementById('f-cliente').value;
-  if(!fs){alert('La fecha de servicio es obligatoria.');return;}
-  if(!fi){alert('La fecha de ingreso es obligatoria.');return;}
-  if(!cli){alert('El cliente es obligatorio.');return;}
-  const tipo=document.getElementById('f-tipo-limpieza').value;
-  let precioLimpieza=0, horas=0, tarifa=0;
-  if(tipo==='Inicial/Obra'||tipo==='Check'){
-    horas=parseFloat(document.getElementById('f-horas')?.value)||0;
-    tarifa=parseFloat(document.getElementById('f-tarifa')?.value)||0;
-  } else if(tipo==='Profunda'){
-    precioLimpieza=parseFloat(document.getElementById('f-precio-profunda')?.value)||0;
-  } else if(tipo==='Normal'||tipo==='Intermedia'){
-    precioLimpieza=parseFloat(document.getElementById('f-precio-limpieza')?.value)||0;
-  }
-  const obj={
-    id: editServIdx===-1 ? uid() : (servicios[editServIdx].id||uid()),
-    fechaServicio:fs,fechaIngreso:fi,
-    ocupacion:document.getElementById('f-ocupacion').value.trim(),
-    empleado:document.getElementById('f-empleado').value.trim(),
-    clienteId:cli,
-    propiedadId:document.getElementById('f-propiedad').value,
-    tipoLimpieza:tipo,precioLimpieza,horas,tarifa,
-    extras:getExtrasFromForm(),
-    arreglos:document.getElementById('f-arreglos').value,
-    detalleArreglos:document.getElementById('f-detalle-arreglos').value.trim(),
-    estadoFactura:document.getElementById('f-estado-factura').value,
-    estadoCobro:document.getElementById('f-estado-cobro').value,
-    observaciones:document.getElementById('f-observaciones').value.trim(),
+  const obj = {
+    fecha: document.getElementById('f-fecha').value,
+    empleado,
+    cliente,
+    propiedad: document.getElementById('f-propiedad').value.trim(),
+    bbq: document.getElementById('f-bbq').checked,
+    cristales: document.getElementById('f-cristales').checked,
+    basura: document.getElementById('f-basura').checked,
+    limpieza: document.getElementById('f-limpieza').checked,
+    tipoLimpieza: document.getElementById('f-tipo-limpieza').value,
+    arreglos: document.getElementById('f-arreglos').value,
+    detalleArreglos: document.getElementById('f-detalle-arreglos').value.trim(),
+    servicioExtra: document.getElementById('f-servicio-extra').value.trim(),
+    detalleExtra: document.getElementById('f-detalle-extra').value.trim(),
+    horas: parseFloat(document.getElementById('f-horas').value) || 0,
+    tarifa: parseFloat(document.getElementById('f-tarifa').value) || 0,
+    precioCerrado: parseFloat(document.getElementById('f-precio-cerrado').value) || 0,
+    importe: parseFloat(document.getElementById('f-importe').value) || 0,
+    estadoFactura: document.getElementById('f-estado-factura').value,
+    estadoCobro: document.getElementById('f-estado-cobro').value,
+    observaciones: document.getElementById('f-observaciones').value.trim(),
   };
-  editServIdx=-1;
-  window.db.collection('servicios').doc(obj.id).set(obj);
-  closeServModal();
-}
-function delServ(idx){
-  if(!confirm('¿Eliminar este servicio?'))return;
-  const s=servicios[idx];
-  if(s?.id) window.db.collection('servicios').doc(s.id).delete();
+
+  if (editIndex === -1) {
+    servicios.push(obj);
+  } else {
+    servicios[editIndex] = obj;
+    editIndex = -1;
+  }
+  save();
+  closeModal();
+  renderTable();
 }
 
-// ══════════════════════════════════════
-// FACTURACIÓN
-// ══════════════════════════════════════
-function renderFacturacion(){
-  const ivaPct=getIva();
-  const ivaEl=document.getElementById('iva-pct'); if(ivaEl) ivaEl.value=ivaPct;
-  const selCli=document.getElementById('fact-filter-cliente');
-  const prev=selCli.value;
-  selCli.innerHTML='<option value="">Todos los clientes</option>'+clientes.map(c=>`<option value="${c.id}">${c.nombre}</option>`).join('');
-  selCli.value=prev;
-  const fCli=document.getElementById('fact-filter-cliente').value;
-  const fEst=document.getElementById('fact-filter-estado').value;
-  const data=servicios.map((s,i)=>({...s,_i:i})).filter(s=>(!fCli||s.clienteId===fCli)&&(!fEst||s.estadoFactura===fEst));
-  const totalBase=data.reduce((a,s)=>a+calcBase(s),0);
-  const totalIva=totalBase*ivaPct/100;
-  document.getElementById('kpi-fact').innerHTML=`
-    <div class="kpi-card"><div class="kpi-label">Base imponible</div><div class="kpi-value green">${fmt(totalBase)}</div><div class="kpi-sub">sin IVA</div></div>
-    <div class="kpi-card"><div class="kpi-label">IVA (${ivaPct}%)</div><div class="kpi-value">${fmt(totalIva)}</div><div class="kpi-sub">impuesto</div></div>
-    <div class="kpi-card"><div class="kpi-label">Total con IVA</div><div class="kpi-value teal">${fmt(totalBase+totalIva)}</div><div class="kpi-sub">a facturar</div></div>
-    <div class="kpi-card"><div class="kpi-label">Cobrado c/IVA</div><div class="kpi-value red">${fmt(data.filter(s=>s.estadoCobro==='Cobrado').reduce((a,s)=>a+calcTotal(s),0))}</div><div class="kpi-sub">recibido</div></div>`;
-  if(!data.length){ document.getElementById('fact-list').innerHTML='<div class="empty"><div class="empty-icon">🧾</div>Sin servicios</div>'; return; }
-  document.getElementById('fact-list').innerHTML=data.map(s=>{
-    const c=getCliente(s.clienteId); const p=getPropiedad(s.propiedadId);
-    const base=calcBase(s); const ivaAmt=base*ivaPct/100; const total=base+ivaAmt;
-    let lines=[];
-    if(s.tipoLimpieza){
-      if(s.tipoLimpieza==='Inicial/Obra'||s.tipoLimpieza==='Check'){
-        const lp=(s.horas||0)*(s.tarifa||0);
-        lines.push({desc:`${s.tipoLimpieza} — ${s.horas}h × ${fmt(s.tarifa)}/h`,precio:lp});
-      } else {
-        lines.push({desc:`Limpieza ${s.tipoLimpieza}`,precio:s.precioLimpieza||0});
-      }
-    }
-    (s.extras||[]).forEach(e=>lines.push({desc:`${e.icon} ${e.label}`,precio:e.precio||0}));
-    return `<div class="fact-card">
-      <div class="fact-card-header" onclick="toggleFactCard(this)">
-        <div class="fact-card-title">${c?.nombre||'Sin cliente'} — ${p?.nombre||'Sin propiedad'}
-          <span style="font-weight:400;color:var(--muted);margin-left:8px;font-size:12px">${fmtDate(s.fechaServicio)}</span>
-        </div>
-        <div class="fact-card-meta">
-          <span style="font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums">${fmt(total)}</span>
-          ${bFact(s.estadoFactura)} ${bCobro(s.estadoCobro)} <span style="color:var(--muted)">▼</span>
-        </div>
-      </div>
-      <div class="fact-card-body">
-        <table class="fact-lines">
-          <thead><tr><th>Concepto</th><th style="text-align:right">Importe s/IVA</th></tr></thead>
-          <tbody>${lines.map(l=>`<tr><td>${l.desc}</td><td style="text-align:right">${fmt(l.precio)}</td></tr>`).join('')}</tbody>
-        </table>
-        <div class="fact-totals">
-          <div class="fact-total-row"><span class="lbl">Base imponible</span><span class="val">${fmt(base)}</span></div>
-          <div class="fact-total-row"><span class="lbl">IVA (${ivaPct}%)</span><span class="val">${fmt(ivaAmt)}</span></div>
-          <div class="fact-total-row grand"><span class="lbl">TOTAL</span><span class="val">${fmt(total)}</span></div>
-        </div>
-        <div style="display:flex;gap:8px;margin-top:14px">
-          <button class="btn btn-ghost btn-sm" onclick="openServModal(${s._i})">✏️ Editar</button>
-          ${s.estadoFactura==='Pendiente'?`<button class="btn btn-ghost btn-sm" onclick="marcarFacturado(${s._i});renderFacturacion()">📄 Marcar facturado</button>`:''}
-          ${s.estadoCobro==='Pendiente'?`<button class="btn btn-ghost btn-sm" onclick="marcarCobrado(${s._i});renderFacturacion()">✓ Marcar cobrado</button>`:''}
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-}
-function toggleFactCard(h){ h.nextElementSibling.classList.toggle('open'); }
+function editarServicio(idx) { openModal(idx); }
 
-// ══════════════════════════════════════
-// COBROS
-// ══════════════════════════════════════
-function renderCobros(){
-  const ivaPct=getIva();
-  const sorted=[...servicios].map((s,i)=>({...s,_i:i})).sort((a,b)=>a.estadoCobro.localeCompare(b.estadoCobro));
-  document.getElementById('cobros-body').innerHTML=sorted.map(s=>{
-    const c=getCliente(s.clienteId);const p=getPropiedad(s.propiedadId);
-    const base=calcBase(s);const ivaAmt=base*ivaPct/100;
-    return `<tr>
-      <td>${fmtDate(s.fechaServicio)}</td><td><strong>${c?.nombre||'—'}</strong></td>
-      <td style="color:var(--muted)">${p?.nombre||'—'}</td><td>${s.empleado||'—'}</td>
-      <td class="importe-cell">${fmt(base)}</td>
-      <td style="color:var(--muted)">${fmt(ivaAmt)}</td>
-      <td class="importe-cell" style="color:var(--accent)">${fmt(base+ivaAmt)}</td>
-      <td>${bFact(s.estadoFactura)}</td><td>${bCobro(s.estadoCobro)}</td>
-      <td><div class="actions">
-        ${s.estadoCobro==='Pendiente'?`<button class="btn btn-ghost btn-sm" onclick="marcarCobrado(${s._i})">✓ Cobrado</button>`:''}
-        ${s.estadoFactura==='Pendiente'?`<button class="btn btn-ghost btn-sm" onclick="marcarFacturado(${s._i})">📄 Facturar</button>`:''}
-      </div></td>
-    </tr>`;
-  }).join('');
-}
-function marcarCobrado(i){
-  servicios[i].estadoCobro='Cobrado';
-  window.db.collection('servicios').doc(servicios[i].id).set(servicios[i]);
-}
-function marcarFacturado(i){
-  servicios[i].estadoFactura='Facturado';
-  window.db.collection('servicios').doc(servicios[i].id).set(servicios[i]);
+function eliminar(idx) {
+  if (!confirm('¿Eliminar este servicio?')) return;
+  servicios.splice(idx, 1);
+  save();
+  renderTable();
 }
 
-// ══════════════════════════════════════
-// MAESTROS
-// ══════════════════════════════════════
-function openClienteModal(fromServicio=false){
-  fromServ=fromServicio;editCliIdx=-1;
-  document.getElementById('cli-modal-title').textContent='Nuevo cliente';
-  ['cli-nombre','cli-telefono','cli-email','cli-notas'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('modal-cliente').classList.add('open');
-}
-function openEditCliente(idx){
-  fromServ=false;editCliIdx=idx;
-  const c=clientes[idx];
-  document.getElementById('cli-modal-title').textContent='Editar cliente';
-  document.getElementById('cli-nombre').value=c.nombre||'';
-  document.getElementById('cli-telefono').value=c.telefono||'';
-  document.getElementById('cli-email').value=c.email||'';
-  document.getElementById('cli-notas').value=c.notas||'';
-  document.getElementById('modal-cliente').classList.add('open');
-}
-function closeClienteModal(){ document.getElementById('modal-cliente').classList.remove('open'); }
-function guardarCliente(){
-  const nombre=document.getElementById('cli-nombre').value.trim();
-  if(!nombre){alert('El nombre es obligatorio.');return;}
-  const obj={id:editCliIdx===-1?uid():clientes[editCliIdx].id,nombre,telefono:document.getElementById('cli-telefono').value.trim(),email:document.getElementById('cli-email').value.trim(),notas:document.getElementById('cli-notas').value.trim()};
-  editCliIdx=-1;
-  window.db.collection('clientes').doc(obj.id).set(obj);
-  closeClienteModal();
-  if(fromServ){fillCliSel('f-cliente',obj.id);fillPropSel('','');}
-}
-function delCliente(idx){
-  if(!confirm('¿Eliminar cliente?'))return;
-  const c=clientes[idx];
-  if(c?.id) window.db.collection('clientes').doc(c.id).delete();
-}
+// ─── RESUMEN ──────────────────────────────────────────────────────────────────
+function renderResumen() {
+  const total = servicios.length;
+  const totalImporte = servicios.reduce((s,x) => s + (x.importe||0), 0);
+  const cobrado = servicios.filter(x => x.estadoCobro === 'Cobrado').reduce((s,x) => s + (x.importe||0), 0);
+  const pendiente = totalImporte - cobrado;
 
-function openPropModal(fromServicio=false){
-  fromServ=fromServicio;editPropIdx=-1;
-  document.getElementById('prop-modal-title').textContent='Nueva propiedad';
-  ['prop-nombre','prop-direccion','prop-notas','prop-precio-normal','prop-precio-intermedia'].forEach(id=>document.getElementById(id).value='');
-  const sel=document.getElementById('prop-cliente');
-  sel.innerHTML='<option value="">— sin cliente —</option>'+clientes.map(c=>`<option value="${c.id}">${c.nombre}</option>`).join('');
-  if(fromServicio){const cv=document.getElementById('f-cliente').value;if(cv)sel.value=cv;}
-  document.getElementById('modal-prop').classList.add('open');
-}
-function openEditProp(idx){
-  fromServ=false;editPropIdx=idx;
-  const p=propiedades[idx];
-  document.getElementById('prop-modal-title').textContent='Editar propiedad';
-  document.getElementById('prop-nombre').value=p.nombre||'';
-  document.getElementById('prop-direccion').value=p.direccion||'';
-  document.getElementById('prop-notas').value=p.notas||'';
-  document.getElementById('prop-precio-normal').value=p.precioNormal||'';
-  document.getElementById('prop-precio-intermedia').value=p.precioIntermedia||'';
-  const sel=document.getElementById('prop-cliente');
-  sel.innerHTML='<option value="">— sin cliente —</option>'+clientes.map(c=>`<option value="${c.id}">${c.nombre}</option>`).join('');
-  sel.value=p.clienteId||'';
-  document.getElementById('modal-prop').classList.add('open');
-}
-function closePropModal(){ document.getElementById('modal-prop').classList.remove('open'); }
-function guardarPropiedad(){
-  const nombre=document.getElementById('prop-nombre').value.trim();
-  if(!nombre){alert('El nombre / código es obligatorio.');return;}
-  const obj={
-    id:editPropIdx===-1?uid():propiedades[editPropIdx].id,
-    nombre,
-    direccion:document.getElementById('prop-direccion').value.trim(),
-    clienteId:document.getElementById('prop-cliente').value,
-    notas:document.getElementById('prop-notas').value.trim(),
-    precioNormal:parseFloat(document.getElementById('prop-precio-normal').value)||0,
-    precioIntermedia:parseFloat(document.getElementById('prop-precio-intermedia').value)||0,
-  };
-  editPropIdx=-1;
-  window.db.collection('propiedades').doc(obj.id).set(obj);
-  closePropModal();
-  if(fromServ){fillPropSel('',obj.id);}
-}
-function delProp(idx){
-  if(!confirm('¿Eliminar propiedad?'))return;
-  const p=propiedades[idx];
-  if(p?.id) window.db.collection('propiedades').doc(p.id).delete();
-}
+  document.getElementById('kpi-resumen').innerHTML = `
+    <div class="kpi-card"><div class="kpi-label">Servicios</div><div class="kpi-value">${total}</div></div>
+    <div class="kpi-card"><div class="kpi-label">Facturado</div><div class="kpi-value green">${fmt(totalImporte)}</div></div>
+    <div class="kpi-card"><div class="kpi-label">Cobrado</div><div class="kpi-value teal">${fmt(cobrado)}</div></div>
+    <div class="kpi-card"><div class="kpi-label">Pendiente</div><div class="kpi-value red">${fmt(pendiente)}</div></div>
+  `;
 
-function renderMaestros(){
-  document.getElementById('lista-clientes').innerHTML=clientes.length?clientes.map((c,i)=>{
-    const n=propiedades.filter(p=>p.clienteId===c.id).length;
-    return `<div class="list-item">
-      <div class="list-item-info"><div class="list-item-name">${c.nombre}</div>
-      <div class="list-item-sub">${[c.telefono,c.email].filter(Boolean).join(' · ')||'Sin datos de contacto'}</div></div>
-      <div class="actions"><span class="prop-tag">${n} prop.</span>
-      <button class="btn btn-ghost btn-sm" onclick="openEditCliente(${i})">✏️</button>
-      <button class="btn btn-danger btn-sm" onclick="delCliente(${i})">🗑</button></div>
-    </div>`;
-  }).join(''):'<div class="empty"><div class="empty-icon">👤</div>Sin clientes</div>';
-
-  document.getElementById('lista-propiedades').innerHTML=propiedades.length?propiedades.map((p,i)=>{
-    const c=getCliente(p.clienteId);
-    const pn=p.precioNormal?`N:${fmt(p.precioNormal)}`:'';
-    const pi=p.precioIntermedia?`I:${fmt(p.precioIntermedia)}`:'';
-    return `<div class="list-item">
-      <div class="list-item-info">
-        <div class="list-item-name">${p.nombre}</div>
-        <div class="list-item-sub">${c?'👤 '+c.nombre:'Sin cliente'}${p.direccion?' · '+p.direccion:''}</div>
-      </div>
-      <div class="actions" style="flex-shrink:0">
-        ${pn?`<span class="price-pill">${pn}</span>`:''}
-        ${pi?`<span class="price-pill">${pi}</span>`:''}
-        <button class="btn btn-ghost btn-sm" onclick="openEditProp(${i})">✏️</button>
-        <button class="btn btn-danger btn-sm" onclick="delProp(${i})">🗑</button>
-      </div>
-    </div>`;
-  }).join(''):'<div class="empty"><div class="empty-icon">🏠</div>Sin propiedades</div>';
-}
-
-// ══════════════════════════════════════
-// RESUMEN
-// ══════════════════════════════════════
-function renderResumen(){
-  const ti=servicios.reduce((a,s)=>a+calcBase(s),0);
-  const co=servicios.filter(s=>s.estadoCobro==='Cobrado').reduce((a,s)=>a+calcBase(s),0);
-  document.getElementById('kpi-resumen').innerHTML=`
-    <div class="kpi-card"><div class="kpi-label">Servicios</div><div class="kpi-value">${servicios.length}</div></div>
-    <div class="kpi-card"><div class="kpi-label">Base total</div><div class="kpi-value green">${fmt(ti)}</div></div>
-    <div class="kpi-card"><div class="kpi-label">Cobrado</div><div class="kpi-value teal">${fmt(co)}</div></div>
-    <div class="kpi-card"><div class="kpi-label">Pendiente</div><div class="kpi-value red">${fmt(ti-co)}</div></div>`;
-  const bEmp={};
-  servicios.forEach(s=>{const k=s.empleado||'Sin asignar';bEmp[k]=(bEmp[k]||0)+calcBase(s);});
-  const mEmp=Math.max(...Object.values(bEmp),1);
-  const bCli={};
-  servicios.forEach(s=>{const c=getCliente(s.clienteId);const k=c?.nombre||'Sin cliente';bCli[k]=(bCli[k]||0)+calcBase(s);});
-  const bTipo={};
-  servicios.forEach(s=>{if(s.tipoLimpieza)bTipo[s.tipoLimpieza]=(bTipo[s.tipoLimpieza]||0)+1;});
-  const mTipo=Math.max(...Object.values(bTipo),1);
-  document.getElementById('resumen-charts').innerHTML=`
-    <div class="chart-card"><div class="chart-title">Importe por empleado</div>
-      ${Object.entries(bEmp).sort((a,b)=>b[1]-a[1]).map(([n,v])=>`<div class="bar-row"><div class="bar-label">${n.split(' ')[0]}</div><div class="bar-track"><div class="bar-fill" style="width:${(v/mEmp*100).toFixed(0)}%"></div></div><div class="bar-val">${fmt(v)}</div></div>`).join('')||'<div class="empty" style="padding:20px">Sin datos</div>'}
+  // Por empleado
+  const byEmpleado = {};
+  servicios.forEach(s => {
+    byEmpleado[s.empleado] = (byEmpleado[s.empleado] || 0) + (s.importe||0);
+  });
+  const maxEmp = Math.max(...Object.values(byEmpleado), 1);
+  const empHTML = Object.entries(byEmpleado).sort((a,b)=>b[1]-a[1]).map(([n,v]) => `
+    <div class="bar-row">
+      <div class="bar-label">${n.split(' ')[0]}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${(v/maxEmp*100).toFixed(0)}%"></div></div>
+      <div class="bar-val">${fmt(v)}</div>
     </div>
-    <div class="chart-card"><div class="chart-title">Facturación por cliente</div>
-      ${Object.entries(bCli).sort((a,b)=>b[1]-a[1]).map(([n,v])=>`<div class="list-stat"><span style="font-size:12px">${n}</span><span class="list-stat-val">${fmt(v)}</span></div>`).join('')||'<div class="empty" style="padding:20px">Sin datos</div>'}
+  `).join('');
+
+  // Por cliente
+  const byCliente = {};
+  servicios.forEach(s => {
+    byCliente[s.cliente] = (byCliente[s.cliente] || 0) + (s.importe||0);
+  });
+  const cliHTML = Object.entries(byCliente).sort((a,b)=>b[1]-a[1]).map(([n,v]) => `
+    <div class="list-stat"><span class="list-stat-name">${n}</span><span class="list-stat-val">${fmt(v)}</span></div>
+  `).join('');
+
+  // Tipos limpieza
+  const byTipo = {};
+  servicios.forEach(s => { if (s.tipoLimpieza) byTipo[s.tipoLimpieza] = (byTipo[s.tipoLimpieza] || 0) + 1; });
+  const maxTipo = Math.max(...Object.values(byTipo), 1);
+  const tipoHTML = Object.entries(byTipo).sort((a,b)=>b[1]-a[1]).map(([n,v]) => `
+    <div class="bar-row">
+      <div class="bar-label">${n}</div>
+      <div class="bar-track"><div class="bar-fill teal" style="width:${(v/maxTipo*100).toFixed(0)}%"></div></div>
+      <div class="bar-val">${v} serv.</div>
     </div>
-    <div class="chart-card"><div class="chart-title">Tipos de limpieza</div>
-      ${Object.entries(bTipo).sort((a,b)=>b[1]-a[1]).map(([n,v])=>`<div class="bar-row"><div class="bar-label">${n}</div><div class="bar-track"><div class="bar-fill teal" style="width:${(v/mTipo*100).toFixed(0)}%"></div></div><div class="bar-val">${v} serv.</div></div>`).join('')||'<div class="empty" style="padding:20px">Sin datos</div>'}
+  `).join('');
+
+  document.getElementById('resumen-charts').innerHTML = `
+    <div class="chart-card">
+      <div class="chart-title">Importe por empleado</div>
+      ${empHTML || '<div class="empty">Sin datos</div>'}
     </div>
-    <div class="chart-card"><div class="chart-title">Estado cobros</div>
-      <div class="list-stat"><span>Cobrado</span><span class="list-stat-val" style="color:var(--accent2)">${servicios.filter(x=>x.estadoCobro==='Cobrado').length} · ${fmt(co)}</span></div>
-      <div class="list-stat"><span>Pendiente cobro</span><span class="list-stat-val" style="color:var(--accent3)">${servicios.filter(x=>x.estadoCobro==='Pendiente').length} · ${fmt(ti-co)}</span></div>
+    <div class="chart-card">
+      <div class="chart-title">Facturación por cliente</div>
+      ${cliHTML || '<div class="empty">Sin datos</div>'}
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Tipos de limpieza</div>
+      ${tipoHTML || '<div class="empty">Sin datos</div>'}
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Estado cobros</div>
+      <div class="list-stat"><span>Cobrado</span><span class="list-stat-val" style="color:var(--accent2)">${servicios.filter(x=>x.estadoCobro==='Cobrado').length} (${fmt(cobrado)})</span></div>
+      <div class="list-stat"><span>Pendiente</span><span class="list-stat-val" style="color:var(--accent3)">${servicios.filter(x=>x.estadoCobro==='Pendiente').length} (${fmt(pendiente)})</span></div>
       <div class="list-stat"><span>Facturado</span><span class="list-stat-val">${servicios.filter(x=>x.estadoFactura==='Facturado').length} serv.</span></div>
       <div class="list-stat"><span>Sin facturar</span><span class="list-stat-val" style="color:var(--accent3)">${servicios.filter(x=>x.estadoFactura==='Pendiente').length} serv.</span></div>
-    </div>`;
+    </div>
+  `;
 }
 
-// ══════════════════════════════════════
-// UTILS
-// ══════════════════════════════════════
-function fmt(n){ if(!n&&n!==0)return'—'; return new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR'}).format(n); }
-function fmtDate(d){ if(!d)return'—'; return new Date(d+'T00:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'}); }
-
-function toggleSidebar(){
-  document.getElementById('sidebar').classList.toggle('open');
-  document.getElementById('sidebar-overlay').classList.toggle('open');
+// ─── COBROS ───────────────────────────────────────────────────────────────────
+function renderCobros() {
+  const tbody = document.getElementById('cobros-body');
+  const sorted = [...servicios].map((s,i) => ({...s, _idx:i})).sort((a,b) => a.estadoCobro.localeCompare(b.estadoCobro));
+  tbody.innerHTML = sorted.map(s => `
+    <tr>
+      <td>${fmtDate(s.fecha)}</td>
+      <td><strong>${s.cliente}</strong></td>
+      <td style="color:var(--muted)">${s.propiedad}</td>
+      <td>${s.empleado}</td>
+      <td class="importe-cell">${fmt(s.importe)}</td>
+      <td>${badgeFact(s.estadoFactura)}</td>
+      <td>${badgeCobro(s.estadoCobro)}</td>
+      <td>
+        <div class="actions">
+          ${s.estadoCobro === 'Pendiente' ? `<button class="btn btn-ghost btn-sm" onclick="marcarCobrado(${s._idx})">✓ Cobrado</button>` : ''}
+          ${s.estadoFactura === 'Pendiente' ? `<button class="btn btn-ghost btn-sm" onclick="marcarFacturado(${s._idx})">📄 Facturar</button>` : ''}
+        </div>
+      </td>
+    </tr>
+  `).join('');
 }
-function closeSidebar(){
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('sidebar-overlay').classList.remove('open');
+
+function marcarCobrado(idx) {
+  servicios[idx].estadoCobro = 'Cobrado';
+  save(); renderCobros();
 }
-window.addEventListener('resize',()=>renderTable());
+function marcarFacturado(idx) {
+  servicios[idx].estadoFactura = 'Facturado';
+  save(); renderCobros();
+}
 
-// ══════════════════════════════════════
-// INIT
-// ══════════════════════════════════════
-const savedIva=localStorage.getItem('sg_iva');
-if(savedIva&&document.getElementById('iva-pct')) document.getElementById('iva-pct').value=savedIva;
-document.getElementById('kpi-grid').innerHTML='<div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--muted)">⏳ Conectando...</div>';
-loadData();
-</script>
+// ─── UTILS ────────────────────────────────────────────────────────────────────
+function fmt(n) {
+  if (!n && n !== 0) return '—';
+  return new Intl.NumberFormat('es-ES', { style:'currency', currency:'EUR' }).format(n);
+}
+function fmtDate(d) {
+  if (!d) return '—';
+  const dt = new Date(d + 'T00:00:00');
+  return dt.toLocaleDateString('es-ES', { day:'2-digit', month:'short', year:'numeric' });
+}
 
-<!-- Firebase compat SDK (funciona sin type=module) -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyDiv5SbDfveNgrEoYUmwMKlU6PF90m6OSk",
-    authDomain: "mhc-app-184e9.firebaseapp.com",
-    projectId: "mhc-app-184e9",
-    storageBucket: "mhc-app-184e9.firebasestorage.app",
-    messagingSenderId: "564434438421",
-    appId: "1:564434438421:web:a4628396a190fd894b011c"
-  };
-  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-  window.db = firebase.firestore();
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+renderTable();
+renderKPIs();
 </script>
 </body>
 </html>
