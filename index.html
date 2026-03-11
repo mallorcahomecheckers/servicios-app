@@ -2,36 +2,21 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gestión de Servicios</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
-<script>
-// ── AUTO-UPDATE: versión basada en timestamp, se actualiza sola ──
-const APP_VERSION = '20260310_1830';
-const stored = localStorage.getItem('app_version');
-if (stored && stored !== APP_VERSION) {
-  localStorage.setItem('app_version', APP_VERSION);
-  window.location.reload(true);
-} else {
-  localStorage.setItem('app_version', APP_VERSION);
-}
-</script>
 <style>
-:root{--bg:#f0f2f5;--surface:#ffffff;--surface2:#f5f7fa;--border:#dde1ea;--accent:#2563eb;--accent2:#0ea5e9;--accent3:#ef4444;--text:#1e2a3a;--muted:#7a8a9e;--radius:10px;}
+:root{--bg:#0e0f13;--surface:#16181f;--surface2:#1e2029;--border:#2a2d38;--accent:#c8f04a;--accent2:#4af0b8;--accent3:#f04a7a;--text:#e8eaf0;--muted:#6b7080;--radius:10px;}
 *{box-sizing:border-box;margin:0;padding:0;}
-html,body{max-width:100%;overflow-x:hidden;}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;min-height:100vh;}
 .layout{display:flex;min-height:100vh;}
-.sidebar{width:235px;background:#1e2a3a;border-right:1px solid #2d3d52;padding:24px 16px;display:flex;flex-direction:column;gap:4px;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto;}
-.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:#60a5fa;letter-spacing:-.5px;margin-bottom:20px;padding:0 8px;}
-.logo span{color:#e2e8f0;}
-.nav-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#64748b;padding:12px 12px 4px;}
-.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius);cursor:pointer;color:#94a3b8;font-weight:500;transition:all .15s;border:none;background:none;font-family:inherit;font-size:14px;width:100%;text-align:left;}
-.nav-item:hover{background:rgba(255,255,255,.07);color:#e2e8f0;}
-.nav-item.active{background:var(--accent);color:#ffffff;}
+.sidebar{width:235px;background:var(--surface);border-right:1px solid var(--border);padding:24px 16px;display:flex;flex-direction:column;gap:4px;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto;}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:var(--accent);letter-spacing:-.5px;margin-bottom:20px;padding:0 8px;}
+.logo span{color:var(--text);}
+.nav-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);padding:12px 12px 4px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius);cursor:pointer;color:var(--muted);font-weight:500;transition:all .15s;border:none;background:none;font-family:inherit;font-size:14px;width:100%;text-align:left;}
+.nav-item:hover{background:var(--surface2);color:var(--text);}
+.nav-item.active{background:var(--accent);color:#0e0f13;}
 .main{margin-left:235px;flex:1;padding:32px;}
 .view{display:none;}.view.active{display:block;}
 .page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;}
@@ -50,18 +35,18 @@ tbody tr:last-child{border-bottom:none;}
 tbody tr:hover{background:var(--surface2);}
 td{padding:11px 14px;white-space:nowrap;}
 .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;}
-.badge-green{background:rgba(37,99,235,.1);color:#2563eb;}
-.badge-teal{background:rgba(14,165,233,.1);color:#0284c7;}
-.badge-red{background:rgba(239,68,68,.1);color:#dc2626;}
-.badge-gray{background:rgba(107,114,128,.12);color:#6b7280;}
-.badge-yellow{background:rgba(217,119,6,.1);color:#d97706;}
+.badge-green{background:rgba(200,240,74,.15);color:var(--accent);}
+.badge-teal{background:rgba(74,240,184,.15);color:var(--accent2);}
+.badge-red{background:rgba(240,74,122,.15);color:var(--accent3);}
+.badge-gray{background:rgba(107,112,128,.2);color:var(--muted);}
+.badge-yellow{background:rgba(255,200,50,.15);color:#ffc832;}
 .btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:var(--radius);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s;}
-.btn-primary{background:var(--accent);color:#ffffff;}.btn-primary:hover{opacity:.88;}
+.btn-primary{background:var(--accent);color:#0e0f13;}.btn-primary:hover{opacity:.88;}
 .btn-ghost{background:var(--surface2);color:var(--text);border:1px solid var(--border);}.btn-ghost:hover{border-color:var(--muted);}
 .btn-sm{padding:6px 12px;font-size:12px;}
 .btn-danger{background:rgba(240,74,122,.15);color:var(--accent3);border:1px solid rgba(240,74,122,.3);}.btn-danger:hover{background:rgba(240,74,122,.25);}
 .btn-icon{padding:8px 10px;font-size:14px;line-height:1;}
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:999;align-items:center;justify-content:center;}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:999;align-items:center;justify-content:center;}
 .modal-overlay.open{display:flex;}
 .modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;width:760px;max-width:96vw;max-height:92vh;overflow-y:auto;padding:28px;}
 .modal-sm{width:500px;}
@@ -89,20 +74,20 @@ td{padding:11px 14px;white-space:nowrap;}
 .importe-cell{font-weight:600;font-variant-numeric:tabular-nums;}
 
 /* PRECIO LIMPIEZA */
-.precio-box{grid-column:1/-1;background:#f0f9ff;border:1px solid rgba(14,165,233,.25);border-radius:9px;padding:14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.precio-box{grid-column:1/-1;background:var(--surface2);border:1px solid rgba(74,240,184,.25);border-radius:9px;padding:14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .precio-box.hidden{display:none;}
-.precio-box-title{grid-column:1/-1;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#0284c7;margin-bottom:2px;}
-.precio-auto-hint{grid-column:1/-1;font-size:12px;color:#2563eb;background:rgba(37,99,235,.07);border-radius:6px;padding:6px 10px;}
+.precio-box-title{grid-column:1/-1;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--accent2);margin-bottom:2px;}
+.precio-auto-hint{grid-column:1/-1;font-size:12px;color:var(--accent);background:rgba(200,240,74,.08);border-radius:6px;padding:6px 10px;}
 
 /* EXTRAS */
 .extras-section{grid-column:1/-1;display:flex;flex-direction:column;gap:10px;}
 .extras-select-wrap{display:flex;gap:10px;align-items:flex-start;}
 .extras-select-wrap select{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:8px 12px;color:var(--text);font-family:inherit;font-size:13px;min-height:130px;}
 .extras-select-wrap select option{padding:6px;font-size:13px;}
-.extras-select-wrap select option:checked{background:var(--accent);color:#ffffff;}
+.extras-select-wrap select option:checked{background:var(--accent);color:#0e0f13;}
 .extras-hint{font-size:11px;color:var(--muted);margin-top:2px;}
 .extras-selected{display:flex;flex-direction:column;gap:7px;margin-top:2px;}
-.extra-row{display:flex;align-items:center;gap:10px;background:#f8fafc;border:1px solid var(--accent);border-radius:8px;padding:9px 14px;}
+.extra-row{display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--accent);border-radius:8px;padding:9px 14px;}
 .extra-row-label{flex:1;font-size:13px;font-weight:500;display:flex;align-items:center;gap:7px;}
 .extra-row-price{display:flex;align-items:center;gap:6px;}
 .extra-row-price input{width:90px;text-align:right;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--text);font-family:inherit;font-size:13px;}
@@ -112,13 +97,13 @@ td{padding:11px 14px;white-space:nowrap;}
 .extra-row-remove{background:none;border:none;color:var(--accent3);cursor:pointer;font-size:16px;padding:0 4px;line-height:1;}
 
 /* RESUMEN PRECIO */
-.price-summary{grid-column:1/-1;background:rgba(37,99,235,.04);border:1px solid rgba(37,99,235,.18);border-radius:9px;padding:16px 18px;display:flex;flex-direction:column;gap:7px;}
+.price-summary{grid-column:1/-1;background:rgba(200,240,74,.07);border:1px solid rgba(200,240,74,.2);border-radius:9px;padding:16px 18px;display:flex;flex-direction:column;gap:7px;}
 .price-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;}
 .price-row .label{color:var(--muted);}
 .price-row .val{font-weight:600;}
-.price-row.subtotal{padding-top:6px;border-top:1px dashed rgba(37,99,235,.15);}
+.price-row.subtotal{padding-top:6px;border-top:1px dashed rgba(200,240,74,.15);}
 .price-row.iva-row .val{color:var(--muted);}
-.price-row.total-row{font-family:'Syne',sans-serif;font-weight:700;font-size:18px;color:var(--accent);padding-top:8px;border-top:1px solid rgba(37,99,235,.2);margin-top:2px;}
+.price-row.total-row{font-family:'Syne',sans-serif;font-weight:700;font-size:18px;color:var(--accent);padding-top:8px;border-top:1px solid rgba(200,240,74,.25);margin-top:2px;}
 
 /* MAESTROS */
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
@@ -131,8 +116,8 @@ td{padding:11px 14px;white-space:nowrap;}
 .list-item-info{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0;}
 .list-item-name{font-weight:500;font-size:13px;}
 .list-item-sub{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.prop-tag{font-size:11px;background:rgba(37,99,235,.08);color:var(--accent);padding:2px 8px;border-radius:10px;white-space:nowrap;margin-right:4px;}
-.price-pill{font-size:11px;background:rgba(14,165,233,.08);color:#0284c7;padding:2px 8px;border-radius:10px;white-space:nowrap;margin-right:4px;}
+.prop-tag{font-size:11px;background:rgba(200,240,74,.1);color:var(--accent);padding:2px 8px;border-radius:10px;white-space:nowrap;margin-right:4px;}
+.price-pill{font-size:11px;background:rgba(74,240,184,.1);color:var(--accent2);padding:2px 8px;border-radius:10px;white-space:nowrap;margin-right:4px;}
 
 /* FACTURACIÓN */
 .iva-config{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 18px;margin-bottom:18px;font-size:13px;flex-wrap:wrap;}
@@ -158,8 +143,8 @@ td{padding:11px 14px;white-space:nowrap;}
 .fact-total-row.grand{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:var(--accent);padding-top:6px;border-top:1px solid var(--border);margin-top:4px;}
 
 /* PROP MODAL PRICES */
-.prop-prices-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;grid-column:1/-1;background:#f0f9ff;border:1px solid rgba(14,165,233,.2);border-radius:8px;padding:12px 14px;}
-.prop-prices-title{grid-column:1/-1;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#0284c7;margin-bottom:2px;}
+.prop-prices-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;grid-column:1/-1;background:rgba(74,240,184,.05);border:1px solid rgba(74,240,184,.2);border-radius:8px;padding:12px 14px;}
+.prop-prices-title{grid-column:1/-1;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--accent2);margin-bottom:2px;}
 
 /* RESUMEN */
 .resumen-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px;}
@@ -167,6 +152,15 @@ td{padding:11px 14px;white-space:nowrap;}
 .chart-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:16px;}
 .bar-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
 .bar-label{width:110px;font-size:11px;text-align:right;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.bar-track{flex:1;height:8px;background:var(--surface2);border-radius:4px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:4px;background:var(--accent);transition:width .5s;}
+.bar-fill.teal{background:var(--accent2);}
+.bar-val{width:60px;font-size:12px;font-weight:600;}
+.list-stat{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);}
+.list-stat:last-child{border:none;}
+.list-stat-val{font-weight:600;font-size:13px;color:var(--accent);}
+
+:root{--bg:#f0f2f5;--surface:#ffffff;--surface2:#f5f7fa;--border:#dde1ea;--accent:#2563eb;--accent2:#0ea5e9;--accent3:#ef4444;--text:#1e2a3a;--muted:#7a8a9e;--radius:10px;}
 .bar-track{flex:1;height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden;}
 .bar-fill{height:100%;border-radius:4px;background:var(--accent);transition:width .5s;}
 .bar-fill.teal{background:var(--accent2);}
@@ -183,13 +177,14 @@ td{padding:11px 14px;white-space:nowrap;}
 .mobile-nav-toggle{display:none;position:fixed;top:12px;left:12px;z-index:200;background:#1e2a3a;border:none;border-radius:8px;padding:10px 12px;cursor:pointer;font-size:18px;color:#e2e8f0;}
 .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:99;}
 .sidebar-overlay.open{display:block;}
+html,body{max-width:100%;overflow-x:hidden;}
 
 @media(max-width:768px){
   .mobile-nav-toggle{display:flex;align-items:center;justify-content:center;}
   .sidebar{transform:translateX(-100%);transition:transform .25s ease;z-index:150;}
   .sidebar.open{transform:translateX(0);}
   .main{margin-left:0;padding:16px;padding-top:60px;}
-  .kpi-grid{grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px;}
+  .kpi-grid{grid-template-columns:repeat(2,1fr)!important;gap:10px;margin-bottom:18px;}
   .kpi-value{font-size:20px;letter-spacing:-.5px;}
   .page-header{flex-wrap:wrap;gap:10px;margin-bottom:18px;}
   .page-title{font-size:20px;}
@@ -206,21 +201,12 @@ td{padding:11px 14px;white-space:nowrap;}
   .filters .form-input,.filters .form-select{max-width:100%;}
   .fact-filters{flex-direction:column;}
   .fact-filters .form-select{max-width:100%;}
-  .fact-card-meta{flex-wrap:wrap;}
   .iva-config{flex-wrap:wrap;gap:8px;}
-  /* Fix Android table overflow */
-  .table-wrap{overflow:hidden !important;}
-  table{table-layout:fixed;width:100% !important;max-width:100% !important;}
-  td,thead th{white-space:normal !important;word-break:break-word;overflow-wrap:break-word;}
+  .table-wrap{overflow:hidden!important;}
+  table{table-layout:fixed;width:100%!important;max-width:100%!important;}
+  td,thead th{white-space:normal!important;word-break:break-word;}
   .extras-select-wrap{flex-direction:column;}
   .panel-header{flex-wrap:wrap;gap:8px;}
-}
-
-@media(max-width:420px){
-  .kpi-grid{grid-template-columns:1fr 1fr;}
-  .kpi-card{padding:14px;}
-  .kpi-value{font-size:20px;}
-  .btn{padding:8px 14px;font-size:12px;}
 }
 </style>
 </head>
@@ -228,14 +214,14 @@ td{padding:11px 14px;white-space:nowrap;}
 <button class="mobile-nav-toggle" onclick="toggleSidebar()" id="nav-toggle">☰</button>
 <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
 <div class="layout">
-<aside class="sidebar" id="sidebar">
-  <div class="logo">servi<span>gestión</span></div>
-  <div class="nav-section">Principal</div>
+<aside class="sidebar" id="sidebar" style="background:#1e2a3a;border-right:1px solid #2d3d52;">
+  <div class="logo" style="color:#60a5fa;">servi<span style="color:#e2e8f0;">gestión</span></div>
+  <div class="nav-section" style="color:#64748b;">Principal</div>
   <button class="nav-item active" onclick="showView('servicios',this);closeSidebar()"><span>🗂</span> Servicios</button>
   <button class="nav-item" onclick="showView('facturacion',this);closeSidebar()"><span>🧾</span> Facturación</button>
   <button class="nav-item" onclick="showView('cobros',this);closeSidebar()"><span>💰</span> Cobros</button>
   <button class="nav-item" onclick="showView('resumen',this);closeSidebar()"><span>📊</span> Resumen</button>
-  <div class="nav-section">Maestros</div>
+  <div class="nav-section" style="color:#64748b;">Maestros</div>
   <button class="nav-item" onclick="showView('maestros',this);closeSidebar()"><span>👥</span> Clientes &amp; Prop.</button>
 </aside>
 
@@ -250,6 +236,7 @@ td{padding:11px 14px;white-space:nowrap;}
   <div class="kpi-grid" id="kpi-grid"></div>
   <div class="filters">
     <input class="form-input" id="filter-search" placeholder="🔍  Buscar…" oninput="renderTable()">
+    <select class="form-select" id="filter-mes" onchange="renderTable()"><option value="">Todos los meses</option></select>
     <select class="form-select" id="filter-cliente" onchange="renderTable()"><option value="">Todos los clientes</option></select>
     <select class="form-select" id="filter-propiedad" onchange="renderTable()" style="max-width:220px"><option value="">Todas las propiedades</option></select>
     <select class="form-select" id="filter-factura" onchange="renderTable()">
@@ -508,27 +495,7 @@ td{padding:11px 14px;white-space:nowrap;}
 </div>
 </div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, doc, setDoc, getDocs, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDiv5SbDfveNgrEoYUmwMKlU6PF90m6OSk",
-  authDomain: "mhc-app-184e9.firebaseapp.com",
-  projectId: "mhc-app-184e9",
-  storageBucket: "mhc-app-184e9.firebasestorage.app",
-  messagingSenderId: "564434438421",
-  appId: "1:564434438421:web:a4628396a190fd894b011c"
-};
-
-const firebaseApp = initializeApp(firebaseConfig);
-const db = getFirestore(firebaseApp);
-
-// ── UTILS (definidas primero para que estén disponibles en todo el módulo) ──
-function fmt(n){ if(!n&&n!==0)return'—'; return new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR'}).format(n); }
-function fmtDate(d){ if(!d)return'—'; return new Date(d+'T00:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'}); }
-window.fmt=fmt; window.fmtDate=fmtDate;
-
+<script>
 // ══════════════════════════════════════
 // DATA
 // ══════════════════════════════════════
@@ -545,6 +512,7 @@ const EXTRAS_CAT=[
   {key:'compras',    label:'Compras',    icon:'🛒', defaultPrice:25, hasImporte:true},
 ];
 
+// Real property data: { code, name, precioNormal, precioIntermedia }
 const PROP_DATA=[
   {code:'ES0087A',  name:'Alcudia Garden & Beach',              precioNormal:184.54, precioIntermedia:0},
   {code:'ES0197A',  name:'Moderne Villa mit Meerblick in Bonaire',precioNormal:252.73,precioIntermedia:0},
@@ -568,74 +536,108 @@ function uid(){ return Date.now().toString(36)+Math.random().toString(36).substr
 function getIva(){ return parseFloat(document.getElementById('iva-pct')?.value||localStorage.getItem('sg_iva')||21)||21; }
 function saveIva(){ localStorage.setItem('sg_iva', document.getElementById('iva-pct')?.value||21); }
 
-// ── FIREBASE SAVE / DELETE ──
-async function saveServicios(){
-  for(const s of servicios){
-    if(!s.id) s.id=uid();
-    await setDoc(doc(db,'servicios',s.id), s);
-  }
-}
-async function saveClientes(){
-  for(const c of clientes){
-    if(!c.id) c.id=uid();
-    await setDoc(doc(db,'clientes',c.id), c);
-  }
-}
-async function saveProps(){
-  for(const p of propiedades){
-    if(!p.id) p.id=uid();
-    await setDoc(doc(db,'propiedades',p.id), p);
-  }
-}
-async function deleteServicio(id){ await deleteDoc(doc(db,'servicios',id)); }
-async function deleteCliente(id){ await deleteDoc(doc(db,'clientes',id)); }
-async function deleteProp(id){ await deleteDoc(doc(db,'propiedades',id)); }
+function loadData(){
+  try{ servicios   =JSON.parse(localStorage.getItem('sg_servicios')||'[]'); }catch(e){ servicios=[]; }
+  try{ clientes    =JSON.parse(localStorage.getItem('sg_clientes') ||'[]'); }catch(e){ clientes=[]; }
+  try{ propiedades =JSON.parse(localStorage.getItem('sg_props')    ||'[]'); }catch(e){ propiedades=[]; }
 
+  // Always enforce default prices: 25€ for all extras except cristales=0
+  // User edits during a session are kept in _selectedExtras, not in EXTRAS_CAT
+  localStorage.removeItem('sg_extra_prices');
+  EXTRAS_CAT.forEach(e=>{ e.defaultPrice = e.key==='cristales' ? 0 : 25; });
+
+  // Always sync official PROP_DATA into stored properties (preserving user edits)
+  let _changed=false;
+  PROP_DATA.forEach(pd=>{
+    const existing=propiedades.find(p=>p.nombre&&p.nombre.startsWith(pd.code));
+    if(!existing){
+      propiedades.push({id:uid(),nombre:pd.code+' - '+pd.name,direccion:'',clienteId:'',notas:'',precioNormal:pd.precioNormal,precioIntermedia:0});
+      _changed=true;
+    } else {
+      if(!existing.precioNormal){existing.precioNormal=pd.precioNormal;_changed=true;}
+    }
+  });
+  propiedades.sort((a,b)=>a.nombre.localeCompare(b.nombre));
+  if(_changed) saveProps();
+
+  // Always reset clients to official list
+  const _oficialClientes=['Myne','Barbara','Thies','Kim','Anna','Ines','Bianka','Tony'];
+  // Check if list matches - if not, reseed
+  const _nombres=clientes.map(c=>c.nombre);
+  const _match=_oficialClientes.every(n=>_nombres.includes(n)) && clientes.length===_oficialClientes.length;
+  if(!_match){
+    clientes=_oficialClientes.map(n=>({id:uid(),nombre:n,telefono:'',email:'',notas:''}));
+    saveClientes();
+  }
+
+  if(!servicios.length){
+    const p0=propiedades[0]; const p1=propiedades[1];
+    servicios=[
+      {fechaServicio:'2025-03-01',fechaIngreso:'2025-03-01',ocupacion:'Turistas',   empleado:'María García',clienteId:clientes[0].id,propiedadId:p0.id,tipoLimpieza:'Normal',   precioLimpieza:p0.precioNormal,precioIntermedia:0,horas:0,tarifa:0,extras:[],arreglos:'No',detalleArreglos:'',estadoFactura:'Facturado',estadoCobro:'Cobrado',  observaciones:''},
+      {fechaServicio:'2025-03-05',fechaIngreso:'2025-03-04',ocupacion:'Propietario',empleado:'Pedro López', clienteId:clientes[0].id,propiedadId:p1.id,tipoLimpieza:'Profunda', precioLimpieza:0,precioIntermedia:0,horas:0,tarifa:0,extras:[{key:'cristales',label:'Cristales',icon:'🪟',precio:30},{key:'bbq',label:'BBQ',icon:'🍖',precio:25}],arreglos:'No',detalleArreglos:'',estadoFactura:'Pendiente',estadoCobro:'Pendiente',observaciones:''},
+      {fechaServicio:'2025-03-08',fechaIngreso:'2025-03-07',ocupacion:'',           empleado:'María García',clienteId:'',            propiedadId:p0.id,tipoLimpieza:'Inicial/Obra',precioLimpieza:0,precioIntermedia:0,horas:6,tarifa:20,extras:[{key:'lavanderia',label:'Lavandería',icon:'👕',precio:25}],arreglos:'No',detalleArreglos:'',estadoFactura:'Pendiente',estadoCobro:'Pendiente',observaciones:''},
+    ];
+    saveServicios();
+  }
+}
+
+function saveServicios(){ _fbSave('servicios', servicios); }
+function saveClientes() { _fbSave('clientes',  clientes);  }
+function saveProps()    { _fbSave('propiedades', propiedades); }
 function getCliente(id)   { return clientes.find(c=>c.id===id)||null; }
 function getPropiedad(id) { return propiedades.find(p=>p.id===id)||null; }
 
-// ── LOAD DATA FROM FIREBASE ──
-async function loadData(){
-  // Clientes
-  const cSnap = await getDocs(collection(db,'clientes'));
-  clientes = cSnap.docs.map(d=>d.data());
+// Firebase helpers (usamos window.db que se define en el script de Firebase más abajo)
+function _fbSave(col, arr){
+  if(!window.db) return;
+  arr.forEach(item=>{
+    if(!item.id) item.id=uid();
+    window.db.collection(col).doc(item.id).set(item);
+  });
+}
+function _fbDelete(col, id){
+  if(!window.db) return;
+  window.db.collection(col).doc(id).delete();
+}
 
-  // Propiedades
-  const pSnap = await getDocs(collection(db,'propiedades'));
+async function loadData(){
+  if(!window.db){ setTimeout(loadData, 300); return; }
+  const [sSnap,cSnap,pSnap] = await Promise.all([
+    window.db.collection('servicios').get(),
+    window.db.collection('clientes').get(),
+    window.db.collection('propiedades').get()
+  ]);
+  servicios   = sSnap.docs.map(d=>d.data());
+  clientes    = cSnap.docs.map(d=>d.data());
   propiedades = pSnap.docs.map(d=>d.data());
 
-  // Seed default data if empty
+  // Seed clientes si vacío
   if(!clientes.length){
-    const _oficialClientes=['Myne','Bjorn'];
-    clientes=_oficialClientes.map(n=>({id:uid(),nombre:n,telefono:'',email:'',notas:''}));
-    await saveClientes();
+    const nombres=['Myne','Barbara','Thies','Kim','Anna','Ines','Bianka','Tony'];
+    clientes=nombres.map(n=>({id:uid(),nombre:n,telefono:'',email:'',notas:''}));
+    saveClientes();
   }
+  // Seed propiedades si vacío
   if(!propiedades.length){
-    propiedades=PROP_DATA.map(p=>({id:uid(),code:p.code,nombre:`${p.code} - ${p.name}`,clienteId:'',direccion:p.name,precioNormal:p.precioNormal,precioIntermedia:p.precioIntermedia,notas:''}));
-    await saveProps();
+    propiedades=PROP_DATA.map(p=>({id:uid(),nombre:p.code+' - '+p.name,direccion:p.name,clienteId:'',notas:'',precioNormal:p.precioNormal,precioIntermedia:0}));
+    saveProps();
   }
 
-  // Servicios
-  const sSnap = await getDocs(collection(db,'servicios'));
-  servicios = sSnap.docs.map(d=>d.data());
+  EXTRAS_CAT.forEach(e=>{ e.defaultPrice = e.key==='cristales' ? 0 : 25; });
 
-  renderTable();
-  renderKPIs();
-  renderMaestros();
-  renderFacturacion();
-  renderCobros();
-  renderResumen();
+  renderTable(); renderKPIs(); renderMaestros();
+  renderFacturacion(); renderCobros(); renderResumen();
 
-  // ── REALTIME LISTENERS ──
-  onSnapshot(collection(db,'servicios'), snap=>{
+  // Listeners en tiempo real
+  window.db.collection('servicios').onSnapshot(snap=>{
     servicios=snap.docs.map(d=>d.data());
     renderTable(); renderKPIs(); renderFacturacion(); renderCobros(); renderResumen();
   });
-  onSnapshot(collection(db,'clientes'), snap=>{
+  window.db.collection('clientes').onSnapshot(snap=>{
     clientes=snap.docs.map(d=>d.data());
     renderTable(); renderMaestros(); renderFacturacion();
   });
-  onSnapshot(collection(db,'propiedades'), snap=>{
+  window.db.collection('propiedades').onSnapshot(snap=>{
     propiedades=snap.docs.map(d=>d.data());
     renderTable(); renderMaestros();
   });
@@ -676,11 +678,6 @@ function renderKPIs(){
     <div class="kpi-card"><div class="kpi-label">Base total s/IVA</div><div class="kpi-value green">${fmt(ti)}</div><div class="kpi-sub">acumulado</div></div>
     <div class="kpi-card"><div class="kpi-label">Cobrado</div><div class="kpi-value teal">${fmt(co)}</div><div class="kpi-sub">recibido</div></div>
     <div class="kpi-card"><div class="kpi-label">Pendiente</div><div class="kpi-value red">${fmt(ti-co)}</div><div class="kpi-sub">por cobrar</div></div>`;
-  // Force 2-column grid on all devices
-  const kg=document.getElementById('kpi-grid');
-  if(window.innerWidth<=768||screen.width<=768||/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)){
-    kg.style.gridTemplateColumns='repeat(2,1fr)';
-  }
 }
 
 // ══════════════════════════════════════
@@ -688,10 +685,20 @@ function renderKPIs(){
 // ══════════════════════════════════════
 function renderTable(){
   const search=(document.getElementById('filter-search')?.value||'').toLowerCase();
+  const fMes=document.getElementById('filter-mes')?.value||'';
   const fCli=document.getElementById('filter-cliente')?.value||'';
   const fProp=document.getElementById('filter-propiedad')?.value||'';
   const fFact=document.getElementById('filter-factura')?.value||'';
   const fCobro=document.getElementById('filter-cobro')?.value||'';
+  const selM=document.getElementById('filter-mes');
+  const prevM=selM.value;
+  const meses=[...new Set(servicios.map(s=>s.fechaServicio?.substring(0,7)).filter(Boolean))].sort().reverse();
+  selM.innerHTML='<option value="">Todos los meses</option>'+meses.map(m=>{
+    const [y,mo]=m.split('-');
+    const label=new Date(y,mo-1,1).toLocaleDateString('es-ES',{month:'long',year:'numeric'});
+    return `<option value="${m}">${label.charAt(0).toUpperCase()+label.slice(1)}</option>`;
+  }).join('');
+  selM.value=prevM;
   const sel=document.getElementById('filter-cliente');
   const prev=sel.value;
   sel.innerHTML='<option value="">Todos los clientes</option>'+clientes.map(c=>`<option value="${c.id}">${c.nombre}</option>`).join('');
@@ -703,24 +710,22 @@ function renderTable(){
   const data=servicios.map((s,i)=>({...s,_i:i})).filter(s=>{
     const c=getCliente(s.clienteId);const p=getPropiedad(s.propiedadId);
     const txt=((c?.nombre||'')+(p?.nombre||'')+(s.empleado||'')).toLowerCase();
-    return(!search||txt.includes(search))&&(!fCli||s.clienteId===fCli)&&(!fProp||s.propiedadId===fProp)&&(!fFact||s.estadoFactura===fFact)&&(!fCobro||s.estadoCobro===fCobro);
+    const mesOk=!fMes||(s.fechaServicio&&s.fechaServicio.startsWith(fMes));
+    return mesOk&&(!search||txt.includes(search))&&(!fCli||s.clienteId===fCli)&&(!fProp||s.propiedadId===fProp)&&(!fFact||s.estadoFactura===fFact)&&(!fCobro||s.estadoCobro===fCobro);
   });
-  const isMobile=window.innerWidth<=768||screen.width<=768||/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const tbody=document.getElementById('tabla-body');
+  const isMobile=window.innerWidth<=768||/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
   if(isMobile){
-    // Render as cards on mobile
-    const container=document.getElementById('tabla-body');
-    const wrap=document.querySelector('.table-wrap');
-    wrap.style.background='transparent';wrap.style.border='none';wrap.style.borderRadius='0';
-    if(!data.length){container.innerHTML='<tr><td><div class="empty"><div class="empty-icon">📋</div>Sin resultados</div></td></tr>';renderKPIs();return;}
-    container.innerHTML=data.map(s=>{
+    document.querySelector('.table-wrap').style.cssText='background:transparent;border:none;border-radius:0;';
+    document.querySelector('#view-servicios thead').style.display='none';
+    if(!data.length){tbody.innerHTML='<tr><td style="border:none;display:block"><div class="empty"><div class="empty-icon">📋</div>Sin resultados</div></td></tr>';renderKPIs();return;}
+    tbody.innerHTML=data.map(s=>{
       const c=getCliente(s.clienteId);const p=getPropiedad(s.propiedadId);
       return `<tr><td style="padding:0 0 10px 0;border:none;display:block">
         <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;">
           <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-            <div>
-              <div style="font-weight:700;font-size:14px;color:var(--text)">${c?.nombre||'—'}</div>
-              <div style="font-size:12px;color:var(--muted);margin-top:2px">${p?.nombre||'—'}</div>
-            </div>
+            <div><div style="font-weight:700;font-size:14px">${c?.nombre||'—'}</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px">${p?.nombre||'—'}</div></div>
             <div style="font-weight:700;font-size:16px;color:var(--accent)">${fmt(calcBase(s))}</div>
           </div>
           <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
@@ -738,14 +743,9 @@ function renderTable(){
         </div>
       </td></tr>`;
     }).join('');
-    // Hide thead on mobile
-    document.querySelector('#view-servicios thead').style.display='none';
   } else {
-    // Desktop table
-    const wrap=document.querySelector('.table-wrap');
-    wrap.style.background='';wrap.style.border='';wrap.style.borderRadius='';
+    document.querySelector('.table-wrap').style.cssText='';
     document.querySelector('#view-servicios thead').style.display='';
-    const tbody=document.getElementById('tabla-body');
     if(!data.length){tbody.innerHTML='<tr><td colspan="11"><div class="empty"><div class="empty-icon">📋</div>Sin resultados</div></td></tr>';renderKPIs();return;}
     tbody.innerHTML=data.map(s=>{
       const c=getCliente(s.clienteId);const p=getPropiedad(s.propiedadId);
@@ -1010,7 +1010,7 @@ function fillServForm(s){
   recalcTotal();
 }
 
-async function guardarServicio(){
+function guardarServicio(){
   const fs=document.getElementById('f-fecha-servicio').value;
   const fi=document.getElementById('f-fecha-ingreso').value;
   const cli=document.getElementById('f-cliente').value;
@@ -1042,14 +1042,14 @@ async function guardarServicio(){
     estadoCobro:document.getElementById('f-estado-cobro').value,
     observaciones:document.getElementById('f-observaciones').value.trim(),
   };
-  await setDoc(doc(db,'servicios',obj.id), obj);
   editServIdx=-1;
+  window.db.collection('servicios').doc(obj.id).set(obj);
   closeServModal();
 }
-async function delServ(idx){
+function delServ(idx){
   if(!confirm('¿Eliminar este servicio?'))return;
   const s=servicios[idx];
-  if(s?.id) await deleteDoc(doc(db,'servicios',s.id));
+  if(s?.id) window.db.collection('servicios').doc(s.id).delete();
 }
 
 // ══════════════════════════════════════
@@ -1140,13 +1140,13 @@ function renderCobros(){
     </tr>`;
   }).join('');
 }
-async function marcarCobrado(i){
+function marcarCobrado(i){
   servicios[i].estadoCobro='Cobrado';
-  await setDoc(doc(db,'servicios',servicios[i].id), servicios[i]);
+  window.db.collection('servicios').doc(servicios[i].id).set(servicios[i]);
 }
-async function marcarFacturado(i){
+function marcarFacturado(i){
   servicios[i].estadoFactura='Facturado';
-  await setDoc(doc(db,'servicios',servicios[i].id), servicios[i]);
+  window.db.collection('servicios').doc(servicios[i].id).set(servicios[i]);
 }
 
 // ══════════════════════════════════════
@@ -1169,19 +1169,19 @@ function openEditCliente(idx){
   document.getElementById('modal-cliente').classList.add('open');
 }
 function closeClienteModal(){ document.getElementById('modal-cliente').classList.remove('open'); }
-async function guardarCliente(){
+function guardarCliente(){
   const nombre=document.getElementById('cli-nombre').value.trim();
   if(!nombre){alert('El nombre es obligatorio.');return;}
   const obj={id:editCliIdx===-1?uid():clientes[editCliIdx].id,nombre,telefono:document.getElementById('cli-telefono').value.trim(),email:document.getElementById('cli-email').value.trim(),notas:document.getElementById('cli-notas').value.trim()};
-  await setDoc(doc(db,'clientes',obj.id), obj);
   editCliIdx=-1;
+  window.db.collection('clientes').doc(obj.id).set(obj);
   closeClienteModal();
   if(fromServ){fillCliSel('f-cliente',obj.id);fillPropSel('','');}
 }
-async function delCliente(idx){
+function delCliente(idx){
   if(!confirm('¿Eliminar cliente?'))return;
   const c=clientes[idx];
-  if(c?.id) await deleteDoc(doc(db,'clientes',c.id));
+  if(c?.id) window.db.collection('clientes').doc(c.id).delete();
 }
 
 function openPropModal(fromServicio=false){
@@ -1208,7 +1208,7 @@ function openEditProp(idx){
   document.getElementById('modal-prop').classList.add('open');
 }
 function closePropModal(){ document.getElementById('modal-prop').classList.remove('open'); }
-async function guardarPropiedad(){
+function guardarPropiedad(){
   const nombre=document.getElementById('prop-nombre').value.trim();
   if(!nombre){alert('El nombre / código es obligatorio.');return;}
   const obj={
@@ -1220,15 +1220,15 @@ async function guardarPropiedad(){
     precioNormal:parseFloat(document.getElementById('prop-precio-normal').value)||0,
     precioIntermedia:parseFloat(document.getElementById('prop-precio-intermedia').value)||0,
   };
-  await setDoc(doc(db,'propiedades',obj.id), obj);
   editPropIdx=-1;
+  window.db.collection('propiedades').doc(obj.id).set(obj);
   closePropModal();
   if(fromServ){fillPropSel('',obj.id);}
 }
-async function delProp(idx){
+function delProp(idx){
   if(!confirm('¿Eliminar propiedad?'))return;
   const p=propiedades[idx];
-  if(p?.id) await deleteDoc(doc(db,'propiedades',p.id));
+  if(p?.id) window.db.collection('propiedades').doc(p.id).delete();
 }
 
 function renderMaestros(){
@@ -1300,10 +1300,10 @@ function renderResumen(){
 }
 
 // ══════════════════════════════════════
-// INIT
+// UTILS
 // ══════════════════════════════════════
-const savedIva=localStorage.getItem('sg_iva');
-if(savedIva&&document.getElementById('iva-pct')) document.getElementById('iva-pct').value=savedIva;
+function fmt(n){ if(!n&&n!==0)return'—'; return new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR'}).format(n); }
+function fmtDate(d){ if(!d)return'—'; return new Date(d+'T00:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'}); }
 
 function toggleSidebar(){
   document.getElementById('sidebar').classList.toggle('open');
@@ -1315,43 +1315,29 @@ function closeSidebar(){
 }
 window.addEventListener('resize',()=>renderTable());
 
-// Mostrar indicador de carga y arrancar Firebase
-document.getElementById('kpi-grid').innerHTML='<div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--muted)">⏳ Conectando con la base de datos...</div>';
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
+const savedIva=localStorage.getItem('sg_iva');
+if(savedIva&&document.getElementById('iva-pct')) document.getElementById('iva-pct').value=savedIva;
+document.getElementById('kpi-grid').innerHTML='<div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--muted)">⏳ Conectando...</div>';
 loadData();
+</script>
 
-// ── EXPONER FUNCIONES AL HTML (necesario con type="module") ──
-window.showView=showView;
-window.openServModal=openServModal;
-window.closeServModal=closeServModal;
-window.guardarServicio=guardarServicio;
-window.delServ=delServ;
-window.onTipoLimpiezaChange=onTipoLimpiezaChange;
-window.onClienteChange=onClienteChange;
-window.recalcTotal=recalcTotal;
-window.openClienteModal=openClienteModal;
-window.closeClienteModal=closeClienteModal;
-window.guardarCliente=guardarCliente;
-window.delCliente=delCliente;
-window.openEditCliente=openEditCliente;
-window.openPropModal=openPropModal;
-window.closePropModal=closePropModal;
-window.openEditProp=openEditProp;
-window.guardarPropiedad=guardarPropiedad;
-window.delProp=delProp;
-window.marcarCobrado=marcarCobrado;
-window.marcarFacturado=marcarFacturado;
-window.renderTable=renderTable;
-window.renderFacturacion=renderFacturacion;
-window.renderCobros=renderCobros;
-window.toggleFactCard=toggleFactCard;
-window.toggleSidebar=toggleSidebar;
-window.closeSidebar=closeSidebar;
-window.saveIva=saveIva;
-window.addExtraFromSelect=addExtraFromSelect;
-window.removeExtra=removeExtra;
-window.updateExtraPrice=updateExtraPrice;
-window.onExtrasSelectChange=onExtrasSelectChange;
-window.onExtraPriceChange=onExtraPriceChange;
+<!-- Firebase compat SDK (funciona sin type=module) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDiv5SbDfveNgrEoYUmwMKlU6PF90m6OSk",
+    authDomain: "mhc-app-184e9.firebaseapp.com",
+    projectId: "mhc-app-184e9",
+    storageBucket: "mhc-app-184e9.firebasestorage.app",
+    messagingSenderId: "564434438421",
+    appId: "1:564434438421:web:a4628396a190fd894b011c"
+  };
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+  window.db = firebase.firestore();
 </script>
 </body>
 </html>
