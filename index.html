@@ -236,6 +236,7 @@ html,body{max-width:100%;overflow-x:hidden;}
   <div class="kpi-grid" id="kpi-grid"></div>
   <div class="filters">
     <input class="form-input" id="filter-search" placeholder="🔍  Buscar…" oninput="renderTable()">
+    <button id="sort-btn" onclick="toggleSort()" style="flex-shrink:0;padding:0 14px;height:38px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">📅 Más reciente</button>
     <select class="form-select" id="filter-mes" onchange="renderTable()"><option value="">Todos los meses</option></select>
     <select class="form-select" id="filter-cliente" onchange="renderTable()"><option value="">Todos los clientes</option></select>
     <select class="form-select" id="filter-propiedad" onchange="renderTable()" style="max-width:220px"><option value="">Todas las propiedades</option></select>
@@ -683,6 +684,13 @@ function renderKPIs(){
 // ══════════════════════════════════════
 // TABLE
 // ══════════════════════════════════════
+let _sortDir='desc';
+function toggleSort(){
+  _sortDir=_sortDir==='desc'?'asc':'desc';
+  document.getElementById('sort-btn').textContent=_sortDir==='desc'?'📅 Más reciente':'📅 Más antiguo';
+  renderTable();
+}
+
 function renderTable(){
   const search=(document.getElementById('filter-search')?.value||'').toLowerCase();
   const fMes=document.getElementById('filter-mes')?.value||'';
@@ -712,6 +720,9 @@ function renderTable(){
     const txt=((c?.nombre||'')+(p?.nombre||'')+(s.empleado||'')).toLowerCase();
     const mesOk=!fMes||(s.fechaServicio&&s.fechaServicio.startsWith(fMes));
     return mesOk&&(!search||txt.includes(search))&&(!fCli||s.clienteId===fCli)&&(!fProp||s.propiedadId===fProp)&&(!fFact||s.estadoFactura===fFact)&&(!fCobro||s.estadoCobro===fCobro);
+  }).sort((a,b)=>{
+    const da=a.fechaServicio||''; const db=b.fechaServicio||'';
+    return _sortDir==='desc'?db.localeCompare(da):da.localeCompare(db);
   });
   const tbody=document.getElementById('tabla-body');
   const isMobile=window.innerWidth<=768||/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
