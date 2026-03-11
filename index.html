@@ -524,6 +524,11 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 const db = getFirestore(firebaseApp);
 
+// ── UTILS (definidas primero para que estén disponibles en todo el módulo) ──
+function fmt(n){ if(!n&&n!==0)return'—'; return new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR'}).format(n); }
+function fmtDate(d){ if(!d)return'—'; return new Date(d+'T00:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'}); }
+window.fmt=fmt; window.fmtDate=fmtDate;
+
 // ══════════════════════════════════════
 // DATA
 // ══════════════════════════════════════
@@ -1293,12 +1298,6 @@ function renderResumen(){
       <div class="list-stat"><span>Sin facturar</span><span class="list-stat-val" style="color:var(--accent3)">${servicios.filter(x=>x.estadoFactura==='Pendiente').length} serv.</span></div>
     </div>`;
 }
-
-// ══════════════════════════════════════
-// UTILS
-// ══════════════════════════════════════
-function fmt(n){ if(!n&&n!==0)return'—'; return new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR'}).format(n); }
-function fmtDate(d){ if(!d)return'—'; return new Date(d+'T00:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'}); }
 
 // ══════════════════════════════════════
 // INIT
