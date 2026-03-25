@@ -231,7 +231,11 @@ html,body{max-width:100%;overflow-x:hidden;}
 <div class="view active" id="view-servicios">
   <div class="page-header">
     <div class="page-title">Servicios</div>
-    <button class="btn btn-primary" onclick="openServModal()">+ Nuevo servicio</button>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-ghost" onclick="exportarExcel('todos')">⬇ Exportar todo</button>
+      <button class="btn btn-ghost" onclick="exportarExcel('filtrado')">⬇ Exportar filtrado</button>
+      <button class="btn btn-primary" onclick="openServModal()">+ Nuevo servicio</button>
+    </div>
   </div>
   <div class="kpi-grid" id="kpi-grid"></div>
   <div class="filters">
@@ -367,7 +371,11 @@ html,body{max-width:100%;overflow-x:hidden;}
     </div>
     <div class="form-group">
       <label class="form-label">Arreglos</label>
-      <select class="form-select" id="f-arreglos"><option value="">— ninguno —</option><option>Sí</option><option>No</option></select>
+      <select class="form-select" id="f-arreglos" onchange="onArreglosChange()"><option value="">— ninguno —</option><option>Sí</option><option>No</option></select>
+    </div>
+    <div class="form-group" id="f-arreglos-importe-group" style="display:none">
+      <label class="form-label">Importe arreglos (€)</label>
+      <input type="number" class="form-input" id="f-arreglos-importe" min="0" step="0.01" placeholder="0.00" oninput="recalcTotal()">
     </div>
     <div class="form-group full">
       <label class="form-label">Detalle arreglos</label>
@@ -412,10 +420,39 @@ html,body{max-width:100%;overflow-x:hidden;}
       <div class="extras-selected" id="extras-selected"></div>
     </div>
 
+    <div class="section-divider">Abastecimiento</div>
+    <div class="extras-section full" id="abast-section" style="grid-column:1/-1">
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <select id="abast-select" class="form-select" style="flex:1;min-width:180px">
+          <option value="">— seleccionar producto —</option>
+          <option>Papel de vater</option>
+          <option>Rollo de cocina</option>
+          <option>Estropajo</option>
+          <option>Bayeta</option>
+          <option>Pastilla Lavadora</option>
+          <option>Pastillas Lavavajillas</option>
+          <option>Bolsa 5 litros</option>
+          <option>Bolsa 10 litros</option>
+          <option>Bolsa 30 litros</option>
+          <option>Bolsa 50 litros</option>
+          <option>Limpia lavavajillas</option>
+          <option>Jabón de manos</option>
+          <option>Fairi</option>
+          <option>Abrillantador</option>
+          <option>Limpialavadoras</option>
+          <option>Tubo CO2</option>
+          <option value="__otro__">➕ Otro</option>
+        </select>
+        <button class="btn btn-ghost btn-sm" onclick="addAbastProduct()" type="button">+ Añadir</button>
+      </div>
+      <div id="abast-selected" style="display:flex;flex-direction:column;gap:7px;margin-top:8px;"></div>
+    </div>
+
     <div class="section-divider">Resumen de precios</div>
     <div class="price-summary">
       <div class="price-row"><span class="label">Limpieza</span><span class="val" id="ps-limpieza">—</span></div>
       <div class="price-row"><span class="label">Servicios extra</span><span class="val" id="ps-extras">—</span></div>
+      <div class="price-row" id="ps-arreglos-row" style="display:none"><span class="label">Arreglos</span><span class="val" id="ps-arreglos">—</span></div>
       <div class="price-row subtotal"><span class="label">Base imponible (sin IVA)</span><span class="val" id="ps-base">—</span></div>
       <div class="price-row iva-row"><span class="label">IVA (<span id="ps-iva-pct">21</span>%)</span><span class="val" id="ps-iva">—</span></div>
       <div class="price-row total-row"><span>TOTAL</span><span id="ps-total">—</span></div>
@@ -511,6 +548,7 @@ const EXTRAS_CAT=[
   {key:'dog',        label:'Dog',        icon:'🐕', defaultPrice:25},
   {key:'bbq',        label:'BBQ',        icon:'🍖', defaultPrice:25},
   {key:'compras',    label:'Compras',    icon:'🛒', defaultPrice:25, hasImporte:true},
+  {key:'otro',       label:'Otro',       icon:'➕', defaultPrice:0,  isOtro:true},
 ];
 
 // Real property data: { code, name, precioNormal, precioIntermedia }
@@ -652,7 +690,8 @@ function calcBase(s){
     lim=parseFloat(s.precioLimpieza)||0;
   }
   const extras=(s.extras||[]).reduce((a,e)=>a+(parseFloat(e.precio)||0)+(parseFloat(e.importe)||0),0);
-  return lim+extras;
+  const arreglos=parseFloat(s.arreglosImporte)||0;
+  return lim+extras+arreglos;
 }
 function calcIvaAmt(s){ return calcBase(s)*getIva()/100; }
 function calcTotal(s){ return calcBase(s)+calcIvaAmt(s); }
@@ -806,8 +845,8 @@ function buildExtrasGrid(savedExtras){
 function renderExtrasSelect(){
   const sel=document.getElementById('extras-select');
   if(!sel) return;
-  // Only show extras not yet added
-  const available=EXTRAS_CAT.filter(e=>!_selectedExtras.some(x=>x.key===e.key));
+  // Only show extras not yet added (except 'otro' which can be added multiple times)
+  const available=EXTRAS_CAT.filter(e=>e.key==='otro'||!_selectedExtras.some(x=>x.key===e.key));
   sel.innerHTML='<option value="">— seleccionar servicio —</option>'+
     available.map(e=>`<option value="${e.key}">${e.icon} ${e.label}${e.defaultPrice?' ('+fmt(e.defaultPrice)+')':''}</option>`).join('');
 }
@@ -816,8 +855,13 @@ function onExtrasSelectChange(sel){
   const key=sel.value;
   if(!key) return;
   const cat=EXTRAS_CAT.find(e=>e.key===key);
-  if(cat && !_selectedExtras.find(x=>x.key===key)){
-    _selectedExtras.push({key:cat.key,label:cat.label,icon:cat.icon,precio:cat.defaultPrice||0});
+  if(cat){
+    if(key==='otro'){
+      // 'otro' gets a unique key so multiple instances are independent
+      _selectedExtras.push({key:'otro_'+uid(),label:'',icon:'➕',precio:0,isOtro:true});
+    } else if(!_selectedExtras.find(x=>x.key===key)){
+      _selectedExtras.push({key:cat.key,label:cat.label,icon:cat.icon,precio:cat.defaultPrice||0});
+    }
   }
   renderExtrasSelected();
   renderExtrasSelect();
@@ -830,8 +874,26 @@ function renderExtrasSelected(){
   if(!cont) return;
   if(!_selectedExtras.length){cont.innerHTML='';return;}
   cont.innerHTML=_selectedExtras.map((e,i)=>{
-    const cat=EXTRAS_CAT.find(x=>x.key===e.key);
     const isCompras=e.key==='compras';
+    const isOtro=e.isOtro||false;
+    if(isOtro){
+      return `<div class="extra-row" style="flex-wrap:wrap;gap:8px">
+        <div class="extra-row-label" style="width:100%;justify-content:space-between">
+          <span style="display:flex;align-items:center;gap:7px"><span>➕</span><span style="color:var(--muted);font-size:12px">Otro</span></span>
+          <button class="extra-row-remove" onclick="removeExtra(${i})" title="Quitar">✕</button>
+        </div>
+        <div style="flex:1;min-width:160px">
+          <input type="text" value="${e.label||''}" placeholder="Descripción…" style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--text);font-family:inherit;font-size:13px;"
+            oninput="onOtroDescChange(${i},this.value)">
+        </div>
+        <div class="extra-row-price" style="flex:0 0 auto">
+          <input type="number" value="${e.precio!=null&&e.precio!==0?e.precio:''}" min="0" step="0.01" placeholder="0.00"
+            oninput="onExtraPriceChange(${i},this.value,'precio')">
+          <span class="currency">€</span>
+        </div>
+        <div class="extra-row-subtotal">${e.precio>0?fmt(e.precio):'—'}</div>
+      </div>`;
+    }
     return `<div class="extra-row" style="flex-wrap:wrap;gap:8px">
       <div class="extra-row-label" style="width:100%;justify-content:space-between">
         <span style="display:flex;align-items:center;gap:7px"><span>${e.icon}</span><span>${e.label}</span></span>
@@ -852,6 +914,10 @@ function renderExtrasSelected(){
       <div class="extra-row-subtotal">${isCompras?(e.precio||0)+(e.importe||0)>0?fmt((e.precio||0)+(e.importe||0)):'—':e.precio>0?fmt(e.precio):'—'}</div>
     </div>`;
   }).join('');
+}
+
+function onOtroDescChange(idx,val){
+  _selectedExtras[idx].label=val;
 }
 
 function onExtraPriceChange(idx,val,field='precio'){
@@ -886,7 +952,69 @@ function getExtrasFromForm(){
     key:e.key,label:e.label,icon:e.icon,
     precio:e.precio||0,
     importe:e.importe||0,
+    ...(e.isOtro?{isOtro:true}:{}),
   }));
+}
+
+// ══════════════════════════════════════
+// ABASTECIMIENTO
+// ══════════════════════════════════════
+let _abastProducts=[];
+
+function addAbastProduct(){
+  const sel=document.getElementById('abast-select');
+  const nombre=sel.value;
+  if(!nombre) return;
+  if(nombre==='__otro__'){
+    _abastProducts.push({nombre:'',cantidad:1,isOtro:true});
+  } else {
+    _abastProducts.push({nombre,cantidad:1});
+  }
+  renderAbast();
+  sel.value='';
+}
+
+function renderAbast(){
+  const cont=document.getElementById('abast-selected');
+  if(!cont) return;
+  if(!_abastProducts.length){cont.innerHTML='';return;}
+  cont.innerHTML=_abastProducts.map((p,i)=>`
+    <div style="display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;flex-wrap:wrap;">
+      ${p.isOtro
+        ? `<input type="text" value="${p.nombre||''}" placeholder="Descripción del producto…" style="flex:1;min-width:140px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:5px 10px;color:var(--text);font-family:inherit;font-size:13px;" oninput="_abastProducts[${i}].nombre=this.value">`
+        : `<span style="flex:1;font-size:13px;font-weight:500">📦 ${p.nombre}</span>`
+      }
+      <span style="font-size:11px;color:var(--muted);margin-right:2px">Cant.</span>
+      <input type="number" value="${p.cantidad}" min="1" step="1" style="width:64px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-family:inherit;font-size:13px;"
+        oninput="_abastProducts[${i}].cantidad=parseInt(this.value)||1">
+      <button onclick="removeAbast(${i})" style="background:none;border:none;color:var(--accent3);cursor:pointer;font-size:15px;padding:0 4px;line-height:1;">✕</button>
+    </div>`).join('');
+}
+
+function removeAbast(idx){
+  _abastProducts.splice(idx,1);
+  renderAbast();
+}
+
+function clearAbast(){
+  _abastProducts=[];
+  renderAbast();
+}
+
+function fillAbast(items){
+  _abastProducts=(items||[]).map(p=>({...p}));
+  renderAbast();
+}
+
+function getAbastFromForm(){
+  return _abastProducts.map(p=>({nombre:p.nombre||'',cantidad:p.cantidad||1,...(p.isOtro?{isOtro:true}:{})}));
+}
+
+function onArreglosChange(){
+  const val=document.getElementById('f-arreglos').value;
+  const grp=document.getElementById('f-arreglos-importe-group');
+  if(grp) grp.style.display=(val==='Sí')?'':'none';
+  if(val!=='Sí'){const el=document.getElementById('f-arreglos-importe');if(el)el.value='';}
 }
 
 function onTipoLimpiezaChange(){
@@ -952,11 +1080,15 @@ function recalcTotal(){
   }
   const extras=_selectedExtras||[];
   const extTotal=extras.reduce((a,e)=>a+(e.precio||0)+(e.importe||0),0);
-  const base=lim+extTotal;
+  const arreglosImp=parseFloat(document.getElementById('f-arreglos-importe')?.value)||0;
+  const base=lim+extTotal+arreglosImp;
   const ivaPct=getIva();
   const ivaAmt=base*ivaPct/100;
   document.getElementById('ps-limpieza').textContent=lim?fmt(lim):'—';
   document.getElementById('ps-extras').textContent=extTotal?fmt(extTotal):'—';
+  const psArr=document.getElementById('ps-arreglos-row');
+  const psArrVal=document.getElementById('ps-arreglos');
+  if(psArr&&psArrVal){psArr.style.display=arreglosImp?'':'none';psArrVal.textContent=arreglosImp?fmt(arreglosImp):'—';}
   document.getElementById('ps-base').textContent=fmt(base);
   document.getElementById('ps-iva-pct').textContent=ivaPct;
   document.getElementById('ps-iva').textContent=fmt(ivaAmt);
@@ -988,10 +1120,12 @@ function clearServForm(){
   fillPropSel('','');
   document.getElementById('f-tipo-limpieza').value='';
   document.getElementById('f-arreglos').value='';
+  const agi=document.getElementById('f-arreglos-importe');if(agi)agi.value='';
+  const agg=document.getElementById('f-arreglos-importe-group');if(agg)agg.style.display='none';
   document.getElementById('f-estado-factura').value='Pendiente';
   document.getElementById('f-estado-cobro').value='Pendiente';
   ['f-precio-limpieza','f-precio-profunda','f-horas','f-tarifa'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  onTipoLimpiezaChange(); recalcTotal();
+  onTipoLimpiezaChange(); recalcTotal(); clearAbast();
 }
 
 function fillServForm(s){
@@ -1003,6 +1137,8 @@ function fillServForm(s){
   fillPropSel('',s.propiedadId||'');
   document.getElementById('f-tipo-limpieza').value=s.tipoLimpieza||'';
   document.getElementById('f-arreglos').value=s.arreglos||'';
+  onArreglosChange();
+  const ai=document.getElementById('f-arreglos-importe');if(ai) ai.value=s.arreglosImporte||'';
   document.getElementById('f-detalle-arreglos').value=s.detalleArreglos||'';
   document.getElementById('f-estado-factura').value=s.estadoFactura||'Pendiente';
   document.getElementById('f-estado-cobro').value=s.estadoCobro||'Pendiente';
@@ -1018,6 +1154,7 @@ function fillServForm(s){
     const p=document.getElementById('f-precio-limpieza');if(p)p.value=s.precioLimpieza||'';
   }
   buildExtrasGrid(s.extras||[]);
+  fillAbast(s.abastecimiento||[]);
   recalcTotal();
 }
 
@@ -1047,7 +1184,9 @@ function guardarServicio(){
     propiedadId:document.getElementById('f-propiedad').value,
     tipoLimpieza:tipo,precioLimpieza,horas,tarifa,
     extras:getExtrasFromForm(),
+    abastecimiento:getAbastFromForm(),
     arreglos:document.getElementById('f-arreglos').value,
+    arreglosImporte:parseFloat(document.getElementById('f-arreglos-importe')?.value)||0,
     detalleArreglos:document.getElementById('f-detalle-arreglos').value.trim(),
     estadoFactura:document.getElementById('f-estado-factura').value,
     estadoCobro:document.getElementById('f-estado-cobro').value,
@@ -1316,6 +1455,75 @@ function renderResumen(){
 function fmt(n){ if(!n&&n!==0)return'—'; return new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR'}).format(n); }
 function fmtDate(d){ if(!d)return'—'; return new Date(d+'T00:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'}); }
 
+// ══════════════════════════════════════
+// EXPORTAR EXCEL
+// ══════════════════════════════════════
+function exportarExcel(modo='todos'){
+  let data=servicios;
+  if(modo==='filtrado'){
+    const search=(document.getElementById('filter-search')?.value||'').toLowerCase();
+    const fMes=document.getElementById('filter-mes')?.value||'';
+    const fCli=document.getElementById('filter-cliente')?.value||'';
+    const fProp=document.getElementById('filter-propiedad')?.value||'';
+    const fFact=document.getElementById('filter-factura')?.value||'';
+    const fCobro=document.getElementById('filter-cobro')?.value||'';
+    data=servicios.filter(s=>{
+      const c=getCliente(s.clienteId);const p=getPropiedad(s.propiedadId);
+      const txt=((c?.nombre||'')+(p?.nombre||'')+(s.empleado||'')).toLowerCase();
+      const mesOk=!fMes||(s.fechaServicio&&s.fechaServicio.startsWith(fMes));
+      return mesOk&&(!search||txt.includes(search))&&(!fCli||s.clienteId===fCli)&&(!fProp||s.propiedadId===fProp)&&(!fFact||s.estadoFactura===fFact)&&(!fCobro||s.estadoCobro===fCobro);
+    });
+  }
+  if(!data.length){alert('No hay servicios para exportar.');return;}
+  const rows=data.map(s=>{
+    const c=getCliente(s.clienteId);
+    const p=getPropiedad(s.propiedadId);
+    // Limpieza precio
+    let precioLimp=0;
+    if(s.tipoLimpieza==='Inicial/Obra'||s.tipoLimpieza==='Check'){
+      precioLimp=(parseFloat(s.horas)||0)*(parseFloat(s.tarifa)||0);
+    } else {
+      precioLimp=parseFloat(s.precioLimpieza)||0;
+    }
+    // Extras
+    const extrasStr=(s.extras||[]).map(e=>`${e.icon} ${e.label}: ${e.precio||0}€${e.importe?(' + compra: '+e.importe+'€'):''}`).join(' | ');
+    const extrasTotalBase=(s.extras||[]).reduce((a,e)=>a+(parseFloat(e.precio)||0),0);
+    const extrasImporteCompras=(s.extras||[]).reduce((a,e)=>a+(parseFloat(e.importe)||0),0);
+    // Abastecimiento
+    const abastStr=(s.abastecimiento||[]).map(a=>`${a.nombre}: ${a.cantidad}`).join(' | ');
+    return {
+      'F. Servicio':   s.fechaServicio||'',
+      'F. Ingreso':    s.fechaIngreso||'',
+      'Cliente':       c?.nombre||'',
+      'Propiedad':     p?.nombre||'',
+      'Empleado':      s.empleado||'',
+      'Ocupación':     s.ocupacion||'',
+      'Tipo Limpieza': s.tipoLimpieza||'',
+      'Precio Limpieza (€)': precioLimp||'',
+      'Horas':         (s.tipoLimpieza==='Inicial/Obra'||s.tipoLimpieza==='Check')?s.horas||'':'',
+      'Tarifa/h (€)':  (s.tipoLimpieza==='Inicial/Obra'||s.tipoLimpieza==='Check')?s.tarifa||'':'',
+      'Arreglos':      s.arreglos||'',
+      'Importe Arreglos (€)': s.arreglosImporte||'',
+      'Detalle Arreglos': s.detalleArreglos||'',
+      'Servicios Extra': extrasStr,
+      'Total Extra (€)': extrasTotalBase||'',
+      'Importe Compras (€)': extrasImporteCompras||'',
+      'Abastecimiento': abastStr,
+      'Base s/IVA (€)': calcBase(s),
+    };
+  });
+
+  const ws=XLSX.utils.json_to_sheet(rows);
+  // Ancho de columnas automático
+  const cols=Object.keys(rows[0]).map(k=>({wch:Math.max(k.length,18)}));
+  ws['!cols']=cols;
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Servicios');
+  const fecha=new Date().toISOString().slice(0,10);
+  const sufijo=modo==='filtrado'?'_filtrado':'_completo';
+  XLSX.writeFile(wb,`ServiGestion${sufijo}_${fecha}.xlsx`);
+}
+
 function toggleSidebar(){
   document.getElementById('sidebar').classList.toggle('open');
   document.getElementById('sidebar-overlay').classList.toggle('open');
@@ -1334,6 +1542,9 @@ if(savedIva&&document.getElementById('iva-pct')) document.getElementById('iva-pc
 document.getElementById('kpi-grid').innerHTML='<div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--muted)">⏳ Conectando...</div>';
 loadData();
 </script>
+
+<!-- SheetJS para exportar Excel -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <!-- Firebase compat SDK (funciona sin type=module) -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
