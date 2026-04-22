@@ -1,0 +1,29 @@
+on:
+  schedule:
+    # El día 1 de cada mes a las 8:00 AM hora española (7:00 UTC en verano)
+    - cron: '0 7 1 * *'
+  workflow_dispatch:   # permite ejecutarlo manualmente desde GitHub si hace falta
+
+jobs:
+  generar-resumen-mensual:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar dependencias
+        run: |
+          pip install firebase-admin reportlab google-auth
+
+      - name: Generar y enviar resumen mensual
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+        run: |
+          python scripts/generate_prefactura.py mensual
