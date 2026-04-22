@@ -30,8 +30,8 @@ from reportlab.lib import colors
 # ─────────────────────────────────────────
 EMAIL_FROM    = "info@mallorcahomecheckers.com"
 EMAIL_TO      = "info@mallorcahomecheckers.com"
-SMTP_SERVER   = "smtp.gmail.com"
-SMTP_PORT     = 587
+SMTP_SERVER   = "smtpout.secureserver.net"
+SMTP_PORT     = 465
 GMAIL_APP_PWD = os.environ.get("GMAIL_APP_PASSWORD", "")
 
 # ─────────────────────────────────────────
@@ -442,8 +442,9 @@ ServiGestión — Mallorca Home Checkers
     part.add_header("Content-Disposition", f'attachment; filename="{os.path.basename(pdf_path)}"')
     msg.attach(part)
 
-    with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
-        server.starttls()
+    import ssl
+    context = ssl.create_default_context()
+    with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT, context=context) as server:
         server.login(EMAIL_FROM, GMAIL_APP_PWD)
         server.send_message(msg)
     print(f"✅ Email enviado a {EMAIL_TO}")
