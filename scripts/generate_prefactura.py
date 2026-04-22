@@ -436,7 +436,7 @@ ServiGestión — Mallorca Home Checkers
     msg.attach(MIMEText(body, "plain"))
 
     with open(pdf_path, "rb") as f:
-        part = MIMEBase("application", "octet-stream")
+        part = MIMEBase("application", "pdf")
         part.set_payload(f.read())
     encoders.encode_base64(part)
     part.add_header("Content-Disposition", f'attachment; filename="{os.path.basename(pdf_path)}"')
