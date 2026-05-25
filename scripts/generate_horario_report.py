@@ -301,7 +301,7 @@ def build_html(report, week_start, week_end):
             for day in detail_rows:
                 h = day["hours"]
                 html += f"""      <div style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12px;">
-        <span style="color:#64748b;min-width:32px;">{DAYS_ES[day["weekday"]]} {day["date"][8:]}</span>
+        <span style="color:#64748b;min-width:32px;">{DAYS_ES[day["weekday"]]} {day["date"].day}</span>
         <span style="color:#374151;">{day["ingreso"]} → {day["salida"]}</span>
         <span style="font-weight:700;color:{color};">{fmt_hours(h)}</span>
         {f'<span style="color:#94a3b8;">· {day["nota"]}</span>' if day["nota"] else ""}
