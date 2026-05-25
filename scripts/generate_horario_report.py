@@ -16,9 +16,11 @@ import firebase_admin
 from firebase_admin import credentials, db
 
 # ── Configuración ─────────────────────────────────────────────────────────────
-GMAIL_USER     = "info@mallorcahomecheckers.com"
-GMAIL_PASSWORD = os.environ["GMAIL_APP_PASSWORD"]
+EMAIL_FROM     = "info@mallorcahomecheckers.com"
+SMTP_PASSWORD  = os.environ.get("GMAIL_APP_PASSWORD", "")
 EMAIL_TO       = "info@mallorcahomecheckers.com"
+SMTP_SERVER    = "smtpout.secureserver.net"
+SMTP_PORT      = 465
 FIREBASE_DB    = "https://mhc-app-184e9-default-rtdb.europe-west1.firebasedatabase.app"
 
 COLORS = ["#2563eb", "#db2777", "#16a34a", "#d97706", "#7c3aed", "#0891b2", "#dc2626", "#65a30d"]
@@ -328,13 +330,13 @@ def build_html(report, week_start, week_end):
 def send_email(subject, html_body):
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject
-    msg["From"]    = GMAIL_USER
+    msg["From"]    = EMAIL_FROM
     msg["To"]      = EMAIL_TO
     msg.attach(MIMEText(html_body, "html"))
 
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-        server.login(GMAIL_USER, GMAIL_PASSWORD)
-        server.sendmail(GMAIL_USER, EMAIL_TO, msg.as_string())
+    with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT) as server:
+        server.login(EMAIL_FROM, SMTP_PASSWORD)
+        server.sendmail(EMAIL_FROM, EMAIL_TO, msg.as_string())
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 def main():
