@@ -774,14 +774,26 @@ function showView(name,btn){
 // ══════════════════════════════════════
 // KPIs
 // ══════════════════════════════════════
-function renderKPIs(){
-  const ti=servicios.reduce((a,s)=>a+calcBase(s),0);
-  const co=servicios.filter(s=>s.estadoCobro==='Cobrado').reduce((a,s)=>a+calcBase(s),0);
+function renderKPIs(data){
+  const d=data||servicios;
+  const ti=d.reduce((a,s)=>a+calcBase(s),0);
+  const co=d.filter(s=>s.estadoCobro==='Cobrado').reduce((a,s)=>a+calcBase(s),0);
+  const fMes=document.getElementById('filter-mes')?.value||'';
+  const fCli=document.getElementById('filter-cliente')?.value||'';
+  const fProp=document.getElementById('filter-propiedad')?.value||'';
+  const fFact=document.getElementById('filter-factura')?.value||'';
+  const fCobro=document.getElementById('filter-cobro')?.value||'';
+  const hayFiltro=fMes||fCli||fProp||fFact||fCobro;
+  const labelPeriodo=hayFiltro
+    ?fMes
+      ?new Date(fMes+'-01').toLocaleDateString('es-ES',{month:'long',year:'numeric'}).replace(/^\w/,c=>c.toUpperCase())
+      :'Filtrado'
+    :'Total global';
   document.getElementById('kpi-grid').innerHTML=`
-    <div class="kpi-card"><div class="kpi-label">Total servicios</div><div class="kpi-value">${servicios.length}</div><div class="kpi-sub">registros</div></div>
-    <div class="kpi-card kpi-importe"><div class="kpi-label">Base total s/IVA</div><div class="kpi-value green">${fmt(ti)}</div><div class="kpi-sub">acumulado</div></div>
-    <div class="kpi-card kpi-importe"><div class="kpi-label">Cobrado</div><div class="kpi-value teal">${fmt(co)}</div><div class="kpi-sub">recibido</div></div>
-    <div class="kpi-card kpi-importe"><div class="kpi-label">Pendiente</div><div class="kpi-value red">${fmt(ti-co)}</div><div class="kpi-sub">por cobrar</div></div>`;
+    <div class="kpi-card"><div class="kpi-label">Servicios${hayFiltro?' ('+labelPeriodo+')':''}</div><div class="kpi-value">${d.length}</div><div class="kpi-sub">${hayFiltro?'en selección':'registros'}</div></div>
+    <div class="kpi-card kpi-importe"><div class="kpi-label">Base s/IVA${hayFiltro?' · '+labelPeriodo:''}</div><div class="kpi-value green">${fmt(ti)}</div><div class="kpi-sub">${hayFiltro?'período seleccionado':'acumulado'}</div></div>
+    <div class="kpi-card kpi-importe"><div class="kpi-label">Cobrado${hayFiltro?' · '+labelPeriodo:''}</div><div class="kpi-value teal">${fmt(co)}</div><div class="kpi-sub">recibido</div></div>
+    <div class="kpi-card kpi-importe"><div class="kpi-label">Pendiente${hayFiltro?' · '+labelPeriodo:''}</div><div class="kpi-value red">${fmt(ti-co)}</div><div class="kpi-sub">por cobrar</div></div>`;
 }
 
 // ══════════════════════════════════════
@@ -880,7 +892,7 @@ function renderTable(){
       </tr>`;
     }).join('');
   }
-  renderKPIs();
+  renderKPIs(data);
 }
 
 function bFact(v){ return v==='Facturado'?`<span class="badge badge-green">✓ Facturado</span>`:`<span class="badge badge-yellow">⏳ Pendiente</span>`; }
