@@ -123,17 +123,21 @@ def fetch_data(db, date_from, date_to):
             s["_fecha"]   = fecha
             servicios.append(s)
 
-    # Agrupar por propiedad
+    # Agrupar por propiedad, guardando cliente por propiedad
     by_prop = {}
+    prop_cliente = {}  # prop_nombre -> cliente_nombre
     for s in servicios:
         prop_nombre = s["_prop"].get("nombre", "Sin propiedad") if s["_prop"] else "Sin propiedad"
+        cli_nombre  = s["_cliente"].get("nombre", "") if s["_cliente"] else ""
         by_prop.setdefault(prop_nombre, []).append(s)
+        if prop_nombre not in prop_cliente:
+            prop_cliente[prop_nombre] = cli_nombre
 
     # Ordenar propiedades y servicios dentro de cada una
     for k in by_prop:
         by_prop[k].sort(key=lambda x: x["_fecha"])
 
-    return dict(sorted(by_prop.items()))
+    return dict(sorted(by_prop.items())), prop_cliente
 
 # ─────────────────────────────────────────
 # GENERAR PDF
@@ -396,9 +400,9 @@ def build_pdf(by_prop, label, mode, output_path):
 # ─────────────────────────────────────────
 # ENVIAR EMAIL
 # ─────────────────────────────────────────
-def send_email(pdf_path, label, mode, n_servicios, n_propiedades):
+def send_email(pdf_path, label, mode, n_servicios, n_propiedades, asunto_extra=""):
     tipo_txt = "Semanal" if mode == "semanal" else "Mensual"
-    subject  = f"ServiGestión — Prefactura {tipo_txt}: {label}"
+    subject  = f"ServiGestión — Prefactura {tipo_txt}: {label}{asunto_extra}"
 
     if mode == "semanal":
         body = f"""Hola,
@@ -462,7 +466,7 @@ def main():
     date_from, date_to, label = get_date_range(mode)
     print(f"📅 Rango: {date_from} → {date_to}  ({label})")
 
-    by_prop = fetch_data(db, date_from, date_to)
+    by_prop, prop_cliente = fetch_data(db, date_from, date_to)
     n_props = len(by_prop)
     n_servs = sum(len(v) for v in by_prop.values())
     print(f"📊 {n_props} propiedades · {n_servs} servicios")
@@ -471,12 +475,34 @@ def main():
         print("ℹ️  Sin servicios en este período — no se genera email.")
         return
 
-    tipo_txt   = "Semanal" if mode == "semanal" else "Mensual"
-    filename   = f"Prefactura_{tipo_txt}_{label.replace(' ','_').replace('/','_')}.pdf"
-    output_path = f"/tmp/{filename}"
+    tipo_txt = "Semanal" if mode == "semanal" else "Mensual"
 
-    build_pdf(by_prop, label, mode, output_path)
-    send_email(output_path, label, mode, n_servs, n_props)
+    # ── Separar: Myne vs Resto ──
+    CLIENTE_SEPARADO = "Myne"
+    by_prop_myne  = {k: v for k, v in by_prop.items() if prop_cliente.get(k, "").strip().lower() == CLIENTE_SEPARADO.lower()}
+    by_prop_resto = {k: v for k, v in by_prop.items() if prop_cliente.get(k, "").strip().lower() != CLIENTE_SEPARADO.lower()}
+
+    # ── Email Myne ──
+    if by_prop_myne:
+        n_s = sum(len(v) for v in by_prop_myne.values())
+        fname = f"Prefactura_{tipo_txt}_{CLIENTE_SEPARADO}_{label.replace(' ','_').replace('/','_')}.pdf"
+        path  = f"/tmp/{fname}"
+        build_pdf(by_prop_myne, label, mode, path)
+        send_email(path, label, mode, n_s, len(by_prop_myne), asunto_extra=f" — {CLIENTE_SEPARADO}")
+        print(f"✅ Email Myne enviado ({n_s} servicios)")
+    else:
+        print("ℹ️  Sin servicios de Myne en este período.")
+
+    # ── Email Resto ──
+    if by_prop_resto:
+        n_s = sum(len(v) for v in by_prop_resto.values())
+        fname = f"Prefactura_{tipo_txt}_Resto_{label.replace(' ','_').replace('/','_')}.pdf"
+        path  = f"/tmp/{fname}"
+        build_pdf(by_prop_resto, label, mode, path)
+        send_email(path, label, mode, n_s, len(by_prop_resto), asunto_extra=" — Resto clientes")
+        print(f"✅ Email Resto enviado ({n_s} servicios)")
+    else:
+        print("ℹ️  Sin servicios del resto en este período.")
 
 if __name__ == "__main__":
     main()
