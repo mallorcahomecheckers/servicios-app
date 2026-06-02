@@ -125,11 +125,11 @@ def compute_report(state, week_start, week_end):
             if h:
                 worked += h
 
-        # objetivo efectivo (descontando vacaciones y libres)
+        # objetivo efectivo (39h fijas, solo se descuentan días de vacaciones o libres)
         if target_week:
             off_days = sum(1 for d in day_details if d["vac"] or d["libre"])
             h_per_day = target_week / 7
-            effective_target = max(0, (7 - off_days) * h_per_day)
+            effective_target = max(0, target_week - off_days * h_per_day)
         else:
             effective_target = None
 
