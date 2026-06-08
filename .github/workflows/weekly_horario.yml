@@ -20,6 +20,12 @@ jobs:
         run: |
           pip install firebase-admin
 
+     - name: Verificar secretos y archivos        
+        run: |
+          echo "Firebase secret existe: ${{ secrets.FIREBASE_SERVICE_ACCOUNT != '' }}"
+          echo "Gmail secret existe: ${{ secrets.GMAIL_APP_PASSWORD != '' }}"
+          ls -la scripts/     
+
       - name: Generar y enviar reporte de horarios
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
