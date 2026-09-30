@@ -79,7 +79,15 @@ td{padding:11px 14px;white-space:nowrap;}
 .importe-cell{font-weight:600;font-variant-numeric:tabular-nums;}
 th.col-prop,td.col-prop{min-width:280px;max-width:380px;white-space:normal!important;}
 td.col-prop{font-weight:500;color:var(--text);line-height:1.35;}
-.pack-config{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 16px;margin-bottom:16px;font-size:13px;flex-wrap:wrap;}
+.pack-config{display:flex;align-items:center;gap:10px;font-size:13px;flex-wrap:wrap;}
+th.col-rs{position:sticky;}
+.col-grip{position:absolute;top:0;right:-4px;width:9px;height:100%;cursor:col-resize;z-index:3;user-select:none;}
+.col-grip::after{content:'';position:absolute;left:4px;top:25%;height:50%;width:1px;background:var(--border);}
+.col-grip:hover::after,.col-grip.dragging::after{background:var(--accent);width:3px;left:3px;}
+body.col-resizing{cursor:col-resize!important;user-select:none;}
+table.cols-fixed{table-layout:fixed;}
+table.cols-fixed td{overflow:hidden;text-overflow:ellipsis;}
+table.cols-fixed th.col-prop,table.cols-fixed td.col-prop{min-width:0;max-width:none;}
 .pack-config label{color:var(--muted);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
 .pack-config input{width:110px;text-align:right;}
 
@@ -277,7 +285,7 @@ html,body{max-width:100%;overflow-x:hidden;}
   <button class="nav-item active" onclick="showView('servicios',this);closeSidebar()"><span>🗂</span> Servicios</button>
   <button class="nav-item" onclick="showView('facturacion',this);closeSidebar()"><span>🧾</span> Facturación</button>
   <button class="nav-item" onclick="showView('cobros',this);closeSidebar()"><span>💰</span> Cobros</button>
-  <button class="nav-item" onclick="showView('abastecimiento',this);closeSidebar()"><span>📦</span> Abastecimiento</button>
+  <button class="nav-item" onclick="showView('abastecimiento',this);closeSidebar()"><span>💶</span> Precios</button>
   <button class="nav-item" onclick="showView('salidas',this);closeSidebar()"><span>🚪</span> Salidas</button>
   <button class="nav-item" onclick="showView('resumen',this);closeSidebar()"><span>📊</span> Resumen</button>
   <div class="nav-section" style="color:#64748b;">Maestros</div>
@@ -298,13 +306,6 @@ html,body{max-width:100%;overflow-x:hidden;}
     </div>
   </div>
   <div class="kpi-grid" id="kpi-grid"></div>
-  <div class="pack-config">
-    <label>💼 Precio pack de ropa</label>
-    <input type="number" class="form-input" id="cfg-pack-price" min="0" step="0.01" placeholder="0.00" oninput="onPackConfigChange(this.value)">
-    <span style="color:var(--muted)">€ / pack (sin IVA)</span>
-    <span style="color:var(--muted);font-size:12px">· Se aplica por defecto en los nuevos servicios; en cada servicio puedes cambiarlo.</span>
-    <span id="cfg-pack-status" style="color:var(--accent);font-size:12px;font-weight:600"></span>
-  </div>
   <div class="filters">
     <input class="form-input" id="filter-search" placeholder="🔍  Buscar…" oninput="renderTable()">
     <button id="sort-btn" onclick="toggleSort()" style="flex-shrink:0;padding:0 14px;height:38px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">📅 Más reciente</button>
@@ -362,10 +363,22 @@ html,body{max-width:100%;overflow-x:hidden;}
 <!-- ABASTECIMIENTO -->
 <div class="view" id="view-abastecimiento">
   <div class="page-header">
-    <div class="page-title">Abastecimiento</div>
+    <div class="page-title">Precios</div>
     <button class="btn btn-primary" onclick="exportarAbast()">⬇ Descargar Excel</button>
   </div>
   <div class="kpi-grid" id="kpi-abast"></div>
+
+  <!-- Precio pack de ropa -->
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:16px;">
+    <div style="font-family:'Syne',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--accent);margin-bottom:12px;">💼 Pack de ropa</div>
+    <div class="pack-config">
+      <label for="cfg-pack-price">Precio por pack</label>
+      <input type="number" class="form-input" id="cfg-pack-price" min="0" step="0.01" placeholder="0.00" oninput="onPackConfigChange(this.value)">
+      <span style="color:var(--muted)">€ / pack (sin IVA)</span>
+      <span id="cfg-pack-status" style="color:var(--accent);font-size:12px;font-weight:600"></span>
+    </div>
+    <div style="font-size:11px;color:var(--muted);margin-top:8px;">Se carga automáticamente en los servicios nuevos. En cada servicio puedes cambiarlo (botón ↺ para volver a este precio). No modifica los servicios ya guardados.</div>
+  </div>
 
   <!-- Config precios por defecto -->
   <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:20px;">
@@ -767,7 +780,7 @@ async function loadData(){
 
   EXTRAS_CAT.forEach(e=>{ e.defaultPrice = e.key==='cristales' ? 0 : 25; });
 
-  escucharConfig(); renderPackConfig();
+  escucharConfig(); renderPackConfig(); initColResize();
   renderTable(); renderKPIs(); renderMaestros(); renderSalidas();
   renderFacturacion(); renderCobros(); renderResumen();
 
@@ -812,6 +825,51 @@ async function sembrarDatosIniciales(){
       }
     }
   }catch(e){ console.warn('Sin conexión con el servidor: no se crean datos iniciales',e); }
+}
+
+// ── Columnas redimensionables (arrastrar el borde del encabezado; doble clic = restablecer) ──
+// Los anchos se recuerdan en este navegador. No se guarda nada en la base de datos.
+function _colKey(tbl){ const tb=tbl.querySelector('tbody'); return 'sg_cols_'+(tb?.id||''); }
+function _applyWidths(tbl,ws){
+  const ths=[...tbl.querySelectorAll('thead th')];
+  if(!ws||ws.length!==ths.length) return false;
+  ths.forEach((th,i)=>{ th.style.width=ws[i]+'px'; });
+  tbl.style.width=ws.reduce((a,b)=>a+b,0)+'px';
+  tbl.classList.add('cols-fixed');
+  return true;
+}
+function _resetWidths(tbl){
+  tbl.classList.remove('cols-fixed'); tbl.style.width='';
+  tbl.querySelectorAll('thead th').forEach(th=>th.style.width='');
+  try{ localStorage.removeItem(_colKey(tbl)); }catch(e){}
+}
+function initColResize(){
+  if(window.innerWidth<=768) return;
+  document.querySelectorAll('.table-wrap > table').forEach(tbl=>{
+    if(tbl.dataset.rs) return; tbl.dataset.rs='1';
+    try{ _applyWidths(tbl,JSON.parse(localStorage.getItem(_colKey(tbl))||'null')); }catch(e){}
+    tbl.querySelectorAll('thead th').forEach((th,i)=>{
+      th.classList.add('col-rs');
+      const g=document.createElement('span'); g.className='col-grip'; g.title='Arrastra para cambiar el ancho · doble clic para restablecer';
+      th.appendChild(g);
+      g.addEventListener('dblclick',e=>{ e.stopPropagation(); _resetWidths(tbl); });
+      g.addEventListener('mousedown',e=>{
+        e.preventDefault(); e.stopPropagation();
+        const ths=[...tbl.querySelectorAll('thead th')];
+        const ws=ths.map(t=>t.getBoundingClientRect().width);
+        _applyWidths(tbl,ws);
+        const x0=e.clientX, w0=ws[i];
+        g.classList.add('dragging'); document.body.classList.add('col-resizing');
+        const mv=ev=>{ ws[i]=Math.max(40,Math.round(w0+ev.clientX-x0)); _applyWidths(tbl,ws); };
+        const up=()=>{
+          document.removeEventListener('mousemove',mv); document.removeEventListener('mouseup',up);
+          g.classList.remove('dragging'); document.body.classList.remove('col-resizing');
+          try{ localStorage.setItem(_colKey(tbl),JSON.stringify(ws)); }catch(e){}
+        };
+        document.addEventListener('mousemove',mv); document.addEventListener('mouseup',up);
+      });
+    });
+  });
 }
 
 // ── Días de estancia (fecha salida − fecha ingreso) ──
@@ -920,7 +978,7 @@ function showView(name,btn){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('view-'+name).classList.add('active');
   if(btn) btn.classList.add('active');
-  ({salidas:renderSalidas,resumen:renderResumen,cobros:renderCobros,maestros:renderMaestros,facturacion:renderFacturacion,abastecimiento:renderAbastView,servicios:()=>{renderTable();renderKPIs();}})[name]?.();
+  ({salidas:renderSalidas,resumen:renderResumen,cobros:renderCobros,maestros:renderMaestros,facturacion:renderFacturacion,abastecimiento:()=>{renderAbastView();renderPackConfig();},servicios:()=>{renderTable();renderKPIs();}})[name]?.();
 }
 
 // ══════════════════════════════════════
