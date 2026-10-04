@@ -96,6 +96,13 @@ table.cols-fixed th.col-prop,table.cols-fixed td.col-prop{min-width:0;max-width:
 .precio-box.hidden{display:none;}
 .precio-box-title{grid-column:1/-1;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--accent2);margin-bottom:2px;}
 .precio-auto-hint{grid-column:1/-1;font-size:12px;color:var(--accent);background:rgba(200,240,74,.08);border-radius:6px;padding:6px 10px;}
+.pack-line{display:flex;gap:6px;align-items:center;}
+.pack-line .pk-qty{width:62px;flex:0 0 62px;padding:7px 8px;}
+.pack-line .pk-price{width:84px;flex:0 0 84px;padding:7px 8px;}
+.pack-line .pk-x{color:var(--muted);font-size:12px;}
+.pack-line .pk-btn{padding:6px 9px;font-size:12px;white-space:nowrap;}
+.pack-line .pk-bb-toggle.on{background:rgba(37,99,235,.1);border-color:var(--accent);color:var(--accent);}
+.horas-row{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
 
 /* EXTRAS */
 .extras-section{grid-column:1/-1;display:flex;flex-direction:column;gap:10px;}
@@ -116,6 +123,10 @@ table.cols-fixed th.col-prop,table.cols-fixed td.col-prop{min-width:0;max-width:
 .extra-estancia select{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:6px 8px;color:var(--text);font-family:inherit;font-size:12px;cursor:pointer;}
 .extra-estancia select:focus{outline:none;border-color:var(--accent);}
 .extra-estancia select.anterior{border-color:var(--accent2);color:var(--accent2);}
+.extra-nota{width:100%;}
+.extra-nota input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--text);font-family:inherit;font-size:12px;}
+.extra-nota input:focus{outline:none;border-color:var(--accent);}
+.extra-nota-txt{font-size:11px;color:var(--muted);font-style:italic;}
 .extra-ref{width:100%;font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
 .extra-ref .warn{color:#ffc832;}
 .mini-tag{display:inline-block;font-size:10px;font-weight:600;padding:1px 6px;border-radius:20px;margin-left:5px;vertical-align:middle;}
@@ -135,6 +146,20 @@ table.cols-fixed th.col-prop,table.cols-fixed td.col-prop{min-width:0;max-width:
 .price-detail .d-row .d-val{font-variant-numeric:tabular-nums;white-space:nowrap;}
 .price-row.iva-row .val{color:var(--muted);}
 .price-row.total-row{font-family:'Syne',sans-serif;font-weight:700;font-size:18px;color:var(--accent);padding-top:8px;border-top:1px solid rgba(200,240,74,.25);margin-top:2px;}
+
+/* RESUMEN DE SERVICIO (solo lectura) */
+.rs-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px;flex-wrap:wrap;}
+.rs-head-title{font-weight:700;font-size:16px;}
+.rs-head-sub{font-size:13px;color:var(--muted);margin-top:3px;}
+.rs-sec{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent);padding-top:10px;margin:14px 0 8px;border-top:1px solid var(--border);}
+.rs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px 16px;}
+.rs-item .k{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;}
+.rs-item .v{font-size:13px;font-weight:500;margin-top:2px;}
+.rs-line{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px dashed var(--border);font-size:13px;}
+.rs-line:last-child{border-bottom:none;}
+.rs-line .amt{font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap;}
+.rs-line .sub{font-size:11px;color:var(--muted);}
+.rs-note{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:13px;white-space:pre-wrap;}
 
 /* MAESTROS */
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
@@ -377,6 +402,12 @@ html,body{max-width:100%;overflow-x:hidden;}
       <span style="color:var(--muted)">€ / pack (sin IVA)</span>
       <span id="cfg-pack-status" style="color:var(--accent);font-size:12px;font-weight:600"></span>
     </div>
+    <div class="pack-config" style="margin-top:10px">
+      <label for="cfg-packbb-price">Precio pack BB 👶</label>
+      <input type="number" class="form-input" id="cfg-packbb-price" min="0" step="0.01" placeholder="0.00" oninput="onPackBBConfigChange(this.value)">
+      <span style="color:var(--muted)">€ / pack BB (sin IVA)</span>
+      <span id="cfg-packbb-status" style="color:var(--accent);font-size:12px;font-weight:600"></span>
+    </div>
     <div style="font-size:11px;color:var(--muted);margin-top:8px;">Se carga automáticamente en los servicios nuevos. En cada servicio puedes cambiarlo (botón ↺ para volver a este precio). No modifica los servicios ya guardados.</div>
   </div>
 
@@ -529,11 +560,19 @@ html,body{max-width:100%;overflow-x:hidden;}
     </div>
     <div class="form-group">
       <label class="form-label">Packs de ropa <span style="font-size:10px;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">(cantidad × €/pack)</span></label>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <input type="number" class="form-input" id="f-packs" min="0" step="1" placeholder="Cant." oninput="const pp=document.getElementById('f-pack-price');if(this.value>0&&!pp.value&&getPackPriceDefault())pp.value=getPackPriceDefault();recalcTotal()" style="max-width:90px">
-        <span style="color:var(--muted);font-size:13px">×</span>
-        <input type="number" class="form-input" id="f-pack-price" min="0" step="0.01" placeholder="€ / pack" oninput="recalcTotal()">
-        <button type="button" class="btn btn-ghost btn-icon" onclick="usarPackDefault()" title="Usar el precio por defecto del pack">↺</button>
+      <div class="pack-line">
+        <input type="number" class="form-input pk-qty" id="f-packs" min="0" step="1" placeholder="Cant." oninput="const pp=document.getElementById('f-pack-price');if(this.value>0&&!pp.value&&getPackPriceDefault())pp.value=getPackPriceDefault();recalcTotal()">
+        <span class="pk-x">×</span>
+        <input type="number" class="form-input pk-price" id="f-pack-price" min="0" step="0.01" placeholder="€/pack" oninput="recalcTotal()">
+        <button type="button" class="btn btn-ghost pk-btn" onclick="usarPackDefault()" title="Usar el precio por defecto del pack">↺</button>
+        <button type="button" class="btn btn-ghost pk-btn pk-bb-toggle" id="btn-pack-bb" onclick="togglePackBB()" title="Agregar Pack BB">👶 Pack BB</button>
+      </div>
+      <div class="pack-line" id="pack-bb-line" style="display:none;margin-top:6px">
+        <input type="number" class="form-input pk-qty" id="f-packs-bb" min="0" step="1" placeholder="Cant." oninput="const pp=document.getElementById('f-packbb-price');if(this.value>0&&!pp.value&&getPackBBPriceDefault())pp.value=getPackBBPriceDefault();recalcTotal()">
+        <span class="pk-x">×</span>
+        <input type="number" class="form-input pk-price" id="f-packbb-price" min="0" step="0.01" placeholder="€/pack BB" oninput="recalcTotal()">
+        <button type="button" class="btn btn-ghost pk-btn" onclick="usarPackBBDefault()" title="Usar el precio por defecto del pack BB">↺</button>
+        <span style="font-size:11px;color:var(--muted);white-space:nowrap">👶 BB</span>
       </div>
       <div id="packs-hint" style="font-size:11px;color:var(--accent);margin-top:3px;display:none"></div>
     </div>
@@ -577,15 +616,22 @@ html,body{max-width:100%;overflow-x:hidden;}
         <label class="form-label">Precio limpieza profunda (€ sin IVA)</label>
         <input type="number" class="form-input" id="f-precio-profunda" min="0" step="0.01" placeholder="0.00" oninput="recalcTotal()">
       </div>
-      <!-- Inicial/Obra y Check: horas × tarifa -->
-      <div class="form-group" id="pw-horas" style="display:none">
-        <label class="form-label">Horas</label>
-        <input type="number" class="form-input" id="f-horas" min="0" step="0.5" placeholder="0" oninput="recalcTotal()">
+      <!-- Inicial/Obra y Check: horas × operarios × tarifa -->
+      <div class="horas-row" id="pw-horas-row" style="display:none">
+        <div class="form-group" id="pw-horas">
+          <label class="form-label">Horas</label>
+          <input type="number" class="form-input" id="f-horas" min="0" step="0.5" placeholder="0" oninput="recalcTotal()">
+        </div>
+        <div class="form-group" id="pw-operarios">
+          <label class="form-label">Operarios</label>
+          <input type="number" class="form-input" id="f-operarios" min="1" step="1" placeholder="1" oninput="recalcTotal()">
+        </div>
+        <div class="form-group" id="pw-tarifa">
+          <label class="form-label">Tarifa / hora (€)</label>
+          <input type="number" class="form-input" id="f-tarifa" min="0" step="0.01" placeholder="0.00" oninput="recalcTotal()">
+        </div>
       </div>
-      <div class="form-group" id="pw-tarifa" style="display:none">
-        <label class="form-label">Tarifa / hora (€)</label>
-        <input type="number" class="form-input" id="f-tarifa" min="0" step="0.01" placeholder="0.00" oninput="recalcTotal()">
-      </div>
+      <div id="horas-hint" class="precio-auto-hint" style="display:none"></div>
     </div>
 
     <div class="section-divider">Servicios extra</div>
@@ -616,6 +662,7 @@ html,body{max-width:100%;overflow-x:hidden;}
     <div class="price-summary">
       <div class="price-row"><span class="label">Limpieza</span><span class="val" id="ps-limpieza">—</span></div>
       <div class="price-row"><span class="label" id="ps-packs-label">Packs</span><span class="val" id="ps-packs">—</span></div>
+      <div class="price-row" id="ps-packbb-row" style="display:none"><span class="label" id="ps-packbb-label">Pack BB</span><span class="val" id="ps-packbb">—</span></div>
       <div class="price-row"><span class="label">Servicios extra</span><span class="val" id="ps-extras">—</span></div>
       <div class="price-detail" id="ps-extras-det"></div>
       <div class="price-row" id="ps-recibidos-row" style="display:none"><span class="label" style="color:var(--accent2)">↪ Extras de otras limpiezas</span><span class="val" id="ps-recibidos" style="color:var(--accent2)">—</span></div>
@@ -643,6 +690,21 @@ html,body{max-width:100%;overflow-x:hidden;}
   <div class="modal-footer">
     <button class="btn btn-ghost" onclick="closeServModal()">Cancelar</button>
     <button class="btn btn-primary" onclick="guardarServicio()">Guardar servicio</button>
+  </div>
+</div>
+</div>
+
+<!-- ══════════ MODAL RESUMEN SERVICIO (solo lectura) ══════════ -->
+<div class="modal-overlay" id="modal-resumen" onclick="if(event.target===this)closeResumenServ()">
+<div class="modal">
+  <div class="modal-header">
+    <div class="modal-title">Resumen del servicio</div>
+    <button class="modal-close" onclick="closeResumenServ()">✕</button>
+  </div>
+  <div id="resumen-body"></div>
+  <div class="modal-footer">
+    <button class="btn btn-ghost" onclick="closeResumenServ()">Cerrar</button>
+    <button class="btn btn-primary" id="resumen-edit-btn">✏️ Editar servicio</button>
   </div>
 </div>
 </div>
@@ -894,6 +956,47 @@ function getPackPriceDefault(){ return _packPriceDefault||0; }
 function renderPackConfig(){
   const el=document.getElementById('cfg-pack-price');
   if(el&&document.activeElement!==el) el.value=_packPriceDefault?_packPriceDefault:'';
+  const bb=document.getElementById('cfg-packbb-price');
+  if(bb&&document.activeElement!==bb) bb.value=_packBBPriceDefault?_packBBPriceDefault:'';
+}
+// ── Pack BB: mismo funcionamiento que el pack de ropa, con su propio precio por defecto ──
+let _packBBPriceDefault=parseFloat(localStorage.getItem('sg_packbb_price'))||0;
+function getPackBBPriceDefault(){ return _packBBPriceDefault||0; }
+let _packBBSaveT=null;
+function onPackBBConfigChange(v){
+  _packBBPriceDefault=parseFloat(v)||0;
+  localStorage.setItem('sg_packbb_price',_packBBPriceDefault);
+  clearTimeout(_packBBSaveT);
+  _packBBSaveT=setTimeout(()=>{ if(window.db) window.db.collection('config').doc('ajustes').set({packBBPrice:_packBBPriceDefault},{merge:true}); },600);
+  const st=document.getElementById('cfg-packbb-status'); if(st){ st.textContent='✓ Guardado'; setTimeout(()=>st.textContent='',1500); }
+}
+function usarPackBBDefault(){
+  const el=document.getElementById('f-packbb-price');
+  if(el){ el.value=getPackBBPriceDefault()||''; recalcTotal(); }
+}
+function setPackBBVisible(on){
+  document.getElementById('pack-bb-line').style.display=on?'':'none';
+  document.getElementById('btn-pack-bb').classList.toggle('on',on);
+}
+function togglePackBB(){
+  const on=document.getElementById('pack-bb-line').style.display==='none';
+  setPackBBVisible(on);
+  if(on){
+    const pp=document.getElementById('f-packbb-price'); if(!pp.value&&getPackBBPriceDefault()) pp.value=getPackBBPriceDefault();
+    document.getElementById('f-packs-bb').focus();
+  } else {
+    document.getElementById('f-packs-bb').value=''; document.getElementById('f-packbb-price').value='';
+  }
+  recalcTotal();
+}
+function packBBTotal(s){ return (parseInt(s.packsBB)||0)*(parseFloat(s.packBBPrice)||0); }
+// Celda "Packs" de las tablas (ropa + BB)
+function packsCell(s,priceCls=''){
+  const q=parseInt(s.packs)||0, pr=parseFloat(s.packPrice)||0;
+  const qb=parseInt(s.packsBB)||0;
+  if(!q&&!qb) return '—';
+  const tot=q*pr+packBBTotal(s);
+  return `${q>0?`<span class="badge badge-teal">📦 ${q}</span>`:''}${qb>0?` <span class="badge badge-teal">👶 ${qb}</span>`:''}${tot>0?`<br><span class="${priceCls}" style="font-size:10px;color:var(--muted)">${fmt(tot)}</span>`:''}`;
 }
 let _packSaveT=null;
 function onPackConfigChange(v){
@@ -907,7 +1010,10 @@ function escucharConfig(){
   if(!window.db) return;
   window.db.collection('config').doc('ajustes').onSnapshot(d=>{
     const v=d.exists?parseFloat(d.data().packPrice):NaN;
-    if(!isNaN(v)){ _packPriceDefault=v; localStorage.setItem('sg_pack_price',v); renderPackConfig(); }
+    if(!isNaN(v)){ _packPriceDefault=v; localStorage.setItem('sg_pack_price',v); }
+    const vb=d.exists?parseFloat(d.data().packBBPrice):NaN;
+    if(!isNaN(vb)){ _packBBPriceDefault=vb; localStorage.setItem('sg_packbb_price',vb); }
+    renderPackConfig();
   },()=>{});
 }
 function usarPackDefault(){
@@ -954,17 +1060,21 @@ function findEstanciaAnterior(propiedadId,fechaIngreso,excluirId){
   return cands[0]||null;
 }
 
+// Limpieza por horas: horas × operarios × tarifa (servicios antiguos sin operarios = 1)
+function esPorHoras(tipo){ return tipo==='Inicial/Obra'||tipo==='Check'; }
+function getOperarios(s){ return Math.max(1,parseInt(s?.operarios)||1); }
+function calcLimpiezaHoras(s){ return (parseFloat(s.horas)||0)*getOperarios(s)*(parseFloat(s.tarifa)||0); }
 function calcBase(s){
   let lim=0;
-  if(s.tipoLimpieza==='Inicial/Obra'||s.tipoLimpieza==='Check'){
-    lim=(parseFloat(s.horas)||0)*(parseFloat(s.tarifa)||0);
+  if(esPorHoras(s.tipoLimpieza)){
+    lim=calcLimpiezaHoras(s);
   } else {
     lim=parseFloat(s.precioLimpieza)||0;
   }
   const extras=getExtrasPropios(s).reduce((a,e)=>a+extraImporte(e),0)
              + getExtrasRecibidos(s.id).reduce((a,e)=>a+extraImporte(e),0);
   const arreglos=parseFloat(s.arreglosImporte)||0;
-  const packTotal=(parseInt(s.packs)||0)*(parseFloat(s.packPrice)||0);
+  const packTotal=(parseInt(s.packs)||0)*(parseFloat(s.packPrice)||0)+packBBTotal(s);
   return lim+extras+arreglos+packTotal;
 }
 function calcIvaAmt(s){ return calcBase(s)*getIva()/100; }
@@ -1069,12 +1179,14 @@ function renderTable(){
             ${s.fechaSalida?`<span style="font-size:11px;color:var(--muted)">· 🚪 ${fmtDate(s.fechaSalida)}</span>`:''}
             ${diasEstancia(s)!=null?`<span class="badge badge-teal" style="font-size:10px">🗓 ${fmtDias(diasEstancia(s))}</span>`:''}
             ${(parseInt(s.packs)||0)>0?`<span style="font-size:11px;color:var(--muted)">· 📦 ${s.packs} pack${s.packs>1?'s':''}</span>`:''}
+            ${(parseInt(s.packsBB)||0)>0?`<span style="font-size:11px;color:var(--muted)">· 👶 ${s.packsBB} BB</span>`:''}
             ${s.tipoLimpieza?`<span class="badge badge-gray" style="font-size:10px">${s.tipoLimpieza}</span>`:''}
           </div>
           <div style="display:flex;justify-content:space-between;align-items:center;">
             <div style="display:flex;gap:5px;">${bFact(s.estadoFactura)}${bCobro(s.estadoCobro)}</div>
             <div style="display:flex;gap:5px;">
-              <button class="btn btn-ghost btn-sm" onclick="openServModal(${s._i})">✏️</button>
+              <button class="btn btn-ghost btn-sm" onclick="openResumenServ(${s._i})" title="Ver resumen">👁</button>
+              <button class="btn btn-ghost btn-sm" onclick="openServModal(${s._i})" title="Editar">✏️</button>
               <button class="btn btn-danger btn-sm" onclick="delServ('${s.id}')">🗑</button>
             </div>
           </div>
@@ -1094,12 +1206,13 @@ function renderTable(){
         <td><strong>${c?.nombre||'—'}</strong></td>
         <td class="col-prop" title="${(p?.nombre||'').replace(/"/g,'')}">${p?.nombre||'—'}</td>
         <td>${s.ocupacion?`<span class="badge badge-gray">${s.ocupacion}</span>`:'—'}</td>
-        <td style="text-align:center">${packQty>0?`<span class="badge badge-teal">📦 ${packQty}</span>${packPrice>0?`<br><span style="font-size:10px;color:var(--muted)">${fmt(packQty*packPrice)}</span>`:''}`:'—'}</td>
+        <td style="text-align:center">${packsCell(s)}</td>
         <td>${s.tipoLimpieza?`<span class="badge badge-gray">${s.tipoLimpieza}</span>`:'—'}</td>
         <td class="importe-cell">${fmt(calcBase(s))}${marcaEstancias(s)}</td>
         <td>${bFact(s.estadoFactura)}</td><td>${bCobro(s.estadoCobro)}</td>
         <td><div class="actions">
-          <button class="btn btn-ghost btn-sm" onclick="openServModal(${s._i})">✏️</button>
+          <button class="btn btn-ghost btn-sm" onclick="openResumenServ(${s._i})" title="Ver resumen">👁</button>
+          <button class="btn btn-ghost btn-sm" onclick="openServModal(${s._i})" title="Editar">✏️</button>
           <button class="btn btn-danger btn-sm" onclick="delServ('${s.id}')">🗑</button>
         </div></td>
       </tr>`;
@@ -1184,7 +1297,7 @@ function renderExtrasSelected(){
           <button class="extra-row-remove" onclick="removeExtra(${i})" title="Quitar">✕</button>
         </div>
         <div style="flex:1;min-width:160px">
-          <input type="text" value="${e.label||''}" placeholder="Descripción…" style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--text);font-family:inherit;font-size:13px;"
+          <input type="text" value="${esc(e.label)}" placeholder="Concepto…" style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--text);font-family:inherit;font-size:13px;"
             oninput="onOtroDescChange(${i},this.value)">
         </div>
         <div class="extra-row-price" style="flex:0 0 auto">
@@ -1199,6 +1312,7 @@ function renderExtrasSelected(){
         </select>
       </div>
         <div class="extra-row-subtotal">${e.precio>0?fmt(e.precio):'—'}</div>
+      <div class="extra-nota"><input type="text" value="${esc(e.nota)}" placeholder="📝 Descripción / anotación (opcional)…" oninput="onExtraNotaChange(${i},this.value)"></div>
       ${anterior?`<div class="extra-ref">${refHint}</div>`:''}
       </div>`;
     }
@@ -1226,6 +1340,7 @@ function renderExtrasSelected(){
         </select>
       </div>
       <div class="extra-row-subtotal">${isCompras?(e.precio||0)+(e.importe||0)>0?fmt((e.precio||0)+(e.importe||0)):'—':e.precio>0?fmt(e.precio):'—'}</div>
+      <div class="extra-nota"><input type="text" value="${esc(e.nota)}" placeholder="📝 Descripción / anotación (opcional)…" oninput="onExtraNotaChange(${i},this.value)"></div>
       ${anterior?`<div class="extra-ref">${refHint}</div>`:''}
     </div>`;
   }).join('');
@@ -1266,6 +1381,9 @@ function onFechaIngresoChange(){
 function onOtroDescChange(idx,val){
   _selectedExtras[idx].label=val;
 }
+function onExtraNotaChange(idx,val){
+  _selectedExtras[idx].nota=val;
+}
 
 function onExtraPriceChange(idx,val,field='precio'){
   const p=parseFloat(val)||0;
@@ -1300,6 +1418,7 @@ function getExtrasFromForm(){
     const anterior=e.estancia==='anterior';
     return {
       key:e.key,label:e.label,icon:e.icon,
+      nota:(e.nota||'').trim(),
       precio:e.precio||0,
       importe:e.importe||0,
       estancia:anterior?'anterior':'actual',
@@ -1644,7 +1763,7 @@ function exportarAbast(){
     const p=getPropiedad(s.propiedadId);
     (s.abastecimiento||[]).forEach(x=>{
       rows.push({
-        'Fecha servicio': s.fechaServicio||'',
+        'Fecha servicio': fmtDateX(s.fechaServicio),
         'Cliente':        c?.nombre||'Sin cliente',
         'Propiedad':      p?.nombre||'Sin propiedad',
         'Producto':       x.nombre||'',
@@ -1686,11 +1805,11 @@ function onTipoLimpiezaChange(){
   const box=document.getElementById('precio-box');
   const pfijo=document.getElementById('pw-precio-fijo');
   const pprofunda=document.getElementById('pw-precio-profunda');
-  const phoras=document.getElementById('pw-horas');
-  const ptarifa=document.getElementById('pw-tarifa');
+  const phoras=document.getElementById('pw-horas-row');
+  const hhint=document.getElementById('horas-hint');
   const phint=document.getElementById('pw-hint');
   const ptitle=document.getElementById('precio-box-title');
-  [pfijo,pprofunda,phoras,ptarifa].forEach(el=>el.style.display='none');
+  [pfijo,pprofunda,phoras,hhint].forEach(el=>el.style.display='none');
   phint.style.display='none';
   if(!tipo){ box.classList.add('hidden'); recalcTotal(); return; }
   box.classList.remove('hidden');
@@ -1718,8 +1837,9 @@ function onTipoLimpiezaChange(){
     ptitle.textContent='Precio Limpieza Profunda (manual)';
     pprofunda.style.display='';
   } else if(tipo==='Inicial/Obra'||tipo==='Check'){
-    ptitle.textContent=`Precio ${tipo} (horas × tarifa)`;
-    phoras.style.display=''; ptarifa.style.display='';
+    ptitle.textContent=`Precio ${tipo} (horas × operarios × tarifa)`;
+    phoras.style.display='';
+    const op=document.getElementById('f-operarios'); if(op&&!op.value) op.value=1;
   }
   recalcTotal();
 }
@@ -1747,8 +1867,16 @@ function setDet(id,rows){
 function recalcTotal(){
   const tipo=document.getElementById('f-tipo-limpieza').value;
   let lim=0;
-  if(tipo==='Inicial/Obra'||tipo==='Check'){
-    lim=(parseFloat(document.getElementById('f-horas')?.value)||0)*(parseFloat(document.getElementById('f-tarifa')?.value)||0);
+  if(esPorHoras(tipo)){
+    const h=parseFloat(document.getElementById('f-horas')?.value)||0;
+    const ops=getOperarios({operarios:document.getElementById('f-operarios')?.value});
+    const t=parseFloat(document.getElementById('f-tarifa')?.value)||0;
+    lim=h*ops*t;
+    const hh=document.getElementById('horas-hint');
+    if(hh){
+      if(h>0){ hh.style.display=''; hh.textContent=`⏱ ${h} h × ${ops} operario${ops>1?'s':''} = ${h*ops} h${t>0?` × ${fmt(t)}/h = ${fmt(lim)}`:''}`; }
+      else hh.style.display='none';
+    }
   } else if(tipo==='Profunda'){
     lim=parseFloat(document.getElementById('f-precio-profunda')?.value)||0;
   } else if(tipo==='Normal'||tipo==='Intermedia'){
@@ -1757,10 +1885,15 @@ function recalcTotal(){
   const qty=parseInt(document.getElementById('f-packs')?.value)||0;
   const packPrice=parseFloat(document.getElementById('f-pack-price')?.value)||0;
   const packTotal=qty*packPrice;
+  const qtyBB=parseInt(document.getElementById('f-packs-bb')?.value)||0;
+  const packBBPrice=parseFloat(document.getElementById('f-packbb-price')?.value)||0;
+  const packBBTot=qtyBB*packBBPrice;
   const hint=document.getElementById('packs-hint');
   if(hint){
-    if(qty>0&&packPrice>0){hint.textContent=`💼 ${qty} pack${qty>1?'s':''} × ${fmt(packPrice)} = ${fmt(packTotal)}`;hint.style.display='';}
-    else{hint.style.display='none';}
+    const parts=[];
+    if(qty>0&&packPrice>0) parts.push(`💼 ${qty} pack${qty>1?'s':''} × ${fmt(packPrice)} = ${fmt(packTotal)}`);
+    if(qtyBB>0&&packBBPrice>0) parts.push(`👶 ${qtyBB} BB × ${fmt(packBBPrice)} = ${fmt(packBBTot)}`);
+    hint.innerHTML=parts.join('<br>'); hint.style.display=parts.length?'':'none';
   }
   const extras=_selectedExtras||[];
   const refAct=getRefEstanciaActual();
@@ -1770,7 +1903,7 @@ function recalcTotal(){
   const recibidos=getExtrasRecibidos(idActual);
   const recTotal=recibidos.reduce((a,e)=>a+extraImporte(e),0);
   const arreglosImp=parseFloat(document.getElementById('f-arreglos-importe')?.value)||0;
-  const base=lim+packTotal+extTotal+recTotal+arreglosImp;
+  const base=lim+packTotal+packBBTot+extTotal+recTotal+arreglosImp;
   const ivaPct=getIva();
   const ivaAmt=base*ivaPct/100;
   document.getElementById('ps-limpieza').textContent=lim?fmt(lim):'—';
@@ -1778,12 +1911,14 @@ function recalcTotal(){
   const vl=document.getElementById('ps-packs');
   if(lbl)lbl.textContent=qty>0?`Packs (${qty}×${fmt(packPrice)})`:'Packs';
   if(vl)vl.textContent=packTotal>0?fmt(packTotal):'—';
+  const bbRow=document.getElementById('ps-packbb-row');
+  if(bbRow){ bbRow.style.display=qtyBB>0?'':'none'; document.getElementById('ps-packbb-label').textContent=`Pack BB (${qtyBB}×${fmt(packBBPrice)})`; document.getElementById('ps-packbb').textContent=packBBTot>0?fmt(packBBTot):'—'; }
   document.getElementById('ps-extras').textContent=extTotal?fmt(extTotal):'—';
   const psRec=document.getElementById('ps-recibidos-row');
   if(psRec){psRec.style.display=recTotal?'':'none';document.getElementById('ps-recibidos').textContent=recTotal?'+ '+fmt(recTotal):'—';}
   // Detalle: qué concepto hay detrás de cada importe
   const dRow=(desc,ref,val,color)=>`<div class="d-row"><span class="d-desc">${desc}${ref?`<span class="d-ref">${ref}</span>`:''}</span><span class="d-val"${color?` style="color:${color}"`:''}>${val}</span></div>`;
-  const nom=e=>`${e.icon||'➕'} ${(e.label||'').trim()||'Otro'}`;
+  const nom=e=>`${e.icon||'➕'} ${esc((e.label||'').trim()||'Otro')}${(e.nota||'').trim()?` <span class="extra-nota-txt">— ${esc(e.nota.trim())}</span>`:''}`;
   const compra=e=>(e.importe||0)>0?`(incl. compra ${fmt(e.importe)})`:'';
   setDet('ps-extras-det', extras.filter(e=>!esCedido(e)).map(e=>dRow(nom(e),compra(e),fmt((e.precio||0)+(e.importe||0)))));
   setDet('ps-recibidos-det', recibidos.map(e=>dRow(nom(e),
@@ -1824,6 +1959,7 @@ function clearServForm(){
   const fp=document.getElementById('f-packs');if(fp)fp.value='';
   const fpp=document.getElementById('f-pack-price');if(fpp)fpp.value='';
   const ph=document.getElementById('packs-hint');if(ph)ph.style.display='none';
+  document.getElementById('f-packs-bb').value=''; document.getElementById('f-packbb-price').value=''; setPackBBVisible(false);
   document.getElementById('f-cliente').value='';
   fillPropSel('','');
   document.getElementById('f-tipo-limpieza').value='';
@@ -1832,7 +1968,7 @@ function clearServForm(){
   const agg=document.getElementById('f-arreglos-importe-group');if(agg)agg.style.display='none';
   document.getElementById('f-estado-factura').value='Pendiente';
   document.getElementById('f-estado-cobro').value='Pendiente';
-  ['f-precio-limpieza','f-precio-profunda','f-horas','f-tarifa'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['f-precio-limpieza','f-precio-profunda','f-horas','f-operarios','f-tarifa'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   const fppd=document.getElementById('f-pack-price');if(fppd&&getPackPriceDefault())fppd.value=getPackPriceDefault();
   onTipoLimpiezaChange(); recalcTotal(); clearAbast(); onFechasChange();
 }
@@ -1844,6 +1980,10 @@ function fillServForm(s){
   document.getElementById('f-ocupacion').value=s.ocupacion||'';
   const fp=document.getElementById('f-packs');if(fp)fp.value=s.packs!=null?s.packs:'';
   const fpp=document.getElementById('f-pack-price');if(fpp)fpp.value=s.packPrice!=null?s.packPrice:'';
+  const qbb=parseInt(s.packsBB)||0;
+  document.getElementById('f-packs-bb').value=qbb||'';
+  document.getElementById('f-packbb-price').value=qbb?(s.packBBPrice||''):'';
+  setPackBBVisible(qbb>0);
   fillCliSel('f-cliente',s.clienteId||'');
   fillPropSel('',s.propiedadId||'');
   document.getElementById('f-tipo-limpieza').value=s.tipoLimpieza||'';
@@ -1858,6 +1998,7 @@ function fillServForm(s){
   const tipo=s.tipoLimpieza||'';
   if(tipo==='Inicial/Obra'||tipo==='Check'){
     const h=document.getElementById('f-horas');if(h)h.value=s.horas||'';
+    const o=document.getElementById('f-operarios');if(o)o.value=getOperarios(s);
     const t=document.getElementById('f-tarifa');if(t)t.value=s.tarifa||'';
   } else if(tipo==='Profunda'){
     const p=document.getElementById('f-precio-profunda');if(p)p.value=s.precioLimpieza||'';
@@ -1879,9 +2020,10 @@ function guardarServicio(){
   if(!fsal){alert('La fecha de salida es obligatoria.');return;}
   if(!cli){alert('El cliente es obligatorio.');return;}
   const tipo=document.getElementById('f-tipo-limpieza').value;
-  let precioLimpieza=0, horas=0, tarifa=0;
-  if(tipo==='Inicial/Obra'||tipo==='Check'){
+  let precioLimpieza=0, horas=0, tarifa=0, operarios=1;
+  if(esPorHoras(tipo)){
     horas=parseFloat(document.getElementById('f-horas')?.value)||0;
+    operarios=getOperarios({operarios:document.getElementById('f-operarios')?.value});
     tarifa=parseFloat(document.getElementById('f-tarifa')?.value)||0;
   } else if(tipo==='Profunda'){
     precioLimpieza=parseFloat(document.getElementById('f-precio-profunda')?.value)||0;
@@ -1894,9 +2036,11 @@ function guardarServicio(){
     ocupacion:document.getElementById('f-ocupacion').value.trim(),
     packs:parseInt(document.getElementById('f-packs')?.value)||0,
     packPrice:parseFloat(document.getElementById('f-pack-price')?.value)||0,
+    packsBB:parseInt(document.getElementById('f-packs-bb')?.value)||0,
+    packBBPrice:parseFloat(document.getElementById('f-packbb-price')?.value)||0,
     clienteId:cli,
     propiedadId:document.getElementById('f-propiedad').value,
-    tipoLimpieza:tipo,precioLimpieza,horas,tarifa,
+    tipoLimpieza:tipo,precioLimpieza,horas,operarios,tarifa,
     extras:getExtrasFromForm(),
     abastecimiento:getAbastFromForm(),
     arreglos:document.getElementById('f-arreglos').value,
@@ -1918,6 +2062,69 @@ function delServ(ref){
   const s=typeof ref==='string'?servicios.find(x=>x.id===ref):servicios[ref];
   if(s?.id) window.db.collection('servicios').doc(s.id).delete();
 }
+
+
+// ══════════════════════════════════════
+// RESUMEN DE SERVICIO (solo lectura, sin riesgo de modificar nada)
+// ══════════════════════════════════════
+function openResumenServ(idx){
+  const s=servicios[idx]; if(!s) return;
+  const c=getCliente(s.clienteId), p=getPropiedad(s.propiedadId);
+  const ivaPct=getIva(), base=calcBase(s), ivaAmt=base*ivaPct/100;
+  const item=(k,v)=>`<div class="rs-item"><div class="k">${k}</div><div class="v">${v}</div></div>`;
+  const line=(desc,amt,sub='')=>`<div class="rs-line"><div>${desc}${sub?`<div class="sub">${sub}</div>`:''}</div><div class="amt">${amt}</div></div>`;
+  const nota=e=>(e.nota||'').trim()?`📝 ${esc(e.nota.trim())}`:'';
+  let h=`<div class="rs-head">
+      <div><div class="rs-head-title">${esc(c?.nombre||'Sin cliente')}</div><div class="rs-head-sub">🏠 ${esc(p?.nombre||'Sin propiedad')}</div></div>
+      <div style="display:flex;gap:6px">${bFact(s.estadoFactura)}${bCobro(s.estadoCobro)}</div>
+    </div>
+    <div class="rs-grid">
+      ${item('F. servicio',fmtDate(s.fechaServicio))}${item('F. ingreso',fmtDate(s.fechaIngreso))}
+      ${item('F. salida',fmtDate(s.fechaSalida))}${item('Estancia',fmtDias(diasEstancia(s)))}
+      ${item('Ocupación',esc(s.ocupacion||'—'))}
+    </div>`;
+  // Conceptos facturados en este servicio
+  const L=[];
+  if(s.tipoLimpieza){
+    if(esPorHoras(s.tipoLimpieza)){
+      const ops=getOperarios(s);
+      L.push(line(`🧹 Limpieza ${s.tipoLimpieza}`,fmt(calcLimpiezaHoras(s)),`${s.horas||0} h × ${ops} operario${ops>1?'s':''} = ${(parseFloat(s.horas)||0)*ops} h × ${fmt(s.tarifa||0)}/h`));
+    } else L.push(line(`🧹 Limpieza ${s.tipoLimpieza}`,fmt(parseFloat(s.precioLimpieza)||0)));
+  }
+  const q=parseInt(s.packs)||0, qb=parseInt(s.packsBB)||0;
+  if(q>0) L.push(line(`💼 Packs de ropa`,fmt(q*(parseFloat(s.packPrice)||0)),`${q} × ${fmt(parseFloat(s.packPrice)||0)}`));
+  if(qb>0) L.push(line(`👶 Pack BB`,fmt(packBBTotal(s)),`${qb} × ${fmt(parseFloat(s.packBBPrice)||0)}`));
+  getExtrasPropios(s).forEach(e=>L.push(line(`${e.icon||'➕'} ${esc(e.label||'Otro')}`,fmt(extraImporte(e)),
+    [ (e.importe||0)>0?`incl. compra ${fmt(e.importe)}`:'', nota(e) ].filter(Boolean).join(' · '))));
+  getExtrasRecibidos(s.id).forEach(e=>L.push(line(`${e.icon||'➕'} ${esc(e.label||'Otro')} <span style="color:var(--accent2);font-size:11px">↪ recibido</span>`,fmt(extraImporte(e)),
+    [ descOrigenExtra(e), nota(e) ].filter(Boolean).join(' · '))));
+  if((parseFloat(s.arreglosImporte)||0)>0||s.arreglos==='Sí') L.push(line(`🔧 Arreglos`,fmt(parseFloat(s.arreglosImporte)||0),esc(s.detalleArreglos||'')));
+  h+=`<div class="rs-sec">Conceptos</div>${L.join('')||'<div style="color:var(--muted);font-size:13px">Sin conceptos</div>'}
+    <div class="fact-totals" style="margin-top:12px">
+      <div class="fact-total-row"><span class="lbl">Base imponible</span><span class="val">${fmt(base)}</span></div>
+      <div class="fact-total-row"><span class="lbl">IVA (${ivaPct}%)</span><span class="val">${fmt(ivaAmt)}</span></div>
+      <div class="fact-total-row grand"><span class="lbl">TOTAL</span><span class="val">${fmt(base+ivaAmt)}</span></div>
+    </div>`;
+  // Extras imputados a la estancia anterior (no suman aquí)
+  const ced=getExtrasCedidos(s);
+  if(ced.length){
+    h+=`<div class="rs-sec">Imputados a la estancia anterior <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--muted)">(no suman en este servicio)</span></div>`+
+      ced.map(e=>{ const r=servicios.find(x=>x.id===e.refServicioId);
+        return line(`${e.icon||'➕'} ${esc(e.label||'Otro')}`,fmt(extraImporte(e)),[`→ salida ${fmtDate(r?.fechaSalida||r?.fechaServicio)}${r?.ocupacion?' · '+esc(r.ocupacion):''}`,nota(e)].filter(Boolean).join(' · ')); }).join('');
+  }
+  const ab=s.abastecimiento||[];
+  if(ab.length){
+    const tot=ab.reduce((a,x)=>a+(x.cantidad||1)*(x.precio||0),0);
+    h+=`<div class="rs-sec">Abastecimiento <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--muted)">(${s.estadoAbast||'Pendiente'} · se factura aparte)</span></div>`+
+      ab.map(x=>line(`📦 ${esc(x.nombre||'—')}`,fmt((x.cantidad||1)*(x.precio||0)),`${x.cantidad||1} × ${fmt(x.precio||0)}`)).join('')+
+      line('<strong>Total abastecimiento</strong>',fmt(tot));
+  }
+  if((s.observaciones||'').trim()) h+=`<div class="rs-sec">Observaciones</div><div class="rs-note">${esc(s.observaciones)}</div>`;
+  document.getElementById('resumen-body').innerHTML=h;
+  document.getElementById('resumen-edit-btn').onclick=()=>{ closeResumenServ(); openServModal(idx); };
+  document.getElementById('modal-resumen').classList.add('open');
+}
+function closeResumenServ(){ document.getElementById('modal-resumen').classList.remove('open'); }
 
 // ══════════════════════════════════════
 // FACTURACIÓN
@@ -1945,17 +2152,19 @@ function renderFacturacion(){
     const base=calcBase(s); const ivaAmt=base*ivaPct/100; const total=base+ivaAmt;
     let lines=[];
     if(s.tipoLimpieza){
-      if(s.tipoLimpieza==='Inicial/Obra'||s.tipoLimpieza==='Check'){
-        const lp=(s.horas||0)*(s.tarifa||0);
-        lines.push({desc:`${s.tipoLimpieza} — ${s.horas}h × ${fmt(s.tarifa)}/h`,precio:lp});
+      if(esPorHoras(s.tipoLimpieza)){
+        const ops=getOperarios(s);
+        lines.push({desc:`${s.tipoLimpieza} — ${s.horas||0}h × ${ops} operario${ops>1?'s':''} × ${fmt(s.tarifa||0)}/h`,precio:calcLimpiezaHoras(s)});
       } else {
         lines.push({desc:`Limpieza ${s.tipoLimpieza}`,precio:s.precioLimpieza||0});
       }
     }
-    getExtrasPropios(s).forEach(e=>lines.push({desc:`${e.icon} ${e.label}`+((e.importe||0)>0?` <span style="color:var(--muted);font-size:11px">(incl. compra ${fmt(e.importe)})</span>`:''),precio:extraImporte(e)}));
-    getExtrasRecibidos(s.id).forEach(e=>lines.push({desc:`${e.icon} ${e.label} <span style="color:var(--accent2);font-size:11px">↩ ${descOrigenExtra(e)}</span>`,precio:extraImporte(e)}));
+    const notaTxt=e=>(e.nota||'').trim()?` <span class="extra-nota-txt">— ${esc(e.nota.trim())}</span>`:'';
+    getExtrasPropios(s).forEach(e=>lines.push({desc:`${e.icon} ${esc(e.label)}`+notaTxt(e)+((e.importe||0)>0?` <span style="color:var(--muted);font-size:11px">(incl. compra ${fmt(e.importe)})</span>`:''),precio:extraImporte(e)}));
+    getExtrasRecibidos(s.id).forEach(e=>lines.push({desc:`${e.icon} ${esc(e.label)}${notaTxt(e)} <span style="color:var(--accent2);font-size:11px">↩ ${descOrigenExtra(e)}</span>`,precio:extraImporte(e)}));
     const packQty=parseInt(s.packs)||0;const packPriceV=parseFloat(s.packPrice)||0;
     if(packQty>0)lines.push({desc:`💼 Packs (${packQty} × ${fmt(packPriceV)})`,precio:packQty*packPriceV});
+    if((parseInt(s.packsBB)||0)>0)lines.push({desc:`👶 Pack BB (${s.packsBB} × ${fmt(parseFloat(s.packBBPrice)||0)})`,precio:packBBTotal(s)});
     if(s.arreglosImporte>0)lines.push({desc:'🔧 Arreglos',precio:s.arreglosImporte});
     return `<div class="fact-card">
       <div class="fact-card-header" onclick="toggleFactCard(this)">
@@ -2001,12 +2210,13 @@ function renderCobros(){
     return `<tr>
       <td>${fmtDate(s.fechaServicio)}</td><td><strong>${c?.nombre||'—'}</strong></td>
       <td style="color:var(--muted)">${p?.nombre||'—'}</td>
-      <td style="text-align:center">${packQty>0?`<span class="badge badge-teal">📦 ${packQty}</span>${packPrice>0?`<br><span style="font-size:10px;color:var(--muted)">${fmt(packQty*packPrice)}</span>`:''}`:'—'}</td>
+      <td style="text-align:center">${packsCell(s)}</td>
       <td class="importe-cell">${fmt(base)}</td>
       <td style="color:var(--muted)">${fmt(ivaAmt)}</td>
       <td class="importe-cell" style="color:var(--accent)">${fmt(base+ivaAmt)}</td>
       <td>${bFact(s.estadoFactura)}</td><td>${bCobro(s.estadoCobro)}</td>
       <td><div class="actions">
+        <button class="btn btn-ghost btn-sm" onclick="openResumenServ(${s._i})" title="Ver resumen">👁</button>
         ${s.estadoCobro==='Pendiente'?`<button class="btn btn-ghost btn-sm" onclick="marcarCobrado(${s._i})">✓ Cobrado</button>`:''}
         ${s.estadoFactura==='Pendiente'?`<button class="btn btn-ghost btn-sm" onclick="marcarFacturado(${s._i})">📄 Facturar</button>`:''}
       </div></td>
@@ -2178,7 +2388,10 @@ function renderResumen(){
 // UTILS
 // ══════════════════════════════════════
 function fmt(n){ if(!n&&n!==0)return'—'; return new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR'}).format(n); }
-function fmtDate(d){ if(!d)return'—'; return new Date(d+'T00:00:00').toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'}); }
+// Formato dd/mm/aa (las fechas se guardan como AAAA-MM-DD)
+function fmtDate(d){ if(!d)return'—'; const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(d); return m?`${m[3]}/${m[2]}/${m[1].slice(2)}`:d; }
+function fmtDateX(d){ return d?fmtDate(d):''; }
+function esc(v){ return String(v??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 // ══════════════════════════════════════
 // EXPORTAR EXCEL
@@ -2218,24 +2431,25 @@ function buildExcelRow(s){
     const p=getPropiedad(s.propiedadId);
     // Limpieza precio
     let precioLimp=0;
-    if(s.tipoLimpieza==='Inicial/Obra'||s.tipoLimpieza==='Check'){
-      precioLimp=(parseFloat(s.horas)||0)*(parseFloat(s.tarifa)||0);
+    if(esPorHoras(s.tipoLimpieza)){
+      precioLimp=calcLimpiezaHoras(s);
     } else {
       precioLimp=parseFloat(s.precioLimpieza)||0;
     }
     // Extras
     const propios=getExtrasPropios(s), cedidos=getExtrasCedidos(s), recibidos=getExtrasRecibidos(s.id);
-    const extrasStr=propios.map(e=>`${e.icon} ${e.label}: ${e.precio||0}€${e.importe?(' + compra: '+e.importe+'€'):''}`).join(' | ');
+    const nt=e=>(e.nota||'').trim()?` (${e.nota.trim()})`:'';
+    const extrasStr=propios.map(e=>`${e.icon} ${e.label}${nt(e)}: ${e.precio||0}€${e.importe?(' + compra: '+e.importe+'€'):''}`).join(' | ');
     const extrasTotalBase=propios.reduce((a,e)=>a+(parseFloat(e.precio)||0),0);
     const extrasImporteCompras=propios.reduce((a,e)=>a+(parseFloat(e.importe)||0),0);
-    const cedidosStr=cedidos.map(e=>`${e.icon} ${e.label}: ${extraImporte(e)}€`).join(' | ');
-    const recibidosStr=recibidos.map(e=>`${e.icon} ${e.label} (limpieza ${e._origenFecha||'?'}): ${extraImporte(e)}€`).join(' | ');
+    const cedidosStr=cedidos.map(e=>`${e.icon} ${e.label}${nt(e)}: ${extraImporte(e)}€`).join(' | ');
+    const recibidosStr=recibidos.map(e=>`${e.icon} ${e.label}${nt(e)} (limpieza ${e._origenFecha?fmtDate(e._origenFecha):'?'}): ${extraImporte(e)}€`).join(' | ');
     // Abastecimiento
     const abastStr=(s.abastecimiento||[]).map(a=>`${a.nombre}: ${a.cantidad}`).join(' | ');
     return {
-      'F. Servicio':   s.fechaServicio||'',
-      'F. Ingreso':    s.fechaIngreso||'',
-      'F. Salida':     s.fechaSalida||'',
+      'F. Servicio':   fmtDateX(s.fechaServicio),
+      'F. Ingreso':    fmtDateX(s.fechaIngreso),
+      'F. Salida':     fmtDateX(s.fechaSalida),
       'Días estancia': diasEstancia(s)??'',
       'Cliente':       c?.nombre||'',
       'Propiedad':     p?.nombre||'',
@@ -2243,10 +2457,14 @@ function buildExcelRow(s){
       'Packs (cant.)': s.packs||0,
       'Precio Pack (€)': s.packPrice||0,
       'Total Packs (€)': (parseInt(s.packs)||0)*(parseFloat(s.packPrice)||0)||'',
+      'Pack BB (cant.)': s.packsBB||0,
+      'Precio Pack BB (€)': s.packBBPrice||0,
+      'Total Pack BB (€)': packBBTotal(s)||'',
       'Tipo Limpieza': s.tipoLimpieza||'',
       'Precio Limpieza (€)': precioLimp||'',
-      'Horas':         (s.tipoLimpieza==='Inicial/Obra'||s.tipoLimpieza==='Check')?s.horas||'':'',
-      'Tarifa/h (€)':  (s.tipoLimpieza==='Inicial/Obra'||s.tipoLimpieza==='Check')?s.tarifa||'':'',
+      'Horas':         esPorHoras(s.tipoLimpieza)?s.horas||'':'',
+      'Operarios':     esPorHoras(s.tipoLimpieza)?getOperarios(s):'',
+      'Tarifa/h (€)':  esPorHoras(s.tipoLimpieza)?s.tarifa||'':'',
       'Arreglos':      s.arreglos||'',
       'Importe Arreglos (€)': s.arreglosImporte||'',
       'Detalle Arreglos': s.detalleArreglos||'',
@@ -2385,7 +2603,7 @@ function renderSalidas(){
             </div>
             <div style="display:flex;justify-content:space-between;align-items:center;">
               <div style="display:flex;gap:5px;">${bFact(s.estadoFactura)}${bCobro(s.estadoCobro)}</div>
-              <button class="btn btn-ghost btn-sm" onclick="openServModal(${s._i})">✏️</button>
+              <div style="display:flex;gap:5px"><button class="btn btn-ghost btn-sm" onclick="openResumenServ(${s._i})" title="Ver resumen">👁</button><button class="btn btn-ghost btn-sm" onclick="openServModal(${s._i})" title="Editar">✏️</button></div>
             </div>
           </div>
         </td></tr>`;
@@ -2405,11 +2623,11 @@ function renderSalidas(){
           <td><strong>${c?.nombre||'—'}</strong></td>
           <td class="col-prop" title="${(p?.nombre||'').replace(/"/g,'')}">${p?.nombre||'—'}</td>
           <td>${s.ocupacion?`<span class="badge badge-gray">${s.ocupacion}</span>`:'—'}</td>
-          <td style="text-align:center">${packQty>0?`<span class="badge badge-teal">📦 ${packQty}</span>${packPrice>0?`<br><span class="importe-cell" style="font-size:10px;color:var(--muted)">${fmt(packQty*packPrice)}</span>`:''}`:'—'}</td>
+          <td style="text-align:center">${packsCell(s,'importe-cell')}</td>
           <td>${s.tipoLimpieza?`<span class="badge badge-gray">${s.tipoLimpieza}</span>`:'—'}</td>
           <td class="importe-cell">${fmt(calcBase(s))}${marcaEstancias(s)}</td>
           <td>${bFact(s.estadoFactura)}</td><td>${bCobro(s.estadoCobro)}</td>
-          <td><div class="actions"><button class="btn btn-ghost btn-sm" onclick="openServModal(${s._i})">✏️</button></div></td>
+          <td><div class="actions"><button class="btn btn-ghost btn-sm" onclick="openResumenServ(${s._i})" title="Ver resumen">👁</button><button class="btn btn-ghost btn-sm" onclick="openServModal(${s._i})" title="Editar">✏️</button></div></td>
         </tr>`;
       }).join('');
   }
