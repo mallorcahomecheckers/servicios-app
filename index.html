@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gesti√≥n de Servicios</title>
+<title>Gestión de Servicios</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0e0f13;--surface:#16181f;--surface2:#1e2029;--border:#2a2d38;--accent:#c8f04a;--accent2:#4af0b8;--accent3:#f04a7a;--text:#e8eaf0;--muted:#6b7080;--radius:10px;}
@@ -175,7 +175,7 @@ table.cols-fixed th.col-prop,table.cols-fixed td.col-prop{min-width:0;max-width:
 .prop-tag{font-size:11px;background:rgba(200,240,74,.1);color:var(--accent);padding:2px 8px;border-radius:10px;white-space:nowrap;margin-right:4px;}
 .price-pill{font-size:11px;background:rgba(74,240,184,.1);color:var(--accent2);padding:2px 8px;border-radius:10px;white-space:nowrap;margin-right:4px;}
 
-/* FACTURACI√ìN */
+/* FACTURACIÓN */
 .iva-config{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 18px;margin-bottom:18px;font-size:13px;flex-wrap:wrap;}
 .iva-config label{color:var(--muted);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
 .iva-config input{width:70px;text-align:center;}
@@ -229,7 +229,7 @@ table.cols-fixed th.col-prop,table.cols-fixed td.col-prop{min-width:0;max-width:
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px;}
 
-/* ‚îÄ‚îÄ OCULTAR IMPORTES ‚îÄ‚îÄ */
+/* ── OCULTAR IMPORTES ── */
 .amounts-hidden .kpi-importe .kpi-value,
 .amounts-hidden .kpi-importe .kpi-sub{filter:blur(6px);user-select:none;pointer-events:none;}
 .amounts-hidden .importe-cell{filter:blur(6px);user-select:none;}
@@ -261,7 +261,7 @@ table.cols-fixed th.col-prop,table.cols-fixed td.col-prop{min-width:0;max-width:
 .abast-remove{background:none;border:none;color:var(--accent3);cursor:pointer;font-size:15px;padding:0 4px;line-height:1;}
 .badge-orange{background:rgba(234,88,12,.1);color:#ea580c;}
 
-/* ‚îÄ‚îÄ RESPONSIVE MOBILE ‚îÄ‚îÄ */
+/* ── RESPONSIVE MOBILE ── */
 .mobile-nav-toggle{display:none;position:fixed;top:12px;left:12px;z-index:200;background:#1e2a3a;border:none;border-radius:8px;padding:10px 12px;cursor:pointer;font-size:18px;color:#e2e8f0;}
 .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:99;}
 .sidebar-overlay.open{display:block;}
@@ -301,20 +301,20 @@ html,body{max-width:100%;overflow-x:hidden;}
 </style>
 </head>
 <body>
-<button class="mobile-nav-toggle" onclick="toggleSidebar()" id="nav-toggle">‚ò∞</button>
+<button class="mobile-nav-toggle" onclick="toggleSidebar()" id="nav-toggle">☰</button>
 <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
 <div class="layout">
 <aside class="sidebar" id="sidebar" style="background:#1e2a3a;border-right:1px solid #2d3d52;">
-  <div class="logo" style="color:#60a5fa;">servi<span style="color:#e2e8f0;">gesti√≥n</span></div>
+  <div class="logo" style="color:#60a5fa;">servi<span style="color:#e2e8f0;">gestión</span></div>
   <div class="nav-section" style="color:#64748b;">Principal</div>
-  <button class="nav-item active" onclick="showView('servicios',this);closeSidebar()"><span>üóÇ</span> Servicios</button>
-  <button class="nav-item" onclick="showView('facturacion',this);closeSidebar()"><span>üßæ</span> Facturaci√≥n</button>
-  <button class="nav-item" onclick="showView('cobros',this);closeSidebar()"><span>üí∞</span> Cobros</button>
-  <button class="nav-item" onclick="showView('abastecimiento',this);closeSidebar()"><span>üí∂</span> Precios</button>
-  <button class="nav-item" onclick="showView('salidas',this);closeSidebar()"><span>üö™</span> Salidas</button>
-  <button class="nav-item" onclick="showView('resumen',this);closeSidebar()"><span>üìä</span> Resumen</button>
+  <button class="nav-item active" onclick="showView('servicios',this);closeSidebar()"><span>🗂</span> Servicios</button>
+  <button class="nav-item" onclick="showView('facturacion',this);closeSidebar()"><span>🧾</span> Facturación</button>
+  <button class="nav-item" onclick="showView('cobros',this);closeSidebar()"><span>💰</span> Cobros</button>
+  <button class="nav-item" onclick="showView('abastecimiento',this);closeSidebar()"><span>💶</span> Precios</button>
+  <button class="nav-item" onclick="showView('salidas',this);closeSidebar()"><span>🚪</span> Salidas</button>
+  <button class="nav-item" onclick="showView('resumen',this);closeSidebar()"><span>📊</span> Resumen</button>
   <div class="nav-section" style="color:#64748b;">Maestros</div>
-  <button class="nav-item" onclick="showView('maestros',this);closeSidebar()"><span>üë•</span> Clientes &amp; Prop.</button>
+  <button class="nav-item" onclick="showView('maestros',this);closeSidebar()"><span>👥</span> Clientes &amp; Prop.</button>
 </aside>
 
 <main class="main">
@@ -324,16 +324,16 @@ html,body{max-width:100%;overflow-x:hidden;}
   <div class="page-header">
     <div class="page-title">Servicios</div>
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-      <button class="btn-eye" id="btn-eye" onclick="toggleAmounts()" title="Ocultar/mostrar importes">üëÅ Ocultar importes</button>
-      <button class="btn btn-ghost" onclick="exportarExcel('todos')">‚¨á Exportar todo</button>
-      <button class="btn btn-ghost" onclick="exportarExcel('filtrado')">‚¨á Exportar filtrado</button>
+      <button class="btn-eye" id="btn-eye" onclick="toggleAmounts()" title="Ocultar/mostrar importes">👁 Ocultar importes</button>
+      <button class="btn btn-ghost" onclick="exportarExcel('todos')">⬇ Exportar todo</button>
+      <button class="btn btn-ghost" onclick="exportarExcel('filtrado')">⬇ Exportar filtrado</button>
       <button class="btn btn-primary" onclick="openServModal()">+ Nuevo servicio</button>
     </div>
   </div>
   <div class="kpi-grid" id="kpi-grid"></div>
   <div class="filters">
-    <input class="form-input" id="filter-search" placeholder="üîç  Buscar‚Ä¶" oninput="renderTable()">
-    <button id="sort-btn" onclick="toggleSort()" style="flex-shrink:0;padding:0 14px;height:38px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">üìÖ M√°s reciente</button>
+    <input class="form-input" id="filter-search" placeholder="🔍  Buscar…" oninput="renderTable()">
+    <button id="sort-btn" onclick="toggleSort()" style="flex-shrink:0;padding:0 14px;height:38px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">📅 Más reciente</button>
     <select class="form-select" id="filter-mes" onchange="renderTable()"><option value="">Todos los meses</option></select>
     <select class="form-select" id="filter-cliente" onchange="renderTable()"><option value="">Todos los clientes</option></select>
     <select class="form-select" id="filter-propiedad" onchange="renderTable()" style="max-width:none;min-width:320px;flex:1 1 320px"><option value="">Todas las propiedades</option></select>
@@ -347,8 +347,8 @@ html,body{max-width:100%;overflow-x:hidden;}
   <div class="table-wrap">
     <table>
       <thead><tr>
-        <th>F.Servicio</th><th>F.Ingreso</th><th>F.Salida</th><th>D√≠as</th><th>Cliente</th>
-        <th class="col-prop">Propiedad</th><th>Ocupaci√≥n</th><th>Packs</th><th>Tipo limpieza</th>
+        <th>F.Servicio</th><th>F.Ingreso</th><th>F.Salida</th><th>Días</th><th>Cliente</th>
+        <th class="col-prop">Propiedad</th><th>Ocupación</th><th>Packs</th><th>Tipo limpieza</th>
         <th>Base s/IVA</th><th>Factura</th><th>Cobro</th><th></th>
       </tr></thead>
       <tbody id="tabla-body"></tbody>
@@ -356,9 +356,9 @@ html,body{max-width:100%;overflow-x:hidden;}
   </div>
 </div>
 
-<!-- FACTURACI√ìN -->
+<!-- FACTURACIÓN -->
 <div class="view" id="view-facturacion">
-  <div class="page-header"><div class="page-title">Facturaci√≥n</div></div>
+  <div class="page-header"><div class="page-title">Facturación</div></div>
   <div class="kpi-grid" id="kpi-fact"></div>
   <div class="iva-config">
     <label>IVA %</label>
@@ -376,7 +376,7 @@ html,body{max-width:100%;overflow-x:hidden;}
 
 <!-- COBROS -->
 <div class="view" id="view-cobros">
-  <div class="page-header"><div class="page-title">Gesti√≥n de Cobros</div></div>
+  <div class="page-header"><div class="page-title">Gestión de Cobros</div></div>
   <div class="table-wrap">
     <table>
       <thead><tr><th>F.Servicio</th><th>Cliente</th><th>Propiedad</th><th>Packs</th><th>Base s/IVA</th><th>IVA</th><th>Total c/IVA</th><th>Factura</th><th>Cobro</th><th>Acciones</th></tr></thead>
@@ -389,39 +389,39 @@ html,body{max-width:100%;overflow-x:hidden;}
 <div class="view" id="view-abastecimiento">
   <div class="page-header">
     <div class="page-title">Precios</div>
-    <button class="btn btn-primary" onclick="exportarAbast()">‚¨á Descargar Excel</button>
+    <button class="btn btn-primary" onclick="exportarAbast()">⬇ Descargar Excel</button>
   </div>
   <div class="kpi-grid" id="kpi-abast"></div>
 
   <!-- Precio pack de ropa -->
   <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:16px;">
-    <div style="font-family:'Syne',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--accent);margin-bottom:12px;">üíº Pack de ropa</div>
+    <div style="font-family:'Syne',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--accent);margin-bottom:12px;">💼 Pack de ropa</div>
     <div class="pack-config">
       <label for="cfg-pack-price">Precio por pack</label>
       <input type="number" class="form-input" id="cfg-pack-price" min="0" step="0.01" placeholder="0.00" oninput="onPackConfigChange(this.value)">
-      <span style="color:var(--muted)">‚Ç¨ / pack (sin IVA)</span>
+      <span style="color:var(--muted)">€ / pack (sin IVA)</span>
       <span id="cfg-pack-status" style="color:var(--accent);font-size:12px;font-weight:600"></span>
     </div>
     <div class="pack-config" style="margin-top:10px">
-      <label for="cfg-packbb-price">Precio pack BB üë∂</label>
+      <label for="cfg-packbb-price">Precio pack BB 👶</label>
       <input type="number" class="form-input" id="cfg-packbb-price" min="0" step="0.01" placeholder="0.00" oninput="onPackBBConfigChange(this.value)">
-      <span style="color:var(--muted)">‚Ç¨ / pack BB (sin IVA)</span>
+      <span style="color:var(--muted)">€ / pack BB (sin IVA)</span>
       <span id="cfg-packbb-status" style="color:var(--accent);font-size:12px;font-weight:600"></span>
     </div>
-    <div style="font-size:11px;color:var(--muted);margin-top:8px;">Se carga autom√°ticamente en los servicios nuevos. En cada servicio puedes cambiarlo (bot√≥n ‚Ü∫ para volver a este precio). No modifica los servicios ya guardados.</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:8px;">Se carga automáticamente en los servicios nuevos. En cada servicio puedes cambiarlo (botón ↺ para volver a este precio). No modifica los servicios ya guardados.</div>
   </div>
 
   <!-- Config precios por defecto -->
   <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:20px;">
-    <div style="font-family:'Syne',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--accent);margin-bottom:12px;">‚öôÔ∏è Precios por defecto de productos</div>
+    <div style="font-family:'Syne',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--accent);margin-bottom:12px;">⚙️ Precios por defecto de productos</div>
     <div class="abast-config-grid" id="abast-config-grid"></div>
-    <div style="font-size:11px;color:var(--muted);margin-top:4px;">Estos precios se cargan autom√°ticamente al a√±adir un producto. Se pueden editar en cada servicio.</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:4px;">Estos precios se cargan automáticamente al añadir un producto. Se pueden editar en cada servicio.</div>
   </div>
 
   <!-- Tabs por servicio / por cliente -->
   <div class="abast-tab-bar">
-    <button class="abast-tab active" onclick="switchAbastTab('servicio',this)">üìã Por servicio</button>
-    <button class="abast-tab" onclick="switchAbastTab('cliente',this)">üë§ Por cliente</button>
+    <button class="abast-tab active" onclick="switchAbastTab('servicio',this)">📋 Por servicio</button>
+    <button class="abast-tab" onclick="switchAbastTab('cliente',this)">👤 Por cliente</button>
   </div>
 
   <!-- Filtros -->
@@ -435,7 +435,7 @@ html,body{max-width:100%;overflow-x:hidden;}
       <input type="date" class="form-input" id="abast-filter-desde" oninput="renderAbastView()" style="max-width:150px">
       <label style="font-size:12px;color:var(--muted);white-space:nowrap">Hasta</label>
       <input type="date" class="form-input" id="abast-filter-hasta" oninput="renderAbastView()" style="max-width:150px">
-      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('abast-filter-desde').value='';document.getElementById('abast-filter-hasta').value='';renderAbastView()">‚úï</button>
+      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('abast-filter-desde').value='';document.getElementById('abast-filter-hasta').value='';renderAbastView()">✕</button>
     </div>
   </div>
 
@@ -447,9 +447,9 @@ html,body{max-width:100%;overflow-x:hidden;}
   <div class="page-header">
     <div class="page-title">Reporte por fecha de salida</div>
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-      <button class="btn-eye" id="btn-eye-sal" onclick="toggleAmounts()" title="Ocultar/mostrar importes">üëÅ Ocultar importes</button>
-      <button class="btn btn-ghost" onclick="limpiarFiltrosSalidas()">‚úï Limpiar filtros</button>
-      <button class="btn btn-primary" onclick="exportarSalidas()">‚¨á Exportar reporte</button>
+      <button class="btn-eye" id="btn-eye-sal" onclick="toggleAmounts()" title="Ocultar/mostrar importes">👁 Ocultar importes</button>
+      <button class="btn btn-ghost" onclick="limpiarFiltrosSalidas()">✕ Limpiar filtros</button>
+      <button class="btn btn-primary" onclick="exportarSalidas()">⬇ Exportar reporte</button>
     </div>
   </div>
   <div class="kpi-grid" id="kpi-salidas"></div>
@@ -461,8 +461,8 @@ html,body{max-width:100%;overflow-x:hidden;}
       <input type="date" class="form-input" id="sal-hasta" oninput="onSalRangoChange()">
     </div>
     <select class="form-select" id="sal-mes" onchange="onSalMesChange()"><option value="">Todos los meses</option></select>
-    <button id="sal-sort-btn" onclick="toggleSalSort()" style="flex-shrink:0;padding:0 14px;height:38px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">üìÖ M√°s reciente</button>
-    <input class="form-input" id="sal-search" placeholder="üîç  Buscar‚Ä¶" oninput="renderSalidas()">
+    <button id="sal-sort-btn" onclick="toggleSalSort()" style="flex-shrink:0;padding:0 14px;height:38px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">📅 Más reciente</button>
+    <input class="form-input" id="sal-search" placeholder="🔍  Buscar…" oninput="renderSalidas()">
     <select class="form-select" id="sal-cliente" onchange="renderSalidas()"><option value="">Todos los clientes</option></select>
     <select class="form-select" id="sal-propiedad" onchange="renderSalidas()" style="max-width:none;min-width:320px;flex:1 1 320px"><option value="">Todas las propiedades</option></select>
     <select class="form-select" id="sal-tipo" onchange="renderSalidas()">
@@ -479,8 +479,8 @@ html,body{max-width:100%;overflow-x:hidden;}
   <div class="table-wrap" id="sal-table-wrap">
     <table>
       <thead id="sal-thead"><tr>
-        <th>F.Salida</th><th>F.Servicio</th><th>F.Ingreso</th><th>D√≠as</th><th>Cliente</th>
-        <th class="col-prop">Propiedad</th><th>Ocupaci√≥n</th><th>Packs</th><th>Tipo limpieza</th>
+        <th>F.Salida</th><th>F.Servicio</th><th>F.Ingreso</th><th>Días</th><th>Cliente</th>
+        <th class="col-prop">Propiedad</th><th>Ocupación</th><th>Packs</th><th>Tipo limpieza</th>
         <th>Base s/IVA</th><th>Factura</th><th>Cobro</th><th></th>
       </tr></thead>
       <tbody id="salidas-body"></tbody>
@@ -501,11 +501,11 @@ html,body{max-width:100%;overflow-x:hidden;}
   </div>
   <div class="two-col">
     <div class="panel">
-      <div class="panel-header"><div class="panel-title">üë§ Clientes</div><button class="btn btn-primary btn-sm" onclick="openClienteModal(false)">+ Agregar</button></div>
+      <div class="panel-header"><div class="panel-title">👤 Clientes</div><button class="btn btn-primary btn-sm" onclick="openClienteModal(false)">+ Agregar</button></div>
       <div id="lista-clientes"></div>
     </div>
     <div class="panel">
-      <div class="panel-header"><div class="panel-title">üè† Propiedades</div><button class="btn btn-primary btn-sm" onclick="openPropModal(false)">+ Agregar</button></div>
+      <div class="panel-header"><div class="panel-title">🏠 Propiedades</div><button class="btn btn-primary btn-sm" onclick="openPropModal(false)">+ Agregar</button></div>
       <div id="lista-propiedades"></div>
     </div>
   </div>
@@ -514,12 +514,12 @@ html,body{max-width:100%;overflow-x:hidden;}
 </main>
 </div>
 
-<!-- ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê MODAL SERVICIO ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê -->
+<!-- ══════════ MODAL SERVICIO ══════════ -->
 <div class="modal-overlay" id="modal-servicio">
 <div class="modal">
   <div class="modal-header">
     <div class="modal-title" id="serv-modal-title">Nuevo servicio</div>
-    <button class="modal-close" onclick="closeServModal()">‚úï</button>
+    <button class="modal-close" onclick="closeServModal()">✕</button>
   </div>
   <div class="form-grid">
     <div class="section-divider">Datos generales</div>
@@ -543,36 +543,36 @@ html,body{max-width:100%;overflow-x:hidden;}
     <div class="form-group">
       <label class="form-label">Cliente <span class="req">*</span></label>
       <div class="input-with-btn">
-        <select class="form-select" id="f-cliente" onchange="onClienteChange()"><option value="">‚Äî seleccionar ‚Äî</option></select>
-        <button class="btn btn-ghost btn-icon" onclick="openClienteModal(true)" title="Nuevo cliente">Ôºã</button>
+        <select class="form-select" id="f-cliente" onchange="onClienteChange()"><option value="">— seleccionar —</option></select>
+        <button class="btn btn-ghost btn-icon" onclick="openClienteModal(true)" title="Nuevo cliente">＋</button>
       </div>
     </div>
     <div class="form-group">
       <label class="form-label">Propiedad</label>
       <div class="input-with-btn">
-        <select class="form-select" id="f-propiedad" onchange="onPropiedadChange()"><option value="">‚Äî seleccionar ‚Äî</option></select>
-        <button class="btn btn-ghost btn-icon" onclick="openPropModal(true)" title="Nueva propiedad">Ôºã</button>
+        <select class="form-select" id="f-propiedad" onchange="onPropiedadChange()"><option value="">— seleccionar —</option></select>
+        <button class="btn btn-ghost btn-icon" onclick="openPropModal(true)" title="Nueva propiedad">＋</button>
       </div>
     </div>
     <div class="form-group">
-      <label class="form-label">Ocupaci√≥n</label>
-      <input type="text" class="form-input" id="f-ocupacion" placeholder="Turistas, Propietario‚Ä¶">
+      <label class="form-label">Ocupación</label>
+      <input type="text" class="form-input" id="f-ocupacion" placeholder="Turistas, Propietario…">
     </div>
     <div class="form-group">
-      <label class="form-label">Packs de ropa <span style="font-size:10px;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">(cantidad √ó ‚Ç¨/pack)</span></label>
+      <label class="form-label">Packs de ropa <span style="font-size:10px;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">(cantidad × €/pack)</span></label>
       <div class="pack-line">
         <input type="number" class="form-input pk-qty" id="f-packs" min="0" step="1" placeholder="Cant." oninput="const pp=document.getElementById('f-pack-price');if(this.value>0&&!pp.value&&getPackPriceDefault())pp.value=getPackPriceDefault();recalcTotal()">
-        <span class="pk-x">√ó</span>
-        <input type="number" class="form-input pk-price" id="f-pack-price" min="0" step="0.01" placeholder="‚Ç¨/pack" oninput="recalcTotal()">
-        <button type="button" class="btn btn-ghost pk-btn" onclick="usarPackDefault()" title="Usar el precio por defecto del pack">‚Ü∫</button>
-        <button type="button" class="btn btn-ghost pk-btn pk-bb-toggle" id="btn-pack-bb" onclick="togglePackBB()" title="Agregar Pack BB">üë∂ Pack BB</button>
+        <span class="pk-x">×</span>
+        <input type="number" class="form-input pk-price" id="f-pack-price" min="0" step="0.01" placeholder="€/pack" oninput="recalcTotal()">
+        <button type="button" class="btn btn-ghost pk-btn" onclick="usarPackDefault()" title="Usar el precio por defecto del pack">↺</button>
+        <button type="button" class="btn btn-ghost pk-btn pk-bb-toggle" id="btn-pack-bb" onclick="togglePackBB()" title="Agregar Pack BB">👶 Pack BB</button>
       </div>
       <div class="pack-line" id="pack-bb-line" style="display:none;margin-top:6px">
         <input type="number" class="form-input pk-qty" id="f-packs-bb" min="0" step="1" placeholder="Cant." oninput="const pp=document.getElementById('f-packbb-price');if(this.value>0&&!pp.value&&getPackBBPriceDefault())pp.value=getPackBBPriceDefault();recalcTotal()">
-        <span class="pk-x">√ó</span>
-        <input type="number" class="form-input pk-price" id="f-packbb-price" min="0" step="0.01" placeholder="‚Ç¨/pack BB" oninput="recalcTotal()">
-        <button type="button" class="btn btn-ghost pk-btn" onclick="usarPackBBDefault()" title="Usar el precio por defecto del pack BB">‚Ü∫</button>
-        <span style="font-size:11px;color:var(--muted);white-space:nowrap">üë∂ BB</span>
+        <span class="pk-x">×</span>
+        <input type="number" class="form-input pk-price" id="f-packbb-price" min="0" step="0.01" placeholder="€/pack BB" oninput="recalcTotal()">
+        <button type="button" class="btn btn-ghost pk-btn" onclick="usarPackBBDefault()" title="Usar el precio por defecto del pack BB">↺</button>
+        <span style="font-size:11px;color:var(--muted);white-space:nowrap">👶 BB</span>
       </div>
       <div id="packs-hint" style="font-size:11px;color:var(--accent);margin-top:3px;display:none"></div>
     </div>
@@ -581,7 +581,7 @@ html,body{max-width:100%;overflow-x:hidden;}
     <div class="form-group">
       <label class="form-label">Tipo de limpieza</label>
       <select class="form-select" id="f-tipo-limpieza" onchange="onTipoLimpiezaChange()">
-        <option value="">‚Äî ninguna ‚Äî</option>
+        <option value="">— ninguna —</option>
         <option value="Normal">Normal</option>
         <option value="Intermedia">Intermedia</option>
         <option value="Profunda">Profunda</option>
@@ -591,32 +591,32 @@ html,body{max-width:100%;overflow-x:hidden;}
     </div>
     <div class="form-group">
       <label class="form-label">Arreglos</label>
-      <select class="form-select" id="f-arreglos" onchange="onArreglosChange()"><option value="">‚Äî ninguno ‚Äî</option><option>S√≠</option><option>No</option></select>
+      <select class="form-select" id="f-arreglos" onchange="onArreglosChange()"><option value="">— ninguno —</option><option>Sí</option><option>No</option></select>
     </div>
     <div class="form-group" id="f-arreglos-importe-group" style="display:none">
-      <label class="form-label">Importe arreglos (‚Ç¨)</label>
+      <label class="form-label">Importe arreglos (€)</label>
       <input type="number" class="form-input" id="f-arreglos-importe" min="0" step="0.01" placeholder="0.00" oninput="recalcTotal()">
     </div>
     <div class="form-group full">
       <label class="form-label">Detalle arreglos</label>
-      <input type="text" class="form-input" id="f-detalle-arreglos" placeholder="Descripci√≥n">
+      <input type="text" class="form-input" id="f-detalle-arreglos" placeholder="Descripción">
     </div>
 
-    <!-- PRECIO LIMPIEZA DIN√ÅMICO -->
+    <!-- PRECIO LIMPIEZA DINÁMICO -->
     <div class="precio-box hidden" id="precio-box">
       <div class="precio-box-title" id="precio-box-title">Precio limpieza</div>
       <div id="pw-hint" class="precio-auto-hint" style="display:none"></div>
       <!-- Normal/Intermedia: precio fijo editable -->
       <div class="form-group full" id="pw-precio-fijo" style="display:none">
-        <label class="form-label">Precio limpieza (‚Ç¨ sin IVA)</label>
+        <label class="form-label">Precio limpieza (€ sin IVA)</label>
         <input type="number" class="form-input" id="f-precio-limpieza" min="0" step="0.01" placeholder="0.00" oninput="recalcTotal()">
       </div>
       <!-- Profunda: precio manual -->
       <div class="form-group full" id="pw-precio-profunda" style="display:none">
-        <label class="form-label">Precio limpieza profunda (‚Ç¨ sin IVA)</label>
+        <label class="form-label">Precio limpieza profunda (€ sin IVA)</label>
         <input type="number" class="form-input" id="f-precio-profunda" min="0" step="0.01" placeholder="0.00" oninput="recalcTotal()">
       </div>
-      <!-- Inicial/Obra y Check: horas √ó operarios √ó tarifa -->
+      <!-- Inicial/Obra y Check: horas × operarios × tarifa -->
       <div class="horas-row" id="pw-horas-row" style="display:none">
         <div class="form-group" id="pw-horas">
           <label class="form-label">Horas</label>
@@ -627,7 +627,7 @@ html,body{max-width:100%;overflow-x:hidden;}
           <input type="number" class="form-input" id="f-operarios" min="1" step="1" placeholder="1" oninput="recalcTotal()">
         </div>
         <div class="form-group" id="pw-tarifa">
-          <label class="form-label">Tarifa / hora (‚Ç¨)</label>
+          <label class="form-label">Tarifa / hora (€)</label>
           <input type="number" class="form-input" id="f-tarifa" min="0" step="0.01" placeholder="0.00" oninput="recalcTotal()">
         </div>
       </div>
@@ -640,7 +640,7 @@ html,body{max-width:100%;overflow-x:hidden;}
         <label class="form-label">Agregar servicio extra</label>
         <div class="input-with-btn">
           <select id="extras-select" class="form-select" onchange="onExtrasSelectChange(this)">
-            <option value="">‚Äî seleccionar servicio ‚Äî</option>
+            <option value="">— seleccionar servicio —</option>
           </select>
         </div>
       </div>
@@ -651,26 +651,26 @@ html,body{max-width:100%;overflow-x:hidden;}
     <div class="extras-section full" id="abast-section" style="grid-column:1/-1">
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
         <select id="abast-select" class="form-select" style="flex:1;min-width:180px">
-          <option value="">‚Äî seleccionar producto ‚Äî</option>
+          <option value="">— seleccionar producto —</option>
         </select>
-        <button class="btn btn-ghost btn-sm" onclick="addAbastProduct()" type="button">+ A√±adir</button>
+        <button class="btn btn-ghost btn-sm" onclick="addAbastProduct()" type="button">+ Añadir</button>
       </div>
       <div id="abast-selected" style="display:flex;flex-direction:column;gap:7px;margin-top:8px;"></div>
     </div>
 
     <div class="section-divider">Resumen de precios</div>
     <div class="price-summary">
-      <div class="price-row"><span class="label">Limpieza</span><span class="val" id="ps-limpieza">‚Äî</span></div>
-      <div class="price-row"><span class="label" id="ps-packs-label">Packs</span><span class="val" id="ps-packs">‚Äî</span></div>
-      <div class="price-row" id="ps-packbb-row" style="display:none"><span class="label" id="ps-packbb-label">Pack BB</span><span class="val" id="ps-packbb">‚Äî</span></div>
-      <div class="price-row"><span class="label">Servicios extra</span><span class="val" id="ps-extras">‚Äî</span></div>
+      <div class="price-row"><span class="label">Limpieza</span><span class="val" id="ps-limpieza">—</span></div>
+      <div class="price-row"><span class="label" id="ps-packs-label">Packs</span><span class="val" id="ps-packs">—</span></div>
+      <div class="price-row" id="ps-packbb-row" style="display:none"><span class="label" id="ps-packbb-label">Pack BB</span><span class="val" id="ps-packbb">—</span></div>
+      <div class="price-row"><span class="label">Servicios extra</span><span class="val" id="ps-extras">—</span></div>
       <div class="price-detail" id="ps-extras-det"></div>
-      <div class="price-row" id="ps-recibidos-row" style="display:none"><span class="label" style="color:var(--accent2)">‚Ü™ Extras de otras limpiezas</span><span class="val" id="ps-recibidos" style="color:var(--accent2)">‚Äî</span></div>
+      <div class="price-row" id="ps-recibidos-row" style="display:none"><span class="label" style="color:var(--accent2)">↪ Extras de otras limpiezas</span><span class="val" id="ps-recibidos" style="color:var(--accent2)">—</span></div>
       <div class="price-detail" id="ps-recibidos-det"></div>
-      <div class="price-row" id="ps-arreglos-row" style="display:none"><span class="label">Arreglos</span><span class="val" id="ps-arreglos">‚Äî</span></div>
-      <div class="price-row subtotal"><span class="label">Base imponible (sin IVA)</span><span class="val" id="ps-base">‚Äî</span></div>
-      <div class="price-row iva-row"><span class="label">IVA (<span id="ps-iva-pct">21</span>%)</span><span class="val" id="ps-iva">‚Äî</span></div>
-      <div class="price-row total-row"><span>TOTAL</span><span id="ps-total">‚Äî</span></div>
+      <div class="price-row" id="ps-arreglos-row" style="display:none"><span class="label">Arreglos</span><span class="val" id="ps-arreglos">—</span></div>
+      <div class="price-row subtotal"><span class="label">Base imponible (sin IVA)</span><span class="val" id="ps-base">—</span></div>
+      <div class="price-row iva-row"><span class="label">IVA (<span id="ps-iva-pct">21</span>%)</span><span class="val" id="ps-iva">—</span></div>
+      <div class="price-row total-row"><span>TOTAL</span><span id="ps-total">—</span></div>
     </div>
 
     <div class="section-divider">Estado</div>
@@ -684,7 +684,7 @@ html,body{max-width:100%;overflow-x:hidden;}
     </div>
     <div class="form-group full">
       <label class="form-label">Observaciones</label>
-      <textarea class="form-textarea" id="f-observaciones" placeholder="Notas adicionales‚Ä¶"></textarea>
+      <textarea class="form-textarea" id="f-observaciones" placeholder="Notas adicionales…"></textarea>
     </div>
   </div>
   <div class="modal-footer">
@@ -694,31 +694,31 @@ html,body{max-width:100%;overflow-x:hidden;}
 </div>
 </div>
 
-<!-- ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê MODAL RESUMEN SERVICIO (solo lectura) ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê -->
+<!-- ══════════ MODAL RESUMEN SERVICIO (solo lectura) ══════════ -->
 <div class="modal-overlay" id="modal-resumen" onclick="if(event.target===this)closeResumenServ()">
 <div class="modal">
   <div class="modal-header">
     <div class="modal-title">Resumen del servicio</div>
-    <button class="modal-close" onclick="closeResumenServ()">‚úï</button>
+    <button class="modal-close" onclick="closeResumenServ()">✕</button>
   </div>
   <div id="resumen-body"></div>
   <div class="modal-footer">
     <button class="btn btn-ghost" onclick="closeResumenServ()">Cerrar</button>
-    <button class="btn btn-primary" id="resumen-edit-btn">‚úèÔ∏è Editar servicio</button>
+    <button class="btn btn-primary" id="resumen-edit-btn">✏️ Editar servicio</button>
   </div>
 </div>
 </div>
 
-<!-- ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê MODAL CLIENTE ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê -->
+<!-- ══════════ MODAL CLIENTE ══════════ -->
 <div class="modal-overlay" id="modal-cliente">
 <div class="modal modal-sm">
   <div class="modal-header">
     <div class="modal-title" id="cli-modal-title">Nuevo cliente</div>
-    <button class="modal-close" onclick="closeClienteModal()">‚úï</button>
+    <button class="modal-close" onclick="closeClienteModal()">✕</button>
   </div>
   <div class="form-grid">
     <div class="form-group full"><label class="form-label">Nombre <span class="req">*</span></label><input type="text" class="form-input" id="cli-nombre" placeholder="Nombre del cliente"></div>
-    <div class="form-group"><label class="form-label">Tel√©fono</label><input type="text" class="form-input" id="cli-telefono"></div>
+    <div class="form-group"><label class="form-label">Teléfono</label><input type="text" class="form-input" id="cli-telefono"></div>
     <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="cli-email"></div>
     <div class="form-group full"><label class="form-label">Notas</label><textarea class="form-textarea" id="cli-notas" style="min-height:55px"></textarea></div>
   </div>
@@ -729,32 +729,32 @@ html,body{max-width:100%;overflow-x:hidden;}
 </div>
 </div>
 
-<!-- ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê MODAL PROPIEDAD ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê -->
+<!-- ══════════ MODAL PROPIEDAD ══════════ -->
 <div class="modal-overlay" id="modal-prop">
 <div class="modal modal-sm">
   <div class="modal-header">
     <div class="modal-title" id="prop-modal-title">Nueva propiedad</div>
-    <button class="modal-close" onclick="closePropModal()">‚úï</button>
+    <button class="modal-close" onclick="closePropModal()">✕</button>
   </div>
   <div class="form-grid">
-    <div class="form-group full"><label class="form-label">C√≥digo / Nombre <span class="req">*</span></label><input type="text" class="form-input" id="prop-nombre" placeholder="Ej: ES0087A - Alcudia Garden"></div>
-    <div class="form-group full"><label class="form-label">Direcci√≥n</label><input type="text" class="form-input" id="prop-direccion" placeholder="Calle, n√∫mero, piso‚Ä¶"></div>
-    <div class="form-group full"><label class="form-label">Cliente asociado</label><select class="form-select" id="prop-cliente"><option value="">‚Äî sin cliente ‚Äî</option></select></div>
+    <div class="form-group full"><label class="form-label">Código / Nombre <span class="req">*</span></label><input type="text" class="form-input" id="prop-nombre" placeholder="Ej: ES0087A - Alcudia Garden"></div>
+    <div class="form-group full"><label class="form-label">Dirección</label><input type="text" class="form-input" id="prop-direccion" placeholder="Calle, número, piso…"></div>
+    <div class="form-group full"><label class="form-label">Cliente asociado</label><select class="form-select" id="prop-cliente"><option value="">— sin cliente —</option></select></div>
 
     <!-- PRECIOS POR TIPO -->
     <div class="prop-prices-grid">
-      <div class="prop-prices-title">üí∂ Precios fijos por tipo de limpieza (sin IVA)</div>
+      <div class="prop-prices-title">💶 Precios fijos por tipo de limpieza (sin IVA)</div>
       <div class="form-group">
-        <label class="form-label">Normal (‚Ç¨)</label>
+        <label class="form-label">Normal (€)</label>
         <input type="number" class="form-input" id="prop-precio-normal" min="0" step="0.01" placeholder="0.00">
       </div>
       <div class="form-group">
-        <label class="form-label">Intermedia (‚Ç¨)</label>
+        <label class="form-label">Intermedia (€)</label>
         <input type="number" class="form-input" id="prop-precio-intermedia" min="0" step="0.01" placeholder="0.00">
       </div>
     </div>
 
-    <div class="form-group full"><label class="form-label">Notas</label><textarea class="form-textarea" id="prop-notas" placeholder="Acceso, c√≥digo‚Ä¶" style="min-height:50px"></textarea></div>
+    <div class="form-group full"><label class="form-label">Notas</label><textarea class="form-textarea" id="prop-notas" placeholder="Acceso, código…" style="min-height:50px"></textarea></div>
   </div>
   <div class="modal-footer">
     <button class="btn btn-ghost" onclick="closePropModal()">Cancelar</button>
@@ -764,22 +764,22 @@ html,body{max-width:100%;overflow-x:hidden;}
 </div>
 
 <script>
-// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
+// ══════════════════════════════════════
 // DATA
-// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
+// ══════════════════════════════════════
 let servicios=[], clientes=[], propiedades=[];
 let editServIdx=-1, editCliIdx=-1, editPropIdx=-1, fromServ=false;
 let editServId='', editCliId='', editPropId='';
 
 const EXTRAS_CAT=[
-  {key:'cristales',  label:'Cristales',  icon:'ü™ü', defaultPrice:0,  estanciaDefault:'actual'},
-  {key:'chimenea',   label:'Chimenea',   icon:'üî•', defaultPrice:25, estanciaDefault:'anterior'},
-  {key:'basura',     label:'Basura',     icon:'üóë', defaultPrice:25, estanciaDefault:'anterior'},
-  {key:'lavanderia', label:'Lavander√≠a', icon:'üëï', defaultPrice:25, estanciaDefault:'anterior'},
-  {key:'dog',        label:'Dog',        icon:'üêï', defaultPrice:25, estanciaDefault:'anterior'},
-  {key:'bbq',        label:'BBQ',        icon:'üçñ', defaultPrice:25, estanciaDefault:'anterior'},
-  {key:'compras',    label:'Compras',    icon:'üõí', defaultPrice:25, hasImporte:true, estanciaDefault:'actual'},
-  {key:'otro',       label:'Otro',       icon:'‚ûï', defaultPrice:0,  isOtro:true, estanciaDefault:'actual'},
+  {key:'cristales',  label:'Cristales',  icon:'🪟', defaultPrice:0,  estanciaDefault:'actual'},
+  {key:'chimenea',   label:'Chimenea',   icon:'🔥', defaultPrice:25, estanciaDefault:'anterior'},
+  {key:'basura',     label:'Basura',     icon:'🗑', defaultPrice:25, estanciaDefault:'anterior'},
+  {key:'lavanderia', label:'Lavandería', icon:'👕', defaultPrice:25, estanciaDefault:'anterior'},
+  {key:'dog',        label:'Dog',        icon:'🐕', defaultPrice:25, estanciaDefault:'anterior'},
+  {key:'bbq',        label:'BBQ',        icon:'🍖', defaultPrice:25, estanciaDefault:'anterior'},
+  {key:'compras',    label:'Compras',    icon:'🛒', defaultPrice:25, hasImporte:true, estanciaDefault:'actual'},
+  {key:'otro',       label:'Otro',       icon:'➕', defaultPrice:0,  isOtro:true, estanciaDefault:'actual'},
 ];
 
 // Real property data: { code, name, precioNormal, precioIntermedia }
@@ -794,7 +794,7 @@ const PROP_DATA=[
   {code:'ES0385A',  name:'Bonaire Neubauvilla 2.0',              precioNormal:214.20, precioIntermedia:0},
   {code:'ES0405A',  name:'Santa Ponsa Terrassenwohnung',         precioNormal:153.14, precioIntermedia:0},
   {code:'ES0434A',  name:'Finca Romero',                         precioNormal:299.25, precioIntermedia:0},
-  {code:'ES0488A',  name:'Santany√≠ Townhouse',                   precioNormal:164.87, precioIntermedia:0},
+  {code:'ES0488A',  name:'Santanyí Townhouse',                   precioNormal:164.87, precioIntermedia:0},
   {code:'ES0525A',  name:'Santa Ponsa Terraza al Mar',           precioNormal:214.90, precioIntermedia:0},
   {code:'ES0583A',  name:'Villa Nou',                            precioNormal:300.00, precioIntermedia:0},
   {code:'ES0612A',  name:'La Mola Mar',                          precioNormal:174.05, precioIntermedia:0},
@@ -812,7 +812,7 @@ function saveProps()    { _fbSave('propiedades', propiedades); }
 function getCliente(id)   { return clientes.find(c=>c.id===id)||null; }
 function getPropiedad(id) { return propiedades.find(p=>p.id===id)||null; }
 
-// Firebase helpers (usamos window.db que se define en el script de Firebase m√°s abajo)
+// Firebase helpers (usamos window.db que se define en el script de Firebase más abajo)
 function _fbSave(col, arr){
   if(!window.db) return;
   arr.forEach(item=>{
@@ -836,8 +836,8 @@ async function loadData(){
   clientes    = cSnap.docs.map(docData);
   propiedades = sortProps(pSnap.docs.map(docData));
 
-  // Siembra inicial SEGURA: solo si el servidor confirma que la colecci√≥n est√° vac√≠a
-  // (nunca con la cach√© offline) y con IDs fijos, as√≠ repetirla no crea duplicados.
+  // Siembra inicial SEGURA: solo si el servidor confirma que la colección está vacía
+  // (nunca con la caché offline) y con IDs fijos, así repetirla no crea duplicados.
   if(!clientes.length||!propiedades.length) await sembrarDatosIniciales();
 
   EXTRAS_CAT.forEach(e=>{ e.defaultPrice = e.key==='cristales' ? 0 : 25; });
@@ -886,10 +886,10 @@ async function sembrarDatosIniciales(){
         });
       }
     }
-  }catch(e){ console.warn('Sin conexi√≥n con el servidor: no se crean datos iniciales',e); }
+  }catch(e){ console.warn('Sin conexión con el servidor: no se crean datos iniciales',e); }
 }
 
-// ‚îÄ‚îÄ Columnas redimensionables (arrastrar el borde del encabezado; doble clic = restablecer) ‚îÄ‚îÄ
+// ── Columnas redimensionables (arrastrar el borde del encabezado; doble clic = restablecer) ──
 // Los anchos se recuerdan en este navegador. No se guarda nada en la base de datos.
 function _colKey(tbl){ const tb=tbl.querySelector('tbody'); return 'sg_cols_'+(tb?.id||''); }
 function _applyWidths(tbl,ws){
@@ -912,7 +912,7 @@ function initColResize(){
     try{ _applyWidths(tbl,JSON.parse(localStorage.getItem(_colKey(tbl))||'null')); }catch(e){}
     tbl.querySelectorAll('thead th').forEach((th,i)=>{
       th.classList.add('col-rs');
-      const g=document.createElement('span'); g.className='col-grip'; g.title='Arrastra para cambiar el ancho ¬∑ doble clic para restablecer';
+      const g=document.createElement('span'); g.className='col-grip'; g.title='Arrastra para cambiar el ancho · doble clic para restablecer';
       th.appendChild(g);
       g.addEventListener('dblclick',e=>{ e.stopPropagation(); _resetWidths(tbl); });
       g.addEventListener('mousedown',e=>{
@@ -934,23 +934,23 @@ function initColResize(){
   });
 }
 
-// ‚îÄ‚îÄ D√≠as de estancia (fecha salida ‚àí fecha ingreso) ‚îÄ‚îÄ
+// ── Días de estancia (fecha salida − fecha ingreso) ──
 function diasEstancia(s){
   const fi=s?.fechaIngreso, fs=s?.fechaSalida;
   if(!fi||!fs) return null;
   const d=Math.round((new Date(fs+'T00:00:00')-new Date(fi+'T00:00:00'))/86400000);
   return d>=0?d:null;
 }
-function fmtDias(d){ return d==null?'‚Äî':`${d} d√≠a${d===1?'':'s'}`; }
+function fmtDias(d){ return d==null?'—':`${d} día${d===1?'':'s'}`; }
 function onFechasChange(){
   const d=diasEstancia({fechaIngreso:document.getElementById('f-fecha-ingreso').value,fechaSalida:document.getElementById('f-fecha-salida').value});
   const el=document.getElementById('dias-hint'); if(!el) return;
   const fi=document.getElementById('f-fecha-ingreso').value, fs=document.getElementById('f-fecha-salida').value;
-  if(fi&&fs&&fs<fi){ el.innerHTML='‚ö†Ô∏è La salida es anterior al ingreso'; el.style.color='var(--accent3)'; }
-  else { el.innerHTML=d==null?'':`üóì Estancia: <strong>${fmtDias(d)}</strong>`; el.style.color='var(--accent)'; }
+  if(fi&&fs&&fs<fi){ el.innerHTML='⚠️ La salida es anterior al ingreso'; el.style.color='var(--accent3)'; }
+  else { el.innerHTML=d==null?'':`🗓 Estancia: <strong>${fmtDias(d)}</strong>`; el.style.color='var(--accent)'; }
 }
 
-// ‚îÄ‚îÄ Precio por defecto del pack de ropa (compartido en Firebase) ‚îÄ‚îÄ
+// ── Precio por defecto del pack de ropa (compartido en Firebase) ──
 let _packPriceDefault=parseFloat(localStorage.getItem('sg_pack_price'))||0;
 function getPackPriceDefault(){ return _packPriceDefault||0; }
 function renderPackConfig(){
@@ -959,7 +959,7 @@ function renderPackConfig(){
   const bb=document.getElementById('cfg-packbb-price');
   if(bb&&document.activeElement!==bb) bb.value=_packBBPriceDefault?_packBBPriceDefault:'';
 }
-// ‚îÄ‚îÄ Pack BB: mismo funcionamiento que el pack de ropa, con su propio precio por defecto ‚îÄ‚îÄ
+// ── Pack BB: mismo funcionamiento que el pack de ropa, con su propio precio por defecto ──
 let _packBBPriceDefault=parseFloat(localStorage.getItem('sg_packbb_price'))||0;
 function getPackBBPriceDefault(){ return _packBBPriceDefault||0; }
 let _packBBSaveT=null;
@@ -968,7 +968,7 @@ function onPackBBConfigChange(v){
   localStorage.setItem('sg_packbb_price',_packBBPriceDefault);
   clearTimeout(_packBBSaveT);
   _packBBSaveT=setTimeout(()=>{ if(window.db) window.db.collection('config').doc('ajustes').set({packBBPrice:_packBBPriceDefault},{merge:true}); },600);
-  const st=document.getElementById('cfg-packbb-status'); if(st){ st.textContent='‚úì Guardado'; setTimeout(()=>st.textContent='',1500); }
+  const st=document.getElementById('cfg-packbb-status'); if(st){ st.textContent='✓ Guardado'; setTimeout(()=>st.textContent='',1500); }
 }
 function usarPackBBDefault(){
   const el=document.getElementById('f-packbb-price');
@@ -994,9 +994,9 @@ function packBBTotal(s){ return (parseInt(s.packsBB)||0)*(parseFloat(s.packBBPri
 function packsCell(s,priceCls=''){
   const q=parseInt(s.packs)||0, pr=parseFloat(s.packPrice)||0;
   const qb=parseInt(s.packsBB)||0;
-  if(!q&&!qb) return '‚Äî';
+  if(!q&&!qb) return '—';
   const tot=q*pr+packBBTotal(s);
-  return `${q>0?`<span class="badge badge-teal">üì¶ ${q}</span>`:''}${qb>0?` <span class="badge badge-teal">üë∂ ${qb}</span>`:''}${tot>0?`<br><span class="${priceCls}" style="font-size:10px;color:var(--muted)">${fmt(tot)}</span>`:''}`;
+  return `${q>0?`<span class="badge badge-teal">📦 ${q}</span>`:''}${qb>0?` <span class="badge badge-teal">👶 ${qb}</span>`:''}${tot>0?`<br><span class="${priceCls}" style="font-size:10px;color:var(--muted)">${fmt(tot)}</span>`:''}`;
 }
 let _packSaveT=null;
 function onPackConfigChange(v){
@@ -1004,7 +1004,7 @@ function onPackConfigChange(v){
   localStorage.setItem('sg_pack_price',_packPriceDefault);
   clearTimeout(_packSaveT);
   _packSaveT=setTimeout(()=>{ if(window.db) window.db.collection('config').doc('ajustes').set({packPrice:_packPriceDefault},{merge:true}); },600);
-  const st=document.getElementById('cfg-pack-status'); if(st){ st.textContent='‚úì Guardado'; setTimeout(()=>st.textContent='',1500); }
+  const st=document.getElementById('cfg-pack-status'); if(st){ st.textContent='✓ Guardado'; setTimeout(()=>st.textContent='',1500); }
 }
 function escucharConfig(){
   if(!window.db) return;
@@ -1021,16 +1021,16 @@ function usarPackDefault(){
   if(el){ el.value=getPackPriceDefault()||''; recalcTotal(); }
 }
 
-// ‚îÄ‚îÄ Imputaci√≥n de extras a la estancia correcta ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ‚îÄ
+// ── Imputación de extras a la estancia correcta ─────────────
 // Un extra con estancia==='anterior' y refServicioId se factura en ESE servicio,
-// no en el que se carg√≥. Si no se pudo resolver el anterior, queda en el actual.
+// no en el que se cargó. Si no se pudo resolver el anterior, queda en el actual.
 function extraImporte(e){ return (parseFloat(e.precio)||0)+(parseFloat(e.importe)||0); }
 let _idsIdx=null,_idsIdxSrc=null;
 function servicioExiste(id){
   if(!(_idsIdx&&_idsIdxSrc===servicios)){ _idsIdx=new Set((servicios||[]).map(x=>x.id)); _idsIdxSrc=servicios; }
   return _idsIdx.has(id);
 }
-// Si el servicio destino ya no existe (se borr√≥), el extra vuelve al servicio donde se carg√≥
+// Si el servicio destino ya no existe (se borró), el extra vuelve al servicio donde se cargó
 function extraEsCedido(e){ return e.estancia==='anterior' && !!e.refServicioId && servicioExiste(e.refServicioId); }
 
 let _reciboIdx=null,_reciboIdxSrc=null;
@@ -1060,7 +1060,7 @@ function findEstanciaAnterior(propiedadId,fechaIngreso,excluirId){
   return cands[0]||null;
 }
 
-// Limpieza por horas: horas √ó operarios √ó tarifa (servicios antiguos sin operarios = 1)
+// Limpieza por horas: horas × operarios × tarifa (servicios antiguos sin operarios = 1)
 function esPorHoras(tipo){ return tipo==='Inicial/Obra'||tipo==='Check'; }
 function getOperarios(s){ return Math.max(1,parseInt(s?.operarios)||1); }
 function calcLimpiezaHoras(s){ return (parseFloat(s.horas)||0)*getOperarios(s)*(parseFloat(s.tarifa)||0); }
@@ -1080,9 +1080,9 @@ function calcBase(s){
 function calcIvaAmt(s){ return calcBase(s)*getIva()/100; }
 function calcTotal(s){ return calcBase(s)+calcIvaAmt(s); }
 
-// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
+// ══════════════════════════════════════
 // NAV
-// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
+// ══════════════════════════════════════
 function showView(name,btn){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
@@ -1091,9 +1091,9 @@ function showView(name,btn){
   ({salidas:renderSalidas,resumen:renderResumen,cobros:renderCobros,maestros:renderMaestros,facturacion:renderFacturacion,abastecimiento:()=>{renderAbastView();renderPackConfig();},servicios:()=>{renderTable();renderKPIs();}})[name]?.();
 }
 
-// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
+// ══════════════════════════════════════
 // KPIs
-// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
+// ══════════════════════════════════════
 function renderKPIs(data){
   const d=data||servicios;
   const ti=d.reduce((a,s)=>a+calcBase(s),0);
@@ -1110,19 +1110,19 @@ function renderKPIs(data){
       :'Filtrado'
     :'Total global';
   document.getElementById('kpi-grid').innerHTML=`
-    <div class="kpi-card"><div class="kpi-label">Servicios${hayFiltro?' ('+labelPeriodo+')':''}</div><div class="kpi-value">${d.length}</div><div class="kpi-sub">${hayFiltro?'en selecci√≥n':'registros'}</div></div>
-    <div class="kpi-card kpi-importe"><div class="kpi-label">Base s/IVA${hayFiltro?' ¬∑ '+labelPeriodo:''}</div><div class="kpi-value green">${fmt(ti)}</div><div class="kpi-sub">${hayFiltro?'per√≠odo seleccionado':'acumulado'}</div></div>
-    <div class="kpi-card kpi-importe"><div class="kpi-label">Cobrado${hayFiltro?' ¬∑ '+labelPeriodo:''}</div><div class="kpi-value teal">${fmt(co)}</div><div class="kpi-sub">recibido</div></div>
-    <div class="kpi-card kpi-importe"><div class="kpi-label">Pendiente${hayFiltro?' ¬∑ '+labelPeriodo:''}</div><div class="kpi-value red">${fmt(ti-co)}</div><div class="kpi-sub">por cobrar</div></div>`;
+    <div class="kpi-card"><div class="kpi-label">Servicios${hayFiltro?' ('+labelPeriodo+')':''}</div><div class="kpi-value">${d.length}</div><div class="kpi-sub">${hayFiltro?'en selección':'registros'}</div></div>
+    <div class="kpi-card kpi-importe"><div class="kpi-label">Base s/IVA${hayFiltro?' · '+labelPeriodo:''}</div><div class="kpi-value green">${fmt(ti)}</div><div class="kpi-sub">${hayFiltro?'período seleccionado':'acumulado'}</div></div>
+    <div class="kpi-card kpi-importe"><div class="kpi-label">Cobrado${hayFiltro?' · '+labelPeriodo:''}</div><div class="kpi-value teal">${fmt(co)}</div><div class="kpi-sub">recibido</div></div>
+    <div class="kpi-card kpi-importe"><div class="kpi-label">Pendiente${hayFiltro?' · '+labelPeriodo:''}</div><div class="kpi-value red">${fmt(ti-co)}</div><div class="kpi-sub">por cobrar</div></div>`;
 }
 
-// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
+// ══════════════════════════════════════
 // TABLE
-// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
+// ══════════════════════════════════════
 let _sortDir='desc';
 function toggleSort(){
   _sortDir=_sortDir==='desc'?'asc':'desc';
-  document.getElementById('sort-btn').textContent=_sortDir==='desc'?'üìÖ M√°s reciente':'üìÖ M√°s antiguo';
+  document.getElementById('sort-btn').textContent=_sortDir==='desc'?'📅 Más reciente':'📅 Más antiguo';
   renderTable();
 }
 
@@ -1164,30 +1164,30 @@ function renderTable(){
   if(isMobile){
     document.querySelector('.table-wrap').style.cssText='background:transparent;border:none;border-radius:0;';
     document.querySelector('#view-servicios thead').style.display='none';
-    if(!data.length){tbody.innerHTML='<tr><td style="border:none;display:block"><div class="empty"><div class="empty-icon">üìã</div>Sin resultados</div></td></tr>';renderKPIs();return;}
+    if(!data.length){tbody.innerHTML='<tr><td style="border:none;display:block"><div class="empty"><div class="empty-icon">📋</div>Sin resultados</div></td></tr>';renderKPIs();return;}
     tbody.innerHTML=data.map(s=>{
       const c=getCliente(s.clienteId);const p=getPropiedad(s.propiedadId);
       return `<tr><td style="padding:0 0 10px 0;border:none;display:block">
         <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;">
           <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-            <div><div style="font-weight:700;font-size:14px">${c?.nombre||'‚Äî'}</div>
-            <div style="font-size:13px;color:var(--text);margin-top:3px;font-weight:500">üè† ${p?.nombre||'‚Äî'}</div></div>
+            <div><div style="font-weight:700;font-size:14px">${c?.nombre||'—'}</div>
+            <div style="font-size:13px;color:var(--text);margin-top:3px;font-weight:500">🏠 ${p?.nombre||'—'}</div></div>
             <div style="font-weight:700;font-size:16px;color:var(--accent)">${fmt(calcBase(s))}</div>
           </div>
           <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
-            <span style="font-size:11px;color:var(--muted)">üìÖ ${fmtDate(s.fechaServicio)}</span>
-            ${s.fechaSalida?`<span style="font-size:11px;color:var(--muted)">¬∑ üö™ ${fmtDate(s.fechaSalida)}</span>`:''}
-            ${diasEstancia(s)!=null?`<span class="badge badge-teal" style="font-size:10px">üóì ${fmtDias(diasEstancia(s))}</span>`:''}
-            ${(parseInt(s.packs)||0)>0?`<span style="font-size:11px;color:var(--muted)">¬∑ üì¶ ${s.packs} pack${s.packs>1?'s':''}</span>`:''}
-            ${(parseInt(s.packsBB)||0)>0?`<span style="font-size:11px;color:var(--muted)">¬∑ üë∂ ${s.packsBB} BB</span>`:''}
+            <span style="font-size:11px;color:var(--muted)">📅 ${fmtDate(s.fechaServicio)}</span>
+            ${s.fechaSalida?`<span style="font-size:11px;color:var(--muted)">· 🚪 ${fmtDate(s.fechaSalida)}</span>`:''}
+            ${diasEstancia(s)!=null?`<span class="badge badge-teal" style="font-size:10px">🗓 ${fmtDias(diasEstancia(s))}</span>`:''}
+            ${(parseInt(s.packs)||0)>0?`<span style="font-size:11px;color:var(--muted)">· 📦 ${s.packs} pack${s.packs>1?'s':''}</span>`:''}
+            ${(parseInt(s.packsBB)||0)>0?`<span style="font-size:11px;color:var(--muted)">· 👶 ${s.packsBB} BB</span>`:''}
             ${s.tipoLimpieza?`<span class="badge badge-gray" style="font-size:10px">${s.tipoLimpieza}</span>`:''}
           </div>
           <div style="display:flex;justify-content:space-between;align-items:center;">
             <div style="display:flex;gap:5px;">${bFact(s.estadoFactura)}${bCobro(s.estadoCobro)}</div>
             <div style="display:flex;gap:5px;">
-              <button class="btn btn-ghost btn-sm" onclick="openResumenServ(${s._i})" title="Ver resumen">üëÅ</button>
-              <button class="btn btn-ghost btn-sm" onclick="openServModal(${s._i})" title="Editar">‚úèÔ∏è</button>
-              <button class="btn btn-danger btn-sm" onclick="delServ('${s.id}')">üóë</button>
+              <button class="btn btn-ghost btn-sm" onclick="openResumenServ(${s._i})" title="Ver resumen">👁</button>
+              <button class="btn btn-ghost btn-sm" onclick="openServModal(${s._i})" title="Editar">✏️</button>
+              <button class="btn btn-danger btn-sm" onclick="delServ('${s.id}')">🗑</button>
             </div>
           </div>
         </div>
@@ -1196,24 +1196,24 @@ function renderTable(){
   } else {
     document.querySelector('.table-wrap').style.cssText='';
     document.querySelector('#view-servicios thead').style.display='';
-    if(!data.length){tbody.innerHTML='<tr><td colspan="13"><div class="empty"><div class="empty-icon">üìã</div>Sin resultados</div></td></tr>';renderKPIs();return;}
+    if(!data.length){tbody.innerHTML='<tr><td colspan="13"><div class="empty"><div class="empty-icon">📋</div>Sin resultados</div></td></tr>';renderKPIs();return;}
     tbody.innerHTML=data.map(s=>{
       const c=getCliente(s.clienteId);const p=getPropiedad(s.propiedadId);
       const packQty=parseInt(s.packs)||0; const packPrice=parseFloat(s.packPrice)||0;
       return `<tr>
         <td>${fmtDate(s.fechaServicio)}</td><td>${fmtDate(s.fechaIngreso)}</td><td>${fmtDate(s.fechaSalida)}</td>
-        <td>${diasEstancia(s)!=null?`<span class="badge badge-teal">${fmtDias(diasEstancia(s))}</span>`:'‚Äî'}</td>
-        <td><strong>${c?.nombre||'‚Äî'}</strong></td>
-        <td class="col-prop" title="${(p?.nombre||'').replace(/"/g,'')}">${p?.nombre||'‚Äî'}</td>
-        <td>${s.ocupacion?`<span class="badge badge-gray">${s.ocupacion}</span>`:'‚Äî'}</td>
+        <td>${diasEstancia(s)!=null?`<span class="badge badge-teal">${fmtDias(diasEstancia(s))}</span>`:'—'}</td>
+        <td><strong>${c?.nombre||'—'}</strong></td>
+        <td class="col-prop" title="${(p?.nombre||'').replace(/"/g,'')}">${p?.nombre||'—'}</td>
+        <td>${s.ocupacion?`<span class="badge badge-gray">${s.ocupacion}</span>`:'—'}</td>
         <td style="text-align:center">${packsCell(s)}</td>
-        <td>${s.tipoLimpieza?`<span class="badge badge-gray">${s.tipoLimpieza}</span>`:'‚Äî'}</td>
+        <td>${s.tipoLimpieza?`<span class="badge badge-gray">${s.tipoLimpieza}</span>`:'—'}</td>
         <td class="importe-cell">${fmt(calcBase(s))}${marcaEstancias(s)}</td>
         <td>${bFact(s.estadoFactura)}</td><td>${bCobro(s.estadoCobro)}</td>
         <td><div class="actions">
-          <button class="btn btn-ghost btn-sm" onclick="openResumenServ(${s._i})" title="Ver resumen">üëÅ</button>
-          <button class="btn btn-ghost btn-sm" onclick="openServModal(${s._i})" title="Editar">‚úèÔ∏è</button>
-          <button class="btn btn-danger btn-sm" onclick="delServ('${s.id}')">üóë</button>
+          <button class="btn btn-ghost btn-sm" onclick="openResumenServ(${s._i})" title="Ver resumen">👁</button>
+          <button class="btn btn-ghost btn-sm" onclick="openServModal(${s._i})" title="Editar">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="delServ('${s.id}')">🗑</button>
         </div></td>
       </tr>`;
     }).join('');
@@ -1225,15 +1225,15 @@ function renderTable(){
 function marcaEstancias(s){
   const rec=getExtrasRecibidos(s.id);
   if(!rec.length) return '';
-  const det=rec.map(e=>`${e.label}: ${descOrigenExtra(e)}`).join(' ‚Äî ');
-  return `<span class="mini-tag in" title="${det.replace(/"/g,'')}">‚Ü™${rec.length}</span>`;
+  const det=rec.map(e=>`${e.label}: ${descOrigenExtra(e)}`).join(' — ');
+  return `<span class="mini-tag in" title="${det.replace(/"/g,'')}">↪${rec.length}</span>`;
 }
-function bFact(v){ return v==='Facturado'?`<span class="badge badge-green">‚úì Facturado</span>`:`<span class="badge badge-yellow">‚è≥ Pendiente</span>`; }
-function bCobro(v){ return v==='Cobrado'?`<span class="badge badge-teal">‚úì Cobrado</span>`:`<span class="badge badge-red">‚è≥ Pendiente</span>`; }
+function bFact(v){ return v==='Facturado'?`<span class="badge badge-green">✓ Facturado</span>`:`<span class="badge badge-yellow">⏳ Pendiente</span>`; }
+function bCobro(v){ return v==='Cobrado'?`<span class="badge badge-teal">✓ Cobrado</span>`:`<span class="badge badge-red">⏳ Pendiente</span>`; }
 
-// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
+// ══════════════════════════════════════
 // SERVICIO MODAL
-// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
+// ══════════════════════════════════════
 function openServModal(idx=-1){
   editServIdx=idx;
   editServId=idx>-1&&servicios[idx]?servicios[idx].id:'';
@@ -1259,7 +1259,7 @@ function renderExtrasSelect(){
   if(!sel) return;
   // Only show extras not yet added (except 'otro' which can be added multiple times)
   const available=EXTRAS_CAT.filter(e=>e.key==='otro'||!_selectedExtras.some(x=>x.key===e.key));
-  sel.innerHTML='<option value="">‚Äî seleccionar servicio ‚Äî</option>'+
+  sel.innerHTML='<option value="">— seleccionar servicio —</option>'+
     available.map(e=>`<option value="${e.key}">${e.icon} ${e.label}${e.defaultPrice?' ('+fmt(e.defaultPrice)+')':''}</option>`).join('');
 }
 
@@ -1270,7 +1270,7 @@ function onExtrasSelectChange(sel){
   if(cat){
     if(key==='otro'){
       // 'otro' gets a unique key so multiple instances are independent
-      _selectedExtras.push({key:'otro_'+uid(),label:'',icon:'‚ûï',precio:0,isOtro:true,estancia:'actual'});
+      _selectedExtras.push({key:'otro_'+uid(),label:'',icon:'➕',precio:0,isOtro:true,estancia:'actual'});
     } else if(!_selectedExtras.find(x=>x.key===key)){
       _selectedExtras.push({key:cat.key,label:cat.label,icon:cat.icon,precio:cat.defaultPrice||0,estancia:cat.estanciaDefault||'actual'});
     }
@@ -1293,54 +1293,54 @@ function renderExtrasSelected(){
     if(isOtro){
       return `<div class="extra-row" style="flex-wrap:wrap;gap:8px">
         <div class="extra-row-label" style="width:100%;justify-content:space-between">
-          <span style="display:flex;align-items:center;gap:7px"><span>‚ûï</span><span style="color:var(--muted);font-size:12px">Otro</span></span>
-          <button class="extra-row-remove" onclick="removeExtra(${i})" title="Quitar">‚úï</button>
+          <span style="display:flex;align-items:center;gap:7px"><span>➕</span><span style="color:var(--muted);font-size:12px">Otro</span></span>
+          <button class="extra-row-remove" onclick="removeExtra(${i})" title="Quitar">✕</button>
         </div>
         <div style="flex:1;min-width:160px">
-          <input type="text" value="${esc(e.label)}" placeholder="Concepto‚Ä¶" style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--text);font-family:inherit;font-size:13px;"
+          <input type="text" value="${esc(e.label)}" placeholder="Concepto…" style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--text);font-family:inherit;font-size:13px;"
             oninput="onOtroDescChange(${i},this.value)">
         </div>
         <div class="extra-row-price" style="flex:0 0 auto">
           <input type="number" value="${e.precio!=null&&e.precio!==0?e.precio:''}" min="0" step="0.01" placeholder="0.00"
             oninput="onExtraPriceChange(${i},this.value,'precio')">
-          <span class="currency">‚Ç¨</span>
+          <span class="currency">€</span>
         </div>
       <div class="extra-estancia">
-        <select class="${anterior?'anterior':''}" onchange="onExtraEstanciaChange(${i},this.value)" title="¬øA qu√© estancia se imputa este extra?">
+        <select class="${anterior?'anterior':''}" onchange="onExtraEstanciaChange(${i},this.value)" title="¿A qué estancia se imputa este extra?">
           <option value="actual"${anterior?'':' selected'}>Esta estancia</option>
           <option value="anterior"${anterior?' selected':''}>Estancia anterior</option>
         </select>
       </div>
-        <div class="extra-row-subtotal">${e.precio>0?fmt(e.precio):'‚Äî'}</div>
-      <div class="extra-nota"><input type="text" value="${esc(e.nota)}" placeholder="üìù Descripci√≥n / anotaci√≥n (opcional)‚Ä¶" oninput="onExtraNotaChange(${i},this.value)"></div>
+        <div class="extra-row-subtotal">${e.precio>0?fmt(e.precio):'—'}</div>
+      <div class="extra-nota"><input type="text" value="${esc(e.nota)}" placeholder="📝 Descripción / anotación (opcional)…" oninput="onExtraNotaChange(${i},this.value)"></div>
       ${anterior?`<div class="extra-ref">${refHint}</div>`:''}
       </div>`;
     }
     return `<div class="extra-row" style="flex-wrap:wrap;gap:8px">
       <div class="extra-row-label" style="width:100%;justify-content:space-between">
         <span style="display:flex;align-items:center;gap:7px"><span>${e.icon}</span><span>${e.label}</span></span>
-        <button class="extra-row-remove" onclick="removeExtra(${i})" title="Quitar">‚úï</button>
+        <button class="extra-row-remove" onclick="removeExtra(${i})" title="Quitar">✕</button>
       </div>
       <div class="extra-row-price" style="flex:1">
         <span style="font-size:11px;color:var(--muted);margin-right:4px">Tarifa</span>
         <input type="number" value="${e.precio!=null?e.precio:''}" min="0" step="0.01" placeholder="0.00"
           oninput="onExtraPriceChange(${i},this.value,'precio')">
-        <span class="currency">‚Ç¨</span>
+        <span class="currency">€</span>
       </div>
       ${isCompras?`<div class="extra-row-price" style="flex:1">
         <span style="font-size:11px;color:var(--muted);margin-right:4px">Importe compra</span>
         <input type="number" value="${e.importe!=null?e.importe:''}" min="0" step="0.01" placeholder="0.00"
           oninput="onExtraPriceChange(${i},this.value,'importe')">
-        <span class="currency">‚Ç¨</span>
+        <span class="currency">€</span>
       </div>`:''}
       <div class="extra-estancia">
-        <select class="${anterior?'anterior':''}" onchange="onExtraEstanciaChange(${i},this.value)" title="¬øA qu√© estancia se imputa este extra?">
+        <select class="${anterior?'anterior':''}" onchange="onExtraEstanciaChange(${i},this.value)" title="¿A qué estancia se imputa este extra?">
           <option value="actual"${anterior?'':' selected'}>Esta estancia</option>
           <option value="anterior"${anterior?' selected':''}>Estancia anterior</option>
         </select>
       </div>
-      <div class="extra-row-subtotal">${isCompras?(e.precio||0)+(e.importe||0)>0?fmt((e.precio||0)+(e.importe||0)):'‚Äî':e.precio>0?fmt(e.precio):'‚Äî'}</div>
-      <div class="extra-nota"><input type="text" value="${esc(e.nota)}" placeholder="üìù Descripci√≥n / anotaci√≥n (opcional)‚Ä¶" oninput="onExtraNotaChange(${i},this.value)"></div>
+      <div class="extra-row-subtotal">${isCompras?(e.precio||0)+(e.importe||0)>0?fmt((e.precio||0)+(e.importe||0)):'—':e.precio>0?fmt(e.precio):'—'}</div>
+      <div class="extra-nota"><input type="text" value="${esc(e.nota)}" placeholder="📝 Descripción / anotación (opcional)…" oninput="onExtraNotaChange(${i},this.value)"></div>
       ${anterior?`<div class="extra-ref">${refHint}</div>`:''}
     </div>`;
   }).join('');
@@ -1356,16 +1356,16 @@ function getRefEstanciaActual(){
 function buildRefHint(){
   const prop=document.getElementById('f-propiedad')?.value||'';
   const fIng=document.getElementById('f-fecha-ingreso')?.value||'';
-  if(!prop) return '<span class="warn">‚ö†Ô∏è Eleg√≠ una propiedad para poder imputarlo a la estancia anterior</span>';
-  if(!fIng) return '<span class="warn">‚ö†Ô∏è Falta la fecha de ingreso para ubicar la estancia anterior</span>';
+  if(!prop) return '<span class="warn">⚠️ Elegí una propiedad para poder imputarlo a la estancia anterior</span>';
+  if(!fIng) return '<span class="warn">⚠️ Falta la fecha de ingreso para ubicar la estancia anterior</span>';
   const ref=getRefEstanciaActual();
-  if(!ref) return '<span class="warn">‚ö†Ô∏è No hay una estancia anterior en esta propiedad ‚Äî se factura en esta</span>';
+  if(!ref) return '<span class="warn">⚠️ No hay una estancia anterior en esta propiedad — se factura en esta</span>';
   const c=getCliente(ref.clienteId);
   const cliActual=document.getElementById('f-cliente')?.value||'';
   const distinto=ref.clienteId&&cliActual&&ref.clienteId!==cliActual;
-  // Identificamos la estancia anterior por su ocupaci√≥n, no por el cliente
-  const quien=(ref.ocupacion||'').trim()||c?.nombre||'sin ocupaci√≥n';
-  return `‚Ü© Se imputa a: salida ${fmtDate(ref.fechaSalida||ref.fechaServicio)} ¬∑ <strong style="color:var(--text)">${quien}</strong>`
+  // Identificamos la estancia anterior por su ocupación, no por el cliente
+  const quien=(ref.ocupacion||'').trim()||c?.nombre||'sin ocupación';
+  return `↩ Se imputa a: salida ${fmtDate(ref.fechaSalida||ref.fechaServicio)} · <strong style="color:var(--text)">${quien}</strong>`
        + (distinto?' <span class="badge badge-yellow" style="font-size:10px">otro cliente</span>':'');
 }
 function onExtraEstanciaChange(idx,val){
@@ -1393,7 +1393,7 @@ function onExtraPriceChange(idx,val,field='precio'){
   if(rows[idx]){
     const e=_selectedExtras[idx];
     const sub=e.key==='compras'?(e.precio||0)+(e.importe||0):e.precio||0;
-    rows[idx].querySelector('.extra-row-subtotal').textContent=sub>0?fmt(sub):'‚Äî';
+    rows[idx].querySelector('.extra-row-subtotal').textContent=sub>0?fmt(sub):'—';
   }
   if(field==='precio'){
     const cat=EXTRAS_CAT.find(e=>e.key===_selectedExtras[idx].key);
@@ -1429,11 +1429,11 @@ function getExtrasFromForm(){
   });
 }
 
-// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
-// ABASTECIMIENTO ‚Äî Cat√°logo y l√≥gica
-// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
+// ══════════════════════════════════════
+// ABASTECIMIENTO — Catálogo y lógica
+// ══════════════════════════════════════
 const ABAST_CAT=[
-  {key:'papel_vater',      nombre:'Papel de v√°ter',        precio:0},
+  {key:'papel_vater',      nombre:'Papel de váter',        precio:0},
   {key:'rollo_cocina',     nombre:'Rollo de cocina',       precio:0},
   {key:'estropajo',        nombre:'Estropajo',             precio:0},
   {key:'bayeta',           nombre:'Bayeta',                precio:0},
@@ -1444,12 +1444,12 @@ const ABAST_CAT=[
   {key:'bolsa_30l',        nombre:'Bolsa 30 litros',       precio:0},
   {key:'bolsa_50l',        nombre:'Bolsa 50 litros',       precio:0},
   {key:'limpia_lavav',     nombre:'Limpia lavavajillas',   precio:0},
-  {key:'jabon_manos',      nombre:'Jab√≥n de manos',        precio:0},
+  {key:'jabon_manos',      nombre:'Jabón de manos',        precio:0},
   {key:'fairi',            nombre:'Fairi',                 precio:0},
   {key:'abrillantador',    nombre:'Abrillantador',         precio:0},
   {key:'limpia_lavadoras', nombre:'Limpialavadoras',       precio:0},
   {key:'tubo_co2',         nombre:'Tubo CO2',              precio:0},
-  {key:'__otro__',         nombre:'‚ûï Otro',               precio:0},
+  {key:'__otro__',         nombre:'➕ Otro',               precio:0},
 ];
 
 function loadAbastPrices(){
@@ -1470,7 +1470,7 @@ function getAbastDefaultPrice(key){
 function buildAbastSelect(){
   const sel=document.getElementById('abast-select');
   if(!sel) return;
-  sel.innerHTML='<option value="">‚Äî seleccionar producto ‚Äî</option>'+
+  sel.innerHTML='<option value="">— seleccionar producto —</option>'+
     ABAST_CAT.map(p=>`<option value="${p.key}">${p.nombre}${p.precio>0?' ('+fmt(p.precio)+')':''}</option>`).join('');
 }
 
@@ -1497,22 +1497,22 @@ function renderAbast(){
   cont.innerHTML=_abastProducts.map((p,i)=>`
     <div class="abast-row-item">
       ${p.isOtro
-        ?`<input type="text" value="${p.nombre||''}" placeholder="Descripci√≥n del producto‚Ä¶"
+        ?`<input type="text" value="${p.nombre||''}" placeholder="Descripción del producto…"
             style="flex:1;min-width:130px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:5px 10px;color:var(--text);font-family:inherit;font-size:13px;"
             oninput="_abastProducts[${i}].nombre=this.value">`
-        :`<span class="abast-row-name">üì¶ ${p.nombre}</span>`
+        :`<span class="abast-row-name">📦 ${p.nombre}</span>`
       }
       <div class="abast-row-controls">
         <span style="font-size:11px;color:var(--muted)">Cant.</span>
         <input type="number" value="${p.cantidad}" min="1" step="1"
           oninput="_abastProducts[${i}].cantidad=parseInt(this.value)||1;updateAbastSubtotal(${i})">
-        <span style="font-size:11px;color:var(--muted);margin-left:4px">‚Ç¨/u.</span>
+        <span style="font-size:11px;color:var(--muted);margin-left:4px">€/u.</span>
         <input type="number" value="${p.precio!=null&&p.precio!==0?p.precio:''}" min="0" step="0.01" placeholder="0.00"
           class="abast-price-input"
           oninput="_abastProducts[${i}].precio=parseFloat(this.value)||0;updateAbastSubtotal(${i})">
       </div>
-      <div class="abast-subtotal" id="abast-sub-${i}">${(p.cantidad*(p.precio||0))>0?fmt(p.cantidad*(p.precio||0)):'‚Äî'}</div>
-      <button class="abast-remove" onclick="removeAbast(${i})">‚úï</button>
+      <div class="abast-subtotal" id="abast-sub-${i}">${(p.cantidad*(p.precio||0))>0?fmt(p.cantidad*(p.precio||0)):'—'}</div>
+      <button class="abast-remove" onclick="removeAbast(${i})">✕</button>
     </div>`).join('');
 }
 
@@ -1521,7 +1521,7 @@ function updateAbastSubtotal(i){
   if(el){
     const p=_abastProducts[i];
     const t=(p.cantidad||1)*(p.precio||0);
-    el.textContent=t>0?fmt(t):'‚Äî';
+    el.textContent=t>0?fmt(t):'—';
   }
 }
 
@@ -1547,7 +1547,7 @@ function getAbastFromForm(){
   }));
 }
 
-// ‚îÄ‚îÄ Config panel de precios por defecto ‚îÄ‚îÄ
+// ── Config panel de precios por defecto ──
 function renderAbastConfigGrid(){
   const cont=document.getElementById('abast-config-grid');
   if(!cont) return;
@@ -1556,13 +1556,13 @@ function renderAbastConfigGrid(){
       <label>${p.nombre}</label>
       <input type="number" value="${p.precio!=null&&p.precio!==0?p.precio:''}" min="0" step="0.01" placeholder="0.00"
         oninput="ABAST_CAT.find(x=>x.key==='${p.key}').precio=parseFloat(this.value)||0;saveAbastPrices();buildAbastSelect()">
-      <span class="curr">‚Ç¨</span>
+      <span class="curr">€</span>
     </div>`).join('');
 }
 
-// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
+// ══════════════════════════════════════
 // VISTA ABASTECIMIENTO
-// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
+// ══════════════════════════════════════
 let _abastTab='servicio';
 function switchAbastTab(tab,btn){
   _abastTab=tab;
@@ -1618,7 +1618,7 @@ function renderAbastPorServicio(){
     .filter(s=>abastMatchesFilters(s,f))
     .sort((a,b)=>(b.fechaServicio||'').localeCompare(a.fechaServicio||''));
 
-  if(!data.length){document.getElementById('abast-list').innerHTML='<div class="empty"><div class="empty-icon">üì¶</div>Sin registros de abastecimiento</div>';return;}
+  if(!data.length){document.getElementById('abast-list').innerHTML='<div class="empty"><div class="empty-icon">📦</div>Sin registros de abastecimiento</div>';return;}
 
   document.getElementById('abast-list').innerHTML=data.map(s=>{
     const c=getCliente(s.clienteId);const p=getPropiedad(s.propiedadId);
@@ -1627,28 +1627,28 @@ function renderAbastPorServicio(){
     const totalImp=items.reduce((a,x)=>a+(x.cantidad||1)*(x.precio||0),0);
     const estadoAbast=s.estadoAbast||'Pendiente';
     const bAbast=estadoAbast==='Facturado'
-      ?`<span class="badge badge-green">‚úì Facturado</span>`
-      :`<span class="badge badge-orange">‚è≥ Pendiente</span>`;
+      ?`<span class="badge badge-green">✓ Facturado</span>`
+      :`<span class="badge badge-orange">⏳ Pendiente</span>`;
     return `<div class="abast-card">
       <div class="abast-card-header" onclick="this.nextElementSibling.classList.toggle('open')">
         <div class="abast-card-title">
           <strong>${c?.nombre||'Sin cliente'}</strong>
-          <span style="font-weight:400;color:var(--muted);margin-left:8px;font-size:12px">${p?.nombre||'Sin propiedad'} ¬∑ ${fmtDate(s.fechaServicio)}</span>
+          <span style="font-weight:400;color:var(--muted);margin-left:8px;font-size:12px">${p?.nombre||'Sin propiedad'} · ${fmtDate(s.fechaServicio)}</span>
         </div>
         <div class="abast-card-meta">
           <span style="font-size:12px;color:var(--muted)">${totalUnid} ud.</span>
           <span style="font-weight:700;color:var(--accent)">${fmt(totalImp)}</span>
-          ${bAbast} <span style="color:var(--muted)">‚ñº</span>
+          ${bAbast} <span style="color:var(--muted)">▼</span>
         </div>
       </div>
       <div class="abast-card-body">
         <table class="fact-lines" style="margin-bottom:14px">
-          <thead><tr><th>Producto</th><th style="text-align:center">Cant.</th><th style="text-align:right">‚Ç¨/u.</th><th style="text-align:right">Subtotal</th></tr></thead>
+          <thead><tr><th>Producto</th><th style="text-align:center">Cant.</th><th style="text-align:right">€/u.</th><th style="text-align:right">Subtotal</th></tr></thead>
           <tbody>${items.map(x=>`<tr>
-            <td>üì¶ ${x.nombre||'‚Äî'}</td>
+            <td>📦 ${x.nombre||'—'}</td>
             <td style="text-align:center">${x.cantidad||1}</td>
-            <td style="text-align:right">${x.precio>0?fmt(x.precio):'‚Äî'}</td>
-            <td style="text-align:right;font-weight:600">${(x.cantidad||1)*(x.precio||0)>0?fmt((x.cantidad||1)*(x.precio||0)):'‚Äî'}</td>
+            <td style="text-align:right">${x.precio>0?fmt(x.precio):'—'}</td>
+            <td style="text-align:right;font-weight:600">${(x.cantidad||1)*(x.precio||0)>0?fmt((x.cantidad||1)*(x.precio||0)):'—'}</td>
           </tr>`).join('')}</tbody>
           <tfoot><tr>
             <td colspan="2" style="text-align:right;font-size:11px;color:var(--muted);padding-top:8px">TOTAL</td>
@@ -1657,10 +1657,10 @@ function renderAbastPorServicio(){
           </tr></tfoot>
         </table>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn btn-ghost btn-sm" onclick="openServModal(${s._i})">‚úèÔ∏è Editar servicio</button>
+          <button class="btn btn-ghost btn-sm" onclick="openServModal(${s._i})">✏️ Editar servicio</button>
           ${estadoAbast==='Pendiente'
-            ?`<button class="btn btn-ghost btn-sm" onclick="marcarAbastFacturado(${s._i})">üìÑ Marcar facturado</button>`
-            :`<button class="btn btn-ghost btn-sm" onclick="marcarAbastPendiente(${s._i})">‚Ü© Marcar pendiente</button>`}
+            ?`<button class="btn btn-ghost btn-sm" onclick="marcarAbastFacturado(${s._i})">📄 Marcar facturado</button>`
+            :`<button class="btn btn-ghost btn-sm" onclick="marcarAbastPendiente(${s._i})">↩ Marcar pendiente</button>`}
         </div>
       </div>
     </div>`;
@@ -1678,7 +1678,7 @@ function renderAbastPorCliente(){
     (s.abastecimiento||[]).forEach(x=>{byClient[cid].totalImp+=(x.cantidad||1)*(x.precio||0);byClient[cid].totalUnid+=(x.cantidad||1);});
   });
 
-  if(!Object.keys(byClient).length){document.getElementById('abast-list').innerHTML='<div class="empty"><div class="empty-icon">üì¶</div>Sin registros de abastecimiento</div>';return;}
+  if(!Object.keys(byClient).length){document.getElementById('abast-list').innerHTML='<div class="empty"><div class="empty-icon">📦</div>Sin registros de abastecimiento</div>';return;}
 
   document.getElementById('abast-list').innerHTML=Object.entries(byClient).map(([cid,gr])=>{
     const c=getCliente(cid);
@@ -1699,18 +1699,18 @@ function renderAbastPorCliente(){
         <div class="abast-card-meta">
           <span style="font-size:12px;color:var(--muted)">${gr.totalUnid} ud.</span>
           <span style="font-weight:700;color:var(--accent)">${fmt(gr.totalImp)}</span>
-          ${pendientes>0?`<span class="badge badge-orange">‚è≥ ${pendientes} pend.</span>`:`<span class="badge badge-green">‚úì Todo facturado</span>`}
-          <span style="color:var(--muted)">‚ñº</span>
+          ${pendientes>0?`<span class="badge badge-orange">⏳ ${pendientes} pend.</span>`:`<span class="badge badge-green">✓ Todo facturado</span>`}
+          <span style="color:var(--muted)">▼</span>
         </div>
       </div>
       <div class="abast-card-body">
         <table class="fact-lines" style="margin-bottom:14px">
-          <thead><tr><th>Producto</th><th style="text-align:center">Cant. total</th><th style="text-align:right">‚Ç¨/u.</th><th style="text-align:right">Importe</th></tr></thead>
+          <thead><tr><th>Producto</th><th style="text-align:center">Cant. total</th><th style="text-align:right">€/u.</th><th style="text-align:right">Importe</th></tr></thead>
           <tbody>${Object.values(prodMap).map(x=>`<tr>
-            <td>üì¶ ${x.nombre||'‚Äî'}</td>
+            <td>📦 ${x.nombre||'—'}</td>
             <td style="text-align:center">${x.cantidad}</td>
-            <td style="text-align:right">${x.precio>0?fmt(x.precio):'‚Äî'}</td>
-            <td style="text-align:right;font-weight:600">${x.importe>0?fmt(x.importe):'‚Äî'}</td>
+            <td style="text-align:right">${x.precio>0?fmt(x.precio):'—'}</td>
+            <td style="text-align:right;font-weight:600">${x.importe>0?fmt(x.importe):'—'}</td>
           </tr>`).join('')}</tbody>
           <tfoot><tr>
             <td colspan="2" style="text-align:right;font-size:11px;color:var(--muted);padding-top:8px">TOTAL</td>
@@ -1723,9 +1723,9 @@ function renderAbastPorCliente(){
           const p=getPropiedad(s.propiedadId);
           const est=s.estadoAbast||'Pendiente';
           return `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px">
-            <span>${fmtDate(s.fechaServicio)} ¬∑ ${p?.nombre||'Sin propiedad'}</span>
+            <span>${fmtDate(s.fechaServicio)} · ${p?.nombre||'Sin propiedad'}</span>
             <div style="display:flex;gap:6px;align-items:center">
-              ${est==='Facturado'?`<span class="badge badge-green" style="font-size:10px">‚úì Facturado</span>`:`<span class="badge badge-orange" style="font-size:10px">‚è≥ Pendiente</span>`}
+              ${est==='Facturado'?`<span class="badge badge-green" style="font-size:10px">✓ Facturado</span>`:`<span class="badge badge-orange" style="font-size:10px">⏳ Pendiente</span>`}
               ${est==='Pendiente'?`<button class="btn btn-ghost btn-sm" style="font-size:11px;padding:3px 8px" onclick="marcarAbastFacturado(${s._i})">Facturar</button>`:''}
             </div>
           </div>`;
@@ -1747,7 +1747,7 @@ function marcarAbastPendiente(i){
 }
 
 function exportarAbast(){
-  if(typeof XLSX==='undefined'){alert('La librer√≠a Excel a√∫n no ha cargado. Espera un momento.');return;}
+  if(typeof XLSX==='undefined'){alert('La librería Excel aún no ha cargado. Espera un momento.');return;}
   const f=getAbastFilters();
   const data=servicios
     .map((s,i)=>({...s,_i:i}))
@@ -1768,8 +1768,8 @@ function exportarAbast(){
         'Propiedad':      p?.nombre||'Sin propiedad',
         'Producto':       x.nombre||'',
         'Cantidad':       x.cantidad||1,
-        '‚Ç¨/unidad':       x.precio||0,
-        'Subtotal (‚Ç¨)':   (x.cantidad||1)*(x.precio||0),
+        '€/unidad':       x.precio||0,
+        'Subtotal (€)':   (x.cantidad||1)*(x.precio||0),
         'Estado':         s.estadoAbast||'Pendiente',
       });
     });
@@ -1777,8 +1777,8 @@ function exportarAbast(){
 
   // Fila de totales al final
   const totalUnid=rows.reduce((a,r)=>a+r['Cantidad'],0);
-  const totalImp=rows.reduce((a,r)=>a+r['Subtotal (‚Ç¨)'],0);
-  rows.push({'Fecha servicio':'','Cliente':'','Propiedad':'','Producto':'TOTAL','Cantidad':totalUnid,'‚Ç¨/unidad':'','Subtotal (‚Ç¨)':totalImp,'Estado':''});
+  const totalImp=rows.reduce((a,r)=>a+r['Subtotal (€)'],0);
+  rows.push({'Fecha servicio':'','Cliente':'','Propiedad':'','Producto':'TOTAL','Cantidad':totalUnid,'€/unidad':'','Subtotal (€)':totalImp,'Estado':''});
 
   const ws=XLSX.utils.json_to_sheet(rows);
   // Ajustar anchos de columna
@@ -1794,8 +1794,8 @@ function exportarAbast(){
 function onArreglosChange(){
   const val=document.getElementById('f-arreglos').value;
   const grp=document.getElementById('f-arreglos-importe-group');
-  if(grp) grp.style.display=(val==='S√≠')?'':'none';
-  if(val!=='S√≠'){const el=document.getElementById('f-arreglos-importe');if(el)el.value='';}
+  if(grp) grp.style.display=(val==='Sí')?'':'none';
+  if(val!=='Sí'){const el=document.getElementById('f-arreglos-importe');if(el)el.value='';}
 }
 
 function onTipoLimpiezaChange(){
@@ -1819,7 +1819,7 @@ function onTipoLimpiezaChange(){
     const autoPrice=prop?.precioNormal||0;
     if(autoPrice){
       phint.style.display='';
-      phint.textContent=`üí° Precio fijo de esta propiedad: ${fmt(autoPrice)}`;
+      phint.textContent=`💡 Precio fijo de esta propiedad: ${fmt(autoPrice)}`;
       const el=document.getElementById('f-precio-limpieza');
       if(!el.value||parseFloat(el.value)===0) el.value=autoPrice;
     }
@@ -1829,7 +1829,7 @@ function onTipoLimpiezaChange(){
     const autoPrice=prop?.precioIntermedia||0;
     if(autoPrice){
       phint.style.display='';
-      phint.textContent=`üí° Precio fijo de esta propiedad: ${fmt(autoPrice)}`;
+      phint.textContent=`💡 Precio fijo de esta propiedad: ${fmt(autoPrice)}`;
       const el=document.getElementById('f-precio-limpieza');
       if(!el.value||parseFloat(el.value)===0) el.value=autoPrice;
     }
@@ -1837,7 +1837,7 @@ function onTipoLimpiezaChange(){
     ptitle.textContent='Precio Limpieza Profunda (manual)';
     pprofunda.style.display='';
   } else if(tipo==='Inicial/Obra'||tipo==='Check'){
-    ptitle.textContent=`Precio ${tipo} (horas √ó operarios √ó tarifa)`;
+    ptitle.textContent=`Precio ${tipo} (horas × operarios × tarifa)`;
     phoras.style.display='';
     const op=document.getElementById('f-operarios'); if(op&&!op.value) op.value=1;
   }
@@ -1850,13 +1850,13 @@ function onPropiedadChange(){
   if(tipo==='Normal'||tipo==='Intermedia') onTipoLimpiezaChange();
 }
 
-// Identifica el servicio donde se carg√≥ un extra recibido
+// Identifica el servicio donde se cargó un extra recibido
 function descOrigenExtra(e){
   const o=(servicios||[]).find(x=>x.id===e._origenId);
   const f=fmtDate(e._origenFecha||o?.fechaServicio);
   const p=o?getPropiedad(o.propiedadId):null;
   const ocu=(o?.ocupacion||'').trim();
-  return `cargado en la limpieza del ${f}${p?' ¬∑ '+p.nombre:''}${ocu?` (ingreso: ${ocu})`:''}`;
+  return `cargado en la limpieza del ${f}${p?' · '+p.nombre:''}${ocu?` (ingreso: ${ocu})`:''}`;
 }
 
 function setDet(id,rows){
@@ -1874,7 +1874,7 @@ function recalcTotal(){
     lim=h*ops*t;
     const hh=document.getElementById('horas-hint');
     if(hh){
-      if(h>0){ hh.style.display=''; hh.textContent=`‚è± ${h} h √ó ${ops} operario${ops>1?'s':''} = ${h*ops} h${t>0?` √ó ${fmt(t)}/h = ${fmt(lim)}`:''}`; }
+      if(h>0){ hh.style.display=''; hh.textContent=`⏱ ${h} h × ${ops} operario${ops>1?'s':''} = ${h*ops} h${t>0?` × ${fmt(t)}/h = ${fmt(lim)}`:''}`; }
       else hh.style.display='none';
     }
   } else if(tipo==='Profunda'){
@@ -1891,8 +1891,8 @@ function recalcTotal(){
   const hint=document.getElementById('packs-hint');
   if(hint){
     const parts=[];
-    if(qty>0&&packPrice>0) parts.push(`üíº ${qty} pack${qty>1?'s':''} √ó ${fmt(packPrice)} = ${fmt(packTotal)}`);
-    if(qtyBB>0&&packBBPrice>0) parts.push(`üë∂ ${qtyBB} BB √ó ${fmt(packBBPrice)} = ${fmt(packBBTot)}`);
+    if(qty>0&&packPrice>0) parts.push(`💼 ${qty} pack${qty>1?'s':''} × ${fmt(packPrice)} = ${fmt(packTotal)}`);
+    if(qtyBB>0&&packBBPrice>0) parts.push(`👶 ${qtyBB} BB × ${fmt(packBBPrice)} = ${fmt(packBBTot)}`);
     hint.innerHTML=parts.join('<br>'); hint.style.display=parts.length?'':'none';
   }
   const extras=_selectedExtras||[];
@@ -1906,27 +1906,27 @@ function recalcTotal(){
   const base=lim+packTotal+packBBTot+extTotal+recTotal+arreglosImp;
   const ivaPct=getIva();
   const ivaAmt=base*ivaPct/100;
-  document.getElementById('ps-limpieza').textContent=lim?fmt(lim):'‚Äî';
+  document.getElementById('ps-limpieza').textContent=lim?fmt(lim):'—';
   const lbl=document.getElementById('ps-packs-label');
   const vl=document.getElementById('ps-packs');
-  if(lbl)lbl.textContent=qty>0?`Packs (${qty}√ó${fmt(packPrice)})`:'Packs';
-  if(vl)vl.textContent=packTotal>0?fmt(packTotal):'‚Äî';
+  if(lbl)lbl.textContent=qty>0?`Packs (${qty}×${fmt(packPrice)})`:'Packs';
+  if(vl)vl.textContent=packTotal>0?fmt(packTotal):'—';
   const bbRow=document.getElementById('ps-packbb-row');
-  if(bbRow){ bbRow.style.display=qtyBB>0?'':'none'; document.getElementById('ps-packbb-label').textContent=`Pack BB (${qtyBB}√ó${fmt(packBBPrice)})`; document.getElementById('ps-packbb').textContent=packBBTot>0?fmt(packBBTot):'‚Äî'; }
-  document.getElementById('ps-extras').textContent=extTotal?fmt(extTotal):'‚Äî';
+  if(bbRow){ bbRow.style.display=qtyBB>0?'':'none'; document.getElementById('ps-packbb-label').textContent=`Pack BB (${qtyBB}×${fmt(packBBPrice)})`; document.getElementById('ps-packbb').textContent=packBBTot>0?fmt(packBBTot):'—'; }
+  document.getElementById('ps-extras').textContent=extTotal?fmt(extTotal):'—';
   const psRec=document.getElementById('ps-recibidos-row');
-  if(psRec){psRec.style.display=recTotal?'':'none';document.getElementById('ps-recibidos').textContent=recTotal?'+ '+fmt(recTotal):'‚Äî';}
-  // Detalle: qu√© concepto hay detr√°s de cada importe
+  if(psRec){psRec.style.display=recTotal?'':'none';document.getElementById('ps-recibidos').textContent=recTotal?'+ '+fmt(recTotal):'—';}
+  // Detalle: qué concepto hay detrás de cada importe
   const dRow=(desc,ref,val,color)=>`<div class="d-row"><span class="d-desc">${desc}${ref?`<span class="d-ref">${ref}</span>`:''}</span><span class="d-val"${color?` style="color:${color}"`:''}>${val}</span></div>`;
-  const nom=e=>`${e.icon||'‚ûï'} ${esc((e.label||'').trim()||'Otro')}${(e.nota||'').trim()?` <span class="extra-nota-txt">‚Äî ${esc(e.nota.trim())}</span>`:''}`;
+  const nom=e=>`${e.icon||'➕'} ${esc((e.label||'').trim()||'Otro')}${(e.nota||'').trim()?` <span class="extra-nota-txt">— ${esc(e.nota.trim())}</span>`:''}`;
   const compra=e=>(e.importe||0)>0?`(incl. compra ${fmt(e.importe)})`:'';
   setDet('ps-extras-det', extras.filter(e=>!esCedido(e)).map(e=>dRow(nom(e),compra(e),fmt((e.precio||0)+(e.importe||0)))));
   setDet('ps-recibidos-det', recibidos.map(e=>dRow(nom(e),
-    `‚Üê ${descOrigenExtra(e)}`,
+    `← ${descOrigenExtra(e)}`,
     '+ '+fmt(extraImporte(e)),'var(--accent2)')));
   const psArr=document.getElementById('ps-arreglos-row');
   const psArrVal=document.getElementById('ps-arreglos');
-  if(psArr&&psArrVal){psArr.style.display=arreglosImp?'':'none';psArrVal.textContent=arreglosImp?fmt(arreglosImp):'‚Äî';}
+  if(psArr&&psArrVal){psArr.style.display=arreglosImp?'':'none';psArrVal.textContent=arreglosImp?fmt(arreglosImp):'—';}
   document.getElementById('ps-base').textContent=fmt(base);
   document.getElementById('ps-iva-pct').textContent=ivaPct;
   document.getElementById('ps-iva').textContent=fmt(ivaAmt);
@@ -1935,13 +1935,13 @@ function recalcTotal(){
 
 function fillCliSel(selId,selVal){
   const el=document.getElementById(selId);
-  el.innerHTML='<option value="">‚Äî seleccionar ‚Äî</option>'+clientes.map(c=>`<option value="${c.id}">${c.nombre}</option>`).join('');
+  el.innerHTML='<option value="">— seleccionar —</option>'+clientes.map(c=>`<option value="${c.id}">${c.nombre}</option>`).join('');
   if(selVal) el.value=selVal;
 }
 function fillPropSel(clienteId,selVal){
   const el=document.getElementById('f-propiedad');
   // Always show ALL properties regardless of client
-  el.innerHTML='<option value="">‚Äî seleccionar ‚Äî</option>'+propiedades.map(p=>`<option value="${p.id}">${p.nombre}</option>`).join('');
+  el.innerHTML='<option value="">— seleccionar —</option>'+propiedades.map(p=>`<option value="${p.id}">${p.nombre}</option>`).join('');
   if(selVal) el.value=selVal;
 }
 function onClienteChange(){
@@ -2058,65 +2058,65 @@ function guardarServicio(){
   closeServModal();
 }
 function delServ(ref){
-  if(!confirm('¬øEliminar este servicio?'))return;
+  if(!confirm('¿Eliminar este servicio?'))return;
   const s=typeof ref==='string'?servicios.find(x=>x.id===ref):servicios[ref];
   if(s?.id) window.db.collection('servicios').doc(s.id).delete();
 }
 
 
-// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
+// ══════════════════════════════════════
 // RESUMEN DE SERVICIO (solo lectura, sin riesgo de modificar nada)
-// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
+// ══════════════════════════════════════
 function openResumenServ(idx){
   const s=servicios[idx]; if(!s) return;
   const c=getCliente(s.clienteId), p=getPropiedad(s.propiedadId);
   const ivaPct=getIva(), base=calcBase(s), ivaAmt=base*ivaPct/100;
   const item=(k,v)=>`<div class="rs-item"><div class="k">${k}</div><div class="v">${v}</div></div>`;
   const line=(desc,amt,sub='')=>`<div class="rs-line"><div>${desc}${sub?`<div class="sub">${sub}</div>`:''}</div><div class="amt">${amt}</div></div>`;
-  const nota=e=>(e.nota||'').trim()?`üìù ${esc(e.nota.trim())}`:'';
+  const nota=e=>(e.nota||'').trim()?`📝 ${esc(e.nota.trim())}`:'';
   let h=`<div class="rs-head">
-      <div><div class="rs-head-title">${esc(c?.nombre||'Sin cliente')}</div><div class="rs-head-sub">üè† ${esc(p?.nombre||'Sin propiedad')}</div></div>
+      <div><div class="rs-head-title">${esc(c?.nombre||'Sin cliente')}</div><div class="rs-head-sub">🏠 ${esc(p?.nombre||'Sin propiedad')}</div></div>
       <div style="display:flex;gap:6px">${bFact(s.estadoFactura)}${bCobro(s.estadoCobro)}</div>
     </div>
     <div class="rs-grid">
       ${item('F. servicio',fmtDate(s.fechaServicio))}${item('F. ingreso',fmtDate(s.fechaIngreso))}
       ${item('F. salida',fmtDate(s.fechaSalida))}${item('Estancia',fmtDias(diasEstancia(s)))}
-      ${item('Ocupaci√≥n',esc(s.ocupacion||'‚Äî'))}
+      ${item('Ocupación',esc(s.ocupacion||'—'))}
     </div>`;
   // Conceptos facturados en este servicio
   const L=[];
   if(s.tipoLimpieza){
     if(esPorHoras(s.tipoLimpieza)){
       const ops=getOperarios(s);
-      L.push(line(`üßπ Limpieza ${s.tipoLimpieza}`,fmt(calcLimpiezaHoras(s)),`${s.horas||0} h √ó ${ops} operario${ops>1?'s':''} = ${(parseFloat(s.horas)||0)*ops} h √ó ${fmt(s.tarifa||0)}/h`));
-    } else L.push(line(`üßπ Limpieza ${s.tipoLimpieza}`,fmt(parseFloat(s.precioLimpieza)||0)));
+      L.push(line(`🧹 Limpieza ${s.tipoLimpieza}`,fmt(calcLimpiezaHoras(s)),`${s.horas||0} h × ${ops} operario${ops>1?'s':''} = ${(parseFloat(s.horas)||0)*ops} h × ${fmt(s.tarifa||0)}/h`));
+    } else L.push(line(`🧹 Limpieza ${s.tipoLimpieza}`,fmt(parseFloat(s.precioLimpieza)||0)));
   }
   const q=parseInt(s.packs)||0, qb=parseInt(s.packsBB)||0;
-  if(q>0) L.push(line(`üíº Packs de ropa`,fmt(q*(parseFloat(s.packPrice)||0)),`${q} √ó ${fmt(parseFloat(s.packPrice)||0)}`));
-  if(qb>0) L.push(line(`üë∂ Pack BB`,fmt(packBBTotal(s)),`${qb} √ó ${fmt(parseFloat(s.packBBPrice)||0)}`));
-  getExtrasPropios(s).forEach(e=>L.push(line(`${e.icon||'‚ûï'} ${esc(e.label||'Otro')}`,fmt(extraImporte(e)),
-    [ (e.importe||0)>0?`incl. compra ${fmt(e.importe)}`:'', nota(e) ].filter(Boolean).join(' ¬∑ '))));
-  getExtrasRecibidos(s.id).forEach(e=>L.push(line(`${e.icon||'‚ûï'} ${esc(e.label||'Otro')} <span style="color:var(--accent2);font-size:11px">‚Ü™ recibido</span>`,fmt(extraImporte(e)),
-    [ descOrigenExtra(e), nota(e) ].filter(Boolean).join(' ¬∑ '))));
-  if((parseFloat(s.arreglosImporte)||0)>0||s.arreglos==='S√≠') L.push(line(`üîß Arreglos`,fmt(parseFloat(s.arreglosImporte)||0),esc(s.detalleArreglos||'')));
+  if(q>0) L.push(line(`💼 Packs de ropa`,fmt(q*(parseFloat(s.packPrice)||0)),`${q} × ${fmt(parseFloat(s.packPrice)||0)}`));
+  if(qb>0) L.push(line(`👶 Pack BB`,fmt(packBBTotal(s)),`${qb} × ${fmt(parseFloat(s.packBBPrice)||0)}`));
+  getExtrasPropios(s).forEach(e=>L.push(line(`${e.icon||'➕'} ${esc(e.label||'Otro')}`,fmt(extraImporte(e)),
+    [ (e.importe||0)>0?`incl. compra ${fmt(e.importe)}`:'', nota(e) ].filter(Boolean).join(' · '))));
+  getExtrasRecibidos(s.id).forEach(e=>L.push(line(`${e.icon||'➕'} ${esc(e.label||'Otro')} <span style="color:var(--accent2);font-size:11px">↪ recibido</span>`,fmt(extraImporte(e)),
+    [ descOrigenExtra(e), nota(e) ].filter(Boolean).join(' · '))));
+  if((parseFloat(s.arreglosImporte)||0)>0||s.arreglos==='Sí') L.push(line(`🔧 Arreglos`,fmt(parseFloat(s.arreglosImporte)||0),esc(s.detalleArreglos||'')));
   h+=`<div class="rs-sec">Conceptos</div>${L.join('')||'<div style="color:var(--muted);font-size:13px">Sin conceptos</div>'}
     <div class="fact-totals" style="margin-top:12px">
       <div class="fact-total-row"><span class="lbl">Base imponible</span><span class="val">${fmt(base)}</span></div>
       <div class="fact-total-row"><span class="lbl">IVA (${ivaPct}%)</span><span class="val">${fmt(ivaAmt)}</span></div>
       <div class="fact-total-row grand"><span class="lbl">TOTAL</span><span class="val">${fmt(base+ivaAmt)}</span></div>
     </div>`;
-  // Extras imputados a la estancia anterior (no suman aqu√≠)
+  // Extras imputados a la estancia anterior (no suman aquí)
   const ced=getExtrasCedidos(s);
   if(ced.length){
     h+=`<div class="rs-sec">Imputados a la estancia anterior <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--muted)">(no suman en este servicio)</span></div>`+
       ced.map(e=>{ const r=servicios.find(x=>x.id===e.refServicioId);
-        return line(`${e.icon||'‚ûï'} ${esc(e.label||'Otro')}`,fmt(extraImporte(e)),[`‚Üí salida ${fmtDate(r?.fechaSalida||r?.fechaServicio)}${r?.ocupacion?' ¬∑ '+esc(r.ocupacion):''}`,nota(e)].filter(Boolean).join(' ¬∑ ')); }).join('');
+        return line(`${e.icon||'➕'} ${esc(e.label||'Otro')}`,fmt(extraImporte(e)),[`→ salida ${fmtDate(r?.fechaSalida||r?.fechaServicio)}${r?.ocupacion?' · '+esc(r.ocupacion):''}`,nota(e)].filter(Boolean).join(' · ')); }).join('');
   }
   const ab=s.abastecimiento||[];
   if(ab.length){
     const tot=ab.reduce((a,x)=>a+(x.cantidad||1)*(x.precio||0),0);
-    h+=`<div class="rs-sec">Abastecimiento <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--muted)">(${s.estadoAbast||'Pendiente'} ¬∑ se factura aparte)</span></div>`+
-      ab.map(x=>line(`üì¶ ${esc(x.nombre||'‚Äî')}`,fmt((x.cantidad||1)*(x.precio||0)),`${x.cantidad||1} √ó ${fmt(x.precio||0)}`)).join('')+
+    h+=`<div class="rs-sec">Abastecimiento <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--muted)">(${s.estadoAbast||'Pendiente'} · se factura aparte)</span></div>`+
+      ab.map(x=>line(`📦 ${esc(x.nombre||'—')}`,fmt((x.cantidad||1)*(x.precio||0)),`${x.cantidad||1} × ${fmt(x.precio||0)}`)).join('')+
       line('<strong>Total abastecimiento</strong>',fmt(tot));
   }
   if((s.observaciones||'').trim()) h+=`<div class="rs-sec">Observaciones</div><div class="rs-note">${esc(s.observaciones)}</div>`;
@@ -2126,9 +2126,9 @@ function openResumenServ(idx){
 }
 function closeResumenServ(){ document.getElementById('modal-resumen').classList.remove('open'); }
 
-// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
-// FACTURACI√ìN
-// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
+// ══════════════════════════════════════
+// FACTURACIÓN
+// ══════════════════════════════════════
 function renderFacturacion(){
   const ivaPct=getIva();
   const ivaEl=document.getElementById('iva-pct'); if(ivaEl) ivaEl.value=ivaPct;
@@ -2146,7 +2146,7 @@ function renderFacturacion(){
     <div class="kpi-card"><div class="kpi-label">IVA (${ivaPct}%)</div><div class="kpi-value">${fmt(totalIva)}</div><div class="kpi-sub">impuesto</div></div>
     <div class="kpi-card"><div class="kpi-label">Total con IVA</div><div class="kpi-value teal">${fmt(totalBase+totalIva)}</div><div class="kpi-sub">a facturar</div></div>
     <div class="kpi-card"><div class="kpi-label">Cobrado c/IVA</div><div class="kpi-value red">${fmt(data.filter(s=>s.estadoCobro==='Cobrado').reduce((a,s)=>a+calcTotal(s),0))}</div><div class="kpi-sub">recibido</div></div>`;
-  if(!data.length){ document.getElementById('fact-list').innerHTML='<div class="empty"><div class="empty-icon">üßæ</div>Sin servicios</div>'; return; }
+  if(!data.length){ document.getElementById('fact-list').innerHTML='<div class="empty"><div class="empty-icon">🧾</div>Sin servicios</div>'; return; }
   document.getElementById('fact-list').innerHTML=data.map(s=>{
     const c=getCliente(s.clienteId); const p=getPropiedad(s.propiedadId);
     const base=calcBase(s); const ivaAmt=base*ivaPct/100; const total=base+ivaAmt;
@@ -2154,26 +2154,26 @@ function renderFacturacion(){
     if(s.tipoLimpieza){
       if(esPorHoras(s.tipoLimpieza)){
         const ops=getOperarios(s);
-        lines.push({desc:`${s.tipoLimpieza} ‚Äî ${s.horas||0}h √ó ${ops} operario${ops>1?'s':''} √ó ${fmt(s.tarifa||0)}/h`,precio:calcLimpiezaHoras(s)});
+        lines.push({desc:`${s.tipoLimpieza} — ${s.horas||0}h × ${ops} operario${ops>1?'s':''} × ${fmt(s.tarifa||0)}/h`,precio:calcLimpiezaHoras(s)});
       } else {
         lines.push({desc:`Limpieza ${s.tipoLimpieza}`,precio:s.precioLimpieza||0});
       }
     }
-    const notaTxt=e=>(e.nota||'').trim()?` <span class="extra-nota-txt">‚Äî ${esc(e.nota.trim())}</span>`:'';
+    const notaTxt=e=>(e.nota||'').trim()?` <span class="extra-nota-txt">— ${esc(e.nota.trim())}</span>`:'';
     getExtrasPropios(s).forEach(e=>lines.push({desc:`${e.icon} ${esc(e.label)}`+notaTxt(e)+((e.importe||0)>0?` <span style="color:var(--muted);font-size:11px">(incl. compra ${fmt(e.importe)})</span>`:''),precio:extraImporte(e)}));
-    getExtrasRecibidos(s.id).forEach(e=>lines.push({desc:`${e.icon} ${esc(e.label)}${notaTxt(e)} <span style="color:var(--accent2);font-size:11px">‚Ü© ${descOrigenExtra(e)}</span>`,precio:extraImporte(e)}));
+    getExtrasRecibidos(s.id).forEach(e=>lines.push({desc:`${e.icon} ${esc(e.label)}${notaTxt(e)} <span style="color:var(--accent2);font-size:11px">↩ ${descOrigenExtra(e)}</span>`,precio:extraImporte(e)}));
     const packQty=parseInt(s.packs)||0;const packPriceV=parseFloat(s.packPrice)||0;
-    if(packQty>0)lines.push({desc:`üíº Packs (${packQty} √ó ${fmt(packPriceV)})`,precio:packQty*packPriceV});
-    if((parseInt(s.packsBB)||0)>0)lines.push({desc:`üë∂ Pack BB (${s.packsBB} √ó ${fmt(parseFloat(s.packBBPrice)||0)})`,precio:packBBTotal(s)});
-    if(s.arreglosImporte>0)lines.push({desc:'üîß Arreglos',precio:s.arreglosImporte});
+    if(packQty>0)lines.push({desc:`💼 Packs (${packQty} × ${fmt(packPriceV)})`,precio:packQty*packPriceV});
+    if((parseInt(s.packsBB)||0)>0)lines.push({desc:`👶 Pack BB (${s.packsBB} × ${fmt(parseFloat(s.packBBPrice)||0)})`,precio:packBBTotal(s)});
+    if(s.arreglosImporte>0)lines.push({desc:'🔧 Arreglos',precio:s.arreglosImporte});
     return `<div class="fact-card">
       <div class="fact-card-header" onclick="toggleFactCard(this)">
-        <div class="fact-card-title">${c?.nombre||'Sin cliente'} ‚Äî ${p?.nombre||'Sin propiedad'}
+        <div class="fact-card-title">${c?.nombre||'Sin cliente'} — ${p?.nombre||'Sin propiedad'}
           <span style="font-weight:400;color:var(--muted);margin-left:8px;font-size:12px">${fmtDate(s.fechaServicio)}</span>
         </div>
         <div class="fact-card-meta">
           <span style="font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums">${fmt(total)}</span>
-          ${bFact(s.estadoFactura)} ${bCobro(s.estadoCobro)} <span style="color:var(--muted)">‚ñº</span>
+          ${bFact(s.estadoFactura)} ${bCobro(s.estadoCobro)} <span style="color:var(--muted)">▼</span>
         </div>
       </div>
       <div class="fact-card-body">
@@ -2187,9 +2187,9 @@ function renderFacturacion(){
           <div class="fact-total-row grand"><span class="lbl">TOTAL</span><span class="val">${fmt(total)}</span></div>
         </div>
         <div style="display:flex;gap:8px;margin-top:14px">
-          <button class="btn btn-ghost btn-sm" onclick="openServModal(${s._i})">‚úèÔ∏è Editar</button>
-          ${s.estadoFactura==='Pendiente'?`<button class="btn btn-ghost btn-sm" onclick="marcarFacturado(${s._i});renderFacturacion()">üìÑ Marcar facturado</button>`:''}
-          ${s.estadoCobro==='Pendiente'?`<button class="btn btn-ghost btn-sm" onclick="marcarCobrado(${s._i});renderFacturacion()">‚úì Marcar cobrado</button>`:''}
+          <button class="btn btn-ghost btn-sm" onclick="openServModal(${s._i})">✏️ Editar</button>
+          ${s.estadoFactura==='Pendiente'?`<button class="btn btn-ghost btn-sm" onclick="marcarFacturado(${s._i});renderFacturacion()">📄 Marcar facturado</button>`:''}
+          ${s.estadoCobro==='Pendiente'?`<button class="btn btn-ghost btn-sm" onclick="marcarCobrado(${s._i});renderFacturacion()">✓ Marcar cobrado</button>`:''}
         </div>
       </div>
     </div>`;
@@ -2197,9 +2197,9 @@ function renderFacturacion(){
 }
 function toggleFactCard(h){ h.nextElementSibling.classList.toggle('open'); }
 
-// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
+// ══════════════════════════════════════
 // COBROS
-// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
+// ══════════════════════════════════════
 function renderCobros(){
   const ivaPct=getIva();
   const sorted=[...servicios].map((s,i)=>({...s,_i:i})).sort((a,b)=>a.estadoCobro.localeCompare(b.estadoCobro));
@@ -2208,17 +2208,17 @@ function renderCobros(){
     const base=calcBase(s);const ivaAmt=base*ivaPct/100;
     const packQty=parseInt(s.packs)||0;const packPrice=parseFloat(s.packPrice)||0;
     return `<tr>
-      <td>${fmtDate(s.fechaServicio)}</td><td><strong>${c?.nombre||'‚Äî'}</strong></td>
-      <td style="color:var(--muted)">${p?.nombre||'‚Äî'}</td>
+      <td>${fmtDate(s.fechaServicio)}</td><td><strong>${c?.nombre||'—'}</strong></td>
+      <td style="color:var(--muted)">${p?.nombre||'—'}</td>
       <td style="text-align:center">${packsCell(s)}</td>
       <td class="importe-cell">${fmt(base)}</td>
       <td style="color:var(--muted)">${fmt(ivaAmt)}</td>
       <td class="importe-cell" style="color:var(--accent)">${fmt(base+ivaAmt)}</td>
       <td>${bFact(s.estadoFactura)}</td><td>${bCobro(s.estadoCobro)}</td>
       <td><div class="actions">
-        <button class="btn btn-ghost btn-sm" onclick="openResumenServ(${s._i})" title="Ver resumen">üëÅ</button>
-        ${s.estadoCobro==='Pendiente'?`<button class="btn btn-ghost btn-sm" onclick="marcarCobrado(${s._i})">‚úì Cobrado</button>`:''}
-        ${s.estadoFactura==='Pendiente'?`<button class="btn btn-ghost btn-sm" onclick="marcarFacturado(${s._i})">üìÑ Facturar</button>`:''}
+        <button class="btn btn-ghost btn-sm" onclick="openResumenServ(${s._i})" title="Ver resumen">👁</button>
+        ${s.estadoCobro==='Pendiente'?`<button class="btn btn-ghost btn-sm" onclick="marcarCobrado(${s._i})">✓ Cobrado</button>`:''}
+        ${s.estadoFactura==='Pendiente'?`<button class="btn btn-ghost btn-sm" onclick="marcarFacturado(${s._i})">📄 Facturar</button>`:''}
       </div></td>
     </tr>`;
   }).join('');
@@ -2232,9 +2232,9 @@ function marcarFacturado(i){
   window.db.collection('servicios').doc(servicios[i].id).set(servicios[i]);
 }
 
-// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
+// ══════════════════════════════════════
 // MAESTROS
-// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
+// ══════════════════════════════════════
 function openClienteModal(fromServicio=false){
   fromServ=fromServicio;editCliIdx=-1;editCliId='';
   document.getElementById('cli-modal-title').textContent='Nuevo cliente';
@@ -2263,7 +2263,7 @@ function guardarCliente(){
   if(fromServ){fillCliSel('f-cliente',obj.id);fillPropSel('','');}
 }
 function delCliente(idx){
-  if(!confirm('¬øEliminar cliente?'))return;
+  if(!confirm('¿Eliminar cliente?'))return;
   const c=clientes[idx];
   if(c?.id) window.db.collection('clientes').doc(c.id).delete();
 }
@@ -2273,7 +2273,7 @@ function openPropModal(fromServicio=false){
   document.getElementById('prop-modal-title').textContent='Nueva propiedad';
   ['prop-nombre','prop-direccion','prop-notas','prop-precio-normal','prop-precio-intermedia'].forEach(id=>document.getElementById(id).value='');
   const sel=document.getElementById('prop-cliente');
-  sel.innerHTML='<option value="">‚Äî sin cliente ‚Äî</option>'+clientes.map(c=>`<option value="${c.id}">${c.nombre}</option>`).join('');
+  sel.innerHTML='<option value="">— sin cliente —</option>'+clientes.map(c=>`<option value="${c.id}">${c.nombre}</option>`).join('');
   if(fromServicio){const cv=document.getElementById('f-cliente').value;if(cv)sel.value=cv;}
   document.getElementById('modal-prop').classList.add('open');
 }
@@ -2288,14 +2288,14 @@ function openEditProp(idx){
   document.getElementById('prop-precio-normal').value=p.precioNormal||'';
   document.getElementById('prop-precio-intermedia').value=p.precioIntermedia||'';
   const sel=document.getElementById('prop-cliente');
-  sel.innerHTML='<option value="">‚Äî sin cliente ‚Äî</option>'+clientes.map(c=>`<option value="${c.id}">${c.nombre}</option>`).join('');
+  sel.innerHTML='<option value="">— sin cliente —</option>'+clientes.map(c=>`<option value="${c.id}">${c.nombre}</option>`).join('');
   sel.value=p.clienteId||'';
   document.getElementById('modal-prop').classList.add('open');
 }
 function closePropModal(){ document.getElementById('modal-prop').classList.remove('open'); }
 function guardarPropiedad(){
   const nombre=document.getElementById('prop-nombre').value.trim();
-  if(!nombre){alert('El nombre / c√≥digo es obligatorio.');return;}
+  if(!nombre){alert('El nombre / código es obligatorio.');return;}
   const obj={
     id:editPropId||uid(),
     nombre,
@@ -2311,7 +2311,7 @@ function guardarPropiedad(){
   if(fromServ){fillPropSel('',obj.id);}
 }
 function delProp(idx){
-  if(!confirm('¬øEliminar propiedad?'))return;
+  if(!confirm('¿Eliminar propiedad?'))return;
   const p=propiedades[idx];
   if(p?.id) window.db.collection('propiedades').doc(p.id).delete();
 }
@@ -2321,12 +2321,12 @@ function renderMaestros(){
     const n=propiedades.filter(p=>p.clienteId===c.id).length;
     return `<div class="list-item">
       <div class="list-item-info"><div class="list-item-name">${c.nombre}</div>
-      <div class="list-item-sub">${[c.telefono,c.email].filter(Boolean).join(' ¬∑ ')||'Sin datos de contacto'}</div></div>
+      <div class="list-item-sub">${[c.telefono,c.email].filter(Boolean).join(' · ')||'Sin datos de contacto'}</div></div>
       <div class="actions"><span class="prop-tag">${n} prop.</span>
-      <button class="btn btn-ghost btn-sm" onclick="openEditCliente(${i})">‚úèÔ∏è</button>
-      <button class="btn btn-danger btn-sm" onclick="delCliente(${i})">üóë</button></div>
+      <button class="btn btn-ghost btn-sm" onclick="openEditCliente(${i})">✏️</button>
+      <button class="btn btn-danger btn-sm" onclick="delCliente(${i})">🗑</button></div>
     </div>`;
-  }).join(''):'<div class="empty"><div class="empty-icon">üë§</div>Sin clientes</div>';
+  }).join(''):'<div class="empty"><div class="empty-icon">👤</div>Sin clientes</div>';
 
   document.getElementById('lista-propiedades').innerHTML=propiedades.length?propiedades.map((p,i)=>{
     const c=getCliente(p.clienteId);
@@ -2335,21 +2335,21 @@ function renderMaestros(){
     return `<div class="list-item">
       <div class="list-item-info">
         <div class="list-item-name">${p.nombre}</div>
-        <div class="list-item-sub">${c?'üë§ '+c.nombre:'Sin cliente'}${p.direccion?' ¬∑ '+p.direccion:''}</div>
+        <div class="list-item-sub">${c?'👤 '+c.nombre:'Sin cliente'}${p.direccion?' · '+p.direccion:''}</div>
       </div>
       <div class="actions" style="flex-shrink:0">
         ${pn?`<span class="price-pill">${pn}</span>`:''}
         ${pi?`<span class="price-pill">${pi}</span>`:''}
-        <button class="btn btn-ghost btn-sm" onclick="openEditProp(${i})">‚úèÔ∏è</button>
-        <button class="btn btn-danger btn-sm" onclick="delProp(${i})">üóë</button>
+        <button class="btn btn-ghost btn-sm" onclick="openEditProp(${i})">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="delProp(${i})">🗑</button>
       </div>
     </div>`;
-  }).join(''):'<div class="empty"><div class="empty-icon">üè†</div>Sin propiedades</div>';
+  }).join(''):'<div class="empty"><div class="empty-icon">🏠</div>Sin propiedades</div>';
 }
 
-// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
+// ══════════════════════════════════════
 // RESUMEN
-// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
+// ══════════════════════════════════════
 function renderResumen(){
   const ti=servicios.reduce((a,s)=>a+calcBase(s),0);
   const co=servicios.filter(s=>s.estadoCobro==='Cobrado').reduce((a,s)=>a+calcBase(s),0);
@@ -2370,32 +2370,32 @@ function renderResumen(){
     <div class="chart-card"><div class="chart-title">Packs por cliente</div>
       ${Object.entries(bPacks).sort((a,b)=>b[1]-a[1]).map(([n,v])=>`<div class="bar-row"><div class="bar-label">${n}</div><div class="bar-track"><div class="bar-fill" style="width:${(v/mPacks*100).toFixed(0)}%"></div></div><div class="bar-val">${v} pk</div></div>`).join('')||'<div class="empty" style="padding:20px">Sin datos</div>'}
     </div>
-    <div class="chart-card"><div class="chart-title">Facturaci√≥n por cliente</div>
+    <div class="chart-card"><div class="chart-title">Facturación por cliente</div>
       ${Object.entries(bCli).sort((a,b)=>b[1]-a[1]).map(([n,v])=>`<div class="list-stat"><span style="font-size:12px">${n}</span><span class="list-stat-val">${fmt(v)}</span></div>`).join('')||'<div class="empty" style="padding:20px">Sin datos</div>'}
     </div>
     <div class="chart-card"><div class="chart-title">Tipos de limpieza</div>
       ${Object.entries(bTipo).sort((a,b)=>b[1]-a[1]).map(([n,v])=>`<div class="bar-row"><div class="bar-label">${n}</div><div class="bar-track"><div class="bar-fill teal" style="width:${(v/mTipo*100).toFixed(0)}%"></div></div><div class="bar-val">${v} serv.</div></div>`).join('')||'<div class="empty" style="padding:20px">Sin datos</div>'}
     </div>
     <div class="chart-card"><div class="chart-title">Estado cobros</div>
-      <div class="list-stat"><span>Cobrado</span><span class="list-stat-val" style="color:var(--accent2)">${servicios.filter(x=>x.estadoCobro==='Cobrado').length} ¬∑ ${fmt(co)}</span></div>
-      <div class="list-stat"><span>Pendiente cobro</span><span class="list-stat-val" style="color:var(--accent3)">${servicios.filter(x=>x.estadoCobro==='Pendiente').length} ¬∑ ${fmt(ti-co)}</span></div>
+      <div class="list-stat"><span>Cobrado</span><span class="list-stat-val" style="color:var(--accent2)">${servicios.filter(x=>x.estadoCobro==='Cobrado').length} · ${fmt(co)}</span></div>
+      <div class="list-stat"><span>Pendiente cobro</span><span class="list-stat-val" style="color:var(--accent3)">${servicios.filter(x=>x.estadoCobro==='Pendiente').length} · ${fmt(ti-co)}</span></div>
       <div class="list-stat"><span>Facturado</span><span class="list-stat-val">${servicios.filter(x=>x.estadoFactura==='Facturado').length} serv.</span></div>
       <div class="list-stat"><span>Sin facturar</span><span class="list-stat-val" style="color:var(--accent3)">${servicios.filter(x=>x.estadoFactura==='Pendiente').length} serv.</span></div>
     </div>`;
 }
 
-// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
+// ══════════════════════════════════════
 // UTILS
-// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
-function fmt(n){ if(!n&&n!==0)return'‚Äî'; return new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR'}).format(n); }
+// ══════════════════════════════════════
+function fmt(n){ if(!n&&n!==0)return'—'; return new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR'}).format(n); }
 // Formato dd/mm/aa (las fechas se guardan como AAAA-MM-DD)
-function fmtDate(d){ if(!d)return'‚Äî'; const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(d); return m?`${m[3]}/${m[2]}/${m[1].slice(2)}`:d; }
+function fmtDate(d){ if(!d)return'—'; const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(d); return m?`${m[3]}/${m[2]}/${m[1].slice(2)}`:d; }
 function fmtDateX(d){ return d?fmtDate(d):''; }
 function esc(v){ return String(v??'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
+// ══════════════════════════════════════
 // EXPORTAR EXCEL
-// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
+// ══════════════════════════════════════
 function exportarExcel(modo='todos'){
   let data=servicios;
   if(modo==='filtrado'){
@@ -2416,7 +2416,7 @@ function exportarExcel(modo='todos'){
   const rows=data.map(s=>buildExcelRow(s));
 
   const ws=XLSX.utils.json_to_sheet(rows);
-  // Ancho de columnas autom√°tico
+  // Ancho de columnas automático
   const cols=Object.keys(rows[0]).map(k=>({wch:Math.max(k.length,18)}));
   ws['!cols']=cols;
   const wb=XLSX.utils.book_new();
@@ -2439,54 +2439,54 @@ function buildExcelRow(s){
     // Extras
     const propios=getExtrasPropios(s), cedidos=getExtrasCedidos(s), recibidos=getExtrasRecibidos(s.id);
     const nt=e=>(e.nota||'').trim()?` (${e.nota.trim()})`:'';
-    const extrasStr=propios.map(e=>`${e.icon} ${e.label}${nt(e)}: ${e.precio||0}‚Ç¨${e.importe?(' + compra: '+e.importe+'‚Ç¨'):''}`).join(' | ');
+    const extrasStr=propios.map(e=>`${e.icon} ${e.label}${nt(e)}: ${e.precio||0}€${e.importe?(' + compra: '+e.importe+'€'):''}`).join(' | ');
     const extrasTotalBase=propios.reduce((a,e)=>a+(parseFloat(e.precio)||0),0);
     const extrasImporteCompras=propios.reduce((a,e)=>a+(parseFloat(e.importe)||0),0);
-    const cedidosStr=cedidos.map(e=>`${e.icon} ${e.label}${nt(e)}: ${extraImporte(e)}‚Ç¨`).join(' | ');
-    const recibidosStr=recibidos.map(e=>`${e.icon} ${e.label}${nt(e)} (limpieza ${e._origenFecha?fmtDate(e._origenFecha):'?'}): ${extraImporte(e)}‚Ç¨`).join(' | ');
+    const cedidosStr=cedidos.map(e=>`${e.icon} ${e.label}${nt(e)}: ${extraImporte(e)}€`).join(' | ');
+    const recibidosStr=recibidos.map(e=>`${e.icon} ${e.label}${nt(e)} (limpieza ${e._origenFecha?fmtDate(e._origenFecha):'?'}): ${extraImporte(e)}€`).join(' | ');
     // Abastecimiento
     const abastStr=(s.abastecimiento||[]).map(a=>`${a.nombre}: ${a.cantidad}`).join(' | ');
     return {
       'F. Servicio':   fmtDateX(s.fechaServicio),
       'F. Ingreso':    fmtDateX(s.fechaIngreso),
       'F. Salida':     fmtDateX(s.fechaSalida),
-      'D√≠as estancia': diasEstancia(s)??'',
+      'Días estancia': diasEstancia(s)??'',
       'Cliente':       c?.nombre||'',
       'Propiedad':     p?.nombre||'',
-      'Ocupaci√≥n':     s.ocupacion||'',
+      'Ocupación':     s.ocupacion||'',
       'Packs (cant.)': s.packs||0,
-      'Precio Pack (‚Ç¨)': s.packPrice||0,
-      'Total Packs (‚Ç¨)': (parseInt(s.packs)||0)*(parseFloat(s.packPrice)||0)||'',
+      'Precio Pack (€)': s.packPrice||0,
+      'Total Packs (€)': (parseInt(s.packs)||0)*(parseFloat(s.packPrice)||0)||'',
       'Pack BB (cant.)': s.packsBB||0,
-      'Precio Pack BB (‚Ç¨)': s.packBBPrice||0,
-      'Total Pack BB (‚Ç¨)': packBBTotal(s)||'',
+      'Precio Pack BB (€)': s.packBBPrice||0,
+      'Total Pack BB (€)': packBBTotal(s)||'',
       'Tipo Limpieza': s.tipoLimpieza||'',
-      'Precio Limpieza (‚Ç¨)': precioLimp||'',
+      'Precio Limpieza (€)': precioLimp||'',
       'Horas':         esPorHoras(s.tipoLimpieza)?s.horas||'':'',
       'Operarios':     esPorHoras(s.tipoLimpieza)?getOperarios(s):'',
-      'Tarifa/h (‚Ç¨)':  esPorHoras(s.tipoLimpieza)?s.tarifa||'':'',
+      'Tarifa/h (€)':  esPorHoras(s.tipoLimpieza)?s.tarifa||'':'',
       'Arreglos':      s.arreglos||'',
-      'Importe Arreglos (‚Ç¨)': s.arreglosImporte||'',
+      'Importe Arreglos (€)': s.arreglosImporte||'',
       'Detalle Arreglos': s.detalleArreglos||'',
       'Servicios Extra': extrasStr,
-      'Total Extra (‚Ç¨)': extrasTotalBase||'',
-      'Importe Compras (‚Ç¨)': extrasImporteCompras||'',
+      'Total Extra (€)': extrasTotalBase||'',
+      'Importe Compras (€)': extrasImporteCompras||'',
       'Extras a estancia anterior': cedidosStr,
-      'Total cedido (‚Ç¨)': cedidos.reduce((a,e)=>a+extraImporte(e),0)||'',
+      'Total cedido (€)': cedidos.reduce((a,e)=>a+extraImporte(e),0)||'',
       'Extras de otras limpiezas': recibidosStr,
-      'Total recibido (‚Ç¨)': recibidos.reduce((a,e)=>a+extraImporte(e),0)||'',
+      'Total recibido (€)': recibidos.reduce((a,e)=>a+extraImporte(e),0)||'',
       'Abastecimiento': abastStr,
-      'Base s/IVA (‚Ç¨)': calcBase(s),
+      'Base s/IVA (€)': calcBase(s),
     };
 }
 
-// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
+// ══════════════════════════════════════
 // REPORTE POR FECHA DE SALIDA
-// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
+// ══════════════════════════════════════
 let _salSortDir='desc';
 function toggleSalSort(){
   _salSortDir=_salSortDir==='desc'?'asc':'desc';
-  document.getElementById('sal-sort-btn').textContent=_salSortDir==='desc'?'üìÖ M√°s reciente':'üìÖ M√°s antiguo';
+  document.getElementById('sal-sort-btn').textContent=_salSortDir==='desc'?'📅 Más reciente':'📅 Más antiguo';
   renderSalidas();
 }
 function onSalMesChange(){
@@ -2557,7 +2557,7 @@ function renderSalidas(){
   // Aviso servicios sin fecha de salida (registros antiguos)
   const sinSalida=servicios.filter(s=>!s.fechaSalida).length;
   document.getElementById('sal-aviso').innerHTML = sinSalida
-    ? `<div class="aviso-sinsalida">‚ö†Ô∏è ${sinSalida} servicio${sinSalida>1?'s':''} sin fecha de salida cargada ‚Äî no aparece${sinSalida>1?'n':''} en este reporte. Editalo${sinSalida>1?'s':''} desde <strong>Servicios</strong> para completarla.</div>`
+    ? `<div class="aviso-sinsalida">⚠️ ${sinSalida} servicio${sinSalida>1?'s':''} sin fecha de salida cargada — no aparece${sinSalida>1?'n':''} en este reporte. Editalo${sinSalida>1?'s':''} desde <strong>Servicios</strong> para completarla.</div>`
     : '';
 
   // KPIs
@@ -2569,7 +2569,7 @@ function renderSalidas(){
     const [y,mo]=g('sal-mes').split('-');
     periodo=new Date(y,mo-1,1).toLocaleDateString('es-ES',{month:'long',year:'numeric'}).replace(/^\w/,c=>c.toUpperCase());
   } else if(g('sal-desde')||g('sal-hasta')){
-    periodo=`${g('sal-desde')?fmtDate(g('sal-desde')):'inicio'} ‚Üí ${g('sal-hasta')?fmtDate(g('sal-hasta')):'hoy'}`;
+    periodo=`${g('sal-desde')?fmtDate(g('sal-desde')):'inicio'} → ${g('sal-hasta')?fmtDate(g('sal-hasta')):'hoy'}`;
   }
   document.getElementById('kpi-salidas').innerHTML=`
     <div class="kpi-card"><div class="kpi-label">Salidas</div><div class="kpi-value">${data.length}</div><div class="kpi-sub">${periodo}</div></div>
@@ -2585,25 +2585,25 @@ function renderSalidas(){
     wrap.style.cssText='background:transparent;border:none;border-radius:0;';
     thead.style.display='none';
     tbody.innerHTML = !data.length
-      ? '<tr><td style="border:none;display:block"><div class="empty"><div class="empty-icon">üö™</div>Sin salidas en este per√≠odo</div></td></tr>'
+      ? '<tr><td style="border:none;display:block"><div class="empty"><div class="empty-icon">🚪</div>Sin salidas en este período</div></td></tr>'
       : data.map(s=>{
         const c=getCliente(s.clienteId), p=getPropiedad(s.propiedadId);
         return `<tr><td style="padding:0 0 10px 0;border:none;display:block">
           <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;">
             <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-              <div><div style="font-weight:700;font-size:14px">${c?.nombre||'‚Äî'}</div>
-              <div style="font-size:13px;color:var(--text);margin-top:3px;font-weight:500">üè† ${p?.nombre||'‚Äî'}</div></div>
+              <div><div style="font-weight:700;font-size:14px">${c?.nombre||'—'}</div>
+              <div style="font-size:13px;color:var(--text);margin-top:3px;font-weight:500">🏠 ${p?.nombre||'—'}</div></div>
               <div class="importe-cell" style="font-weight:700;font-size:16px;color:var(--accent)">${fmt(calcBase(s))}</div>
             </div>
             <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
-              <span class="badge badge-teal" style="font-size:10px">üö™ Salida ${fmtDate(s.fechaSalida)}</span>
-              <span style="font-size:11px;color:var(--muted)">üìÖ Serv. ${fmtDate(s.fechaServicio)}</span>
-              ${diasEstancia(s)!=null?`<span class="badge badge-teal" style="font-size:10px">üóì ${fmtDias(diasEstancia(s))}</span>`:''}
+              <span class="badge badge-teal" style="font-size:10px">🚪 Salida ${fmtDate(s.fechaSalida)}</span>
+              <span style="font-size:11px;color:var(--muted)">📅 Serv. ${fmtDate(s.fechaServicio)}</span>
+              ${diasEstancia(s)!=null?`<span class="badge badge-teal" style="font-size:10px">🗓 ${fmtDias(diasEstancia(s))}</span>`:''}
               ${s.tipoLimpieza?`<span class="badge badge-gray" style="font-size:10px">${s.tipoLimpieza}</span>`:''}
             </div>
             <div style="display:flex;justify-content:space-between;align-items:center;">
               <div style="display:flex;gap:5px;">${bFact(s.estadoFactura)}${bCobro(s.estadoCobro)}</div>
-              <div style="display:flex;gap:5px"><button class="btn btn-ghost btn-sm" onclick="openResumenServ(${s._i})" title="Ver resumen">üëÅ</button><button class="btn btn-ghost btn-sm" onclick="openServModal(${s._i})" title="Editar">‚úèÔ∏è</button></div>
+              <div style="display:flex;gap:5px"><button class="btn btn-ghost btn-sm" onclick="openResumenServ(${s._i})" title="Ver resumen">👁</button><button class="btn btn-ghost btn-sm" onclick="openServModal(${s._i})" title="Editar">✏️</button></div>
             </div>
           </div>
         </td></tr>`;
@@ -2612,22 +2612,22 @@ function renderSalidas(){
     wrap.style.cssText='';
     thead.style.display='';
     tbody.innerHTML = !data.length
-      ? '<tr><td colspan="13"><div class="empty"><div class="empty-icon">üö™</div>Sin salidas en este per√≠odo</div></td></tr>'
+      ? '<tr><td colspan="13"><div class="empty"><div class="empty-icon">🚪</div>Sin salidas en este período</div></td></tr>'
       : data.map(s=>{
         const c=getCliente(s.clienteId), p=getPropiedad(s.propiedadId);
         const packQty=parseInt(s.packs)||0, packPrice=parseFloat(s.packPrice)||0;
         return `<tr>
           <td style="font-weight:700;color:var(--accent2)">${fmtDate(s.fechaSalida)}</td>
           <td>${fmtDate(s.fechaServicio)}</td><td>${fmtDate(s.fechaIngreso)}</td>
-          <td>${diasEstancia(s)!=null?`<span class="badge badge-teal">${fmtDias(diasEstancia(s))}</span>`:'‚Äî'}</td>
-          <td><strong>${c?.nombre||'‚Äî'}</strong></td>
-          <td class="col-prop" title="${(p?.nombre||'').replace(/"/g,'')}">${p?.nombre||'‚Äî'}</td>
-          <td>${s.ocupacion?`<span class="badge badge-gray">${s.ocupacion}</span>`:'‚Äî'}</td>
+          <td>${diasEstancia(s)!=null?`<span class="badge badge-teal">${fmtDias(diasEstancia(s))}</span>`:'—'}</td>
+          <td><strong>${c?.nombre||'—'}</strong></td>
+          <td class="col-prop" title="${(p?.nombre||'').replace(/"/g,'')}">${p?.nombre||'—'}</td>
+          <td>${s.ocupacion?`<span class="badge badge-gray">${s.ocupacion}</span>`:'—'}</td>
           <td style="text-align:center">${packsCell(s,'importe-cell')}</td>
-          <td>${s.tipoLimpieza?`<span class="badge badge-gray">${s.tipoLimpieza}</span>`:'‚Äî'}</td>
+          <td>${s.tipoLimpieza?`<span class="badge badge-gray">${s.tipoLimpieza}</span>`:'—'}</td>
           <td class="importe-cell">${fmt(calcBase(s))}${marcaEstancias(s)}</td>
           <td>${bFact(s.estadoFactura)}</td><td>${bCobro(s.estadoCobro)}</td>
-          <td><div class="actions"><button class="btn btn-ghost btn-sm" onclick="openResumenServ(${s._i})" title="Ver resumen">üëÅ</button><button class="btn btn-ghost btn-sm" onclick="openServModal(${s._i})" title="Editar">‚úèÔ∏è</button></div></td>
+          <td><div class="actions"><button class="btn btn-ghost btn-sm" onclick="openResumenServ(${s._i})" title="Ver resumen">👁</button><button class="btn btn-ghost btn-sm" onclick="openServModal(${s._i})" title="Editar">✏️</button></div></td>
         </tr>`;
       }).join('');
   }
@@ -2657,7 +2657,7 @@ function applyAmountsState(){
     const b=document.getElementById(id);
     if(!b) return;
     b.classList.toggle('hiding',_amountsHidden);
-    b.textContent=_amountsHidden?'üôà Mostrar importes':'üëÅ Ocultar importes';
+    b.textContent=_amountsHidden?'🙈 Mostrar importes':'👁 Ocultar importes';
   });
 }
 function toggleAmounts(){
@@ -2675,16 +2675,16 @@ function closeSidebar(){
 }
 window.addEventListener('resize',()=>{renderTable();renderSalidas();});
 
-// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
+// ══════════════════════════════════════
 // INIT
-// ‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê‚ïê
+// ══════════════════════════════════════
 const savedIva=localStorage.getItem('sg_iva');
 if(savedIva&&document.getElementById('iva-pct')) document.getElementById('iva-pct').value=savedIva;
 applyAmountsState();
 loadAbastPrices();
 buildAbastSelect();
 renderAbastConfigGrid();
-document.getElementById('kpi-grid').innerHTML='<div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--muted)">‚è≥ Conectando...</div>';
+document.getElementById('kpi-grid').innerHTML='<div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--muted)">⏳ Conectando...</div>';
 loadData();
 </script>
 
