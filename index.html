@@ -723,6 +723,8 @@ html,body{max-width:100%;overflow-x:hidden;}
     <div class="form-group full"><label class="form-label">Clientes</label>
       <div style="margin-bottom:6px;font-size:12px"><a href="#" onclick="afToggleAll(true);return false">Todos</a> · <a href="#" onclick="afToggleAll(false);return false">Ninguno</a></div>
       <div id="af-clientes" style="max-height:200px;overflow:auto"></div></div>
+    <div class="form-group full"><label class="form-label">Propiedad</label>
+      <select class="form-select" id="af-prop" onchange="afResumen()"><option value="">Todas las propiedades</option></select></div>
     <div class="form-group full"><div id="af-resumen" style="font-size:12px;color:var(--muted)"></div></div>
   </div>
   <div class="modal-footer">
@@ -2373,17 +2375,27 @@ const AF_MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto
 function openAutofacturas(){
   const el=document.getElementById('af-mes');
   if(!el.value){ const h=new Date(); h.setDate(1); h.setMonth(h.getMonth()-1); el.value=h.toISOString().slice(0,7); }
-  document.getElementById('af-clientes').innerHTML=clientes.map(c=>`<label style="display:flex;gap:8px;align-items:center;padding:3px 0"><input type="checkbox" class="af-cli" value="${esc(c.id)}" checked onchange="afResumen()"> ${esc(c.nombre)}</label>`).join('');
+  document.getElementById('af-clientes').innerHTML=clientes.map(c=>`<label style="display:flex;gap:8px;align-items:center;padding:3px 0"><input type="checkbox" class="af-cli" value="${esc(c.id)}" checked onchange="afRefrescarProps()"> ${esc(c.nombre)}</label>`).join('');
   document.getElementById('modal-autofact').classList.add('open');
+  afRefrescarProps();
+}
+function afToggleAll(v){ document.querySelectorAll('.af-cli').forEach(x=>x.checked=v); afRefrescarProps(); }
+// El desplegable de propiedades solo muestra las de los clientes marcados
+function afRefrescarProps(){
+  const sel=document.getElementById('af-prop'), prev=sel.value;
+  const cli=new Set([...document.querySelectorAll('.af-cli:checked')].map(x=>x.value));
+  const ps=propiedades.filter(p=>cli.has(p.clienteId)).sort((a,b)=>a.nombre.localeCompare(b.nombre));
+  sel.innerHTML='<option value="">Todas las propiedades</option>'+ps.map(p=>`<option value="${esc(p.id)}">${esc(p.nombre)}</option>`).join('');
+  if(ps.some(p=>p.id===prev)) sel.value=prev;
   afResumen();
 }
-function afToggleAll(v){ document.querySelectorAll('.af-cli').forEach(x=>x.checked=v); afResumen(); }
 function afSeleccion(){
   const mes=document.getElementById('af-mes').value;
   const cli=new Set([...document.querySelectorAll('.af-cli:checked')].map(x=>x.value));
-  const por={};
+  const fProp=document.getElementById('af-prop').value, por={};
   servicios.forEach(s=>{
     if(!mes||!afSalida(s).startsWith(mes)) return;
+    if(fProp&&s.propiedadId!==fProp) return;
     const p=getPropiedad(s.propiedadId); if(!p) return;
     const cid=p.clienteId||s.clienteId; if(!cli.has(cid)) return;
     (por[p.id]=por[p.id]||{p,cid,items:[]}).items.push(s);
