@@ -559,6 +559,19 @@ function abrirFotos(){
   window.open(config.fotosUrl,'_blank','noopener');
 }
 
+// ── Actualización automática ──
+// Al volver a la app, comprueba si hay una versión nueva publicada y recarga.
+const APP_VER='2026-11-03.4';
+async function comprobarVersion(){
+  try{
+    const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});
+    const m=(await r.text()).match(/const APP_VER='([^']+)'/);
+    if(m&&m[1]!==APP_VER) location.reload();
+  }catch(e){}
+}
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') comprobarVersion(); });
+setInterval(comprobarVersion,10*60*1000);
+
 init();
 </script>
 </body>
