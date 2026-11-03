@@ -107,8 +107,12 @@ table.cols-fixed th.col-prop,table.cols-fixed td.col-prop{min-width:0;max-width:
 .arreglos-row>.form-group{flex:0 0 150px;min-width:0;}
 .arreglos-row>#f-arreglos-importe-group{flex:0 0 130px;}
 .arreglos-row>.ar-detalle{flex:1 1 auto;}
-.op-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
-.op-chips:empty{display:none;}
+.op-checks{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
+.op-check{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);background:var(--surface2);border-radius:999px;padding:6px 12px 6px 8px;font-size:13px;cursor:pointer;user-select:none;}
+.op-check input{width:16px;height:16px;margin:0;accent-color:var(--accent);}
+.op-check.on{border-color:var(--accent);background:rgba(37,99,235,.08);font-weight:600;}
+.op-check.off{opacity:.6;}
+.op-add{border:1px dashed var(--border);background:none;border-radius:999px;padding:6px 12px;font-size:13px;color:var(--muted);cursor:pointer;}
 .op-chip{display:inline-flex;align-items:center;gap:4px;background:var(--accent);color:#fff;border-radius:999px;padding:3px 4px 3px 10px;font-size:12px;font-weight:500;}
 .op-chip button{border:0;background:rgba(255,255,255,.25);color:#fff;border-radius:50%;width:18px;height:18px;line-height:18px;padding:0;cursor:pointer;font-size:11px;}
 
@@ -620,12 +624,8 @@ html,body{max-width:100%;overflow-x:hidden;}
       </select>
     </div>
     <div class="form-group">
-      <label class="form-label">Operarios</label>
-      <div class="input-with-btn">
-        <select class="form-select" id="f-operario" onchange="addOperarioForm(this.value)"><option value="">— añadir operario —</option></select>
-        <button class="btn btn-ghost btn-icon" onclick="openOperarioModal(true)" title="Nuevo operario">＋</button>
-      </div>
-      <div class="op-chips" id="op-chips"></div>
+      <label class="form-label">Operarios asignados <span style="font-size:10px;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">(solo ellos lo verán en su app)</span></label>
+      <div class="op-checks" id="op-chips"></div>
     </div>
     <div class="arreglos-row">
       <div class="form-group">
@@ -2588,17 +2588,21 @@ function opsDeServicio(s){
   return [];
 }
 function nombresOperarios(s){ return opsDeServicio(s).map(o=>o.nombre).join(', '); }
-function fillOperarioSel(){
-  const sel=document.getElementById('f-operario'); if(!sel) return;
-  const usados=new Set(selOps.map(o=>o.id));
-  const libres=operarios.filter(o=>o.activo!==false&&!usados.has(o.id));
-  sel.innerHTML=`<option value="">${libres.length?'— añadir operario —':(operarios.length?'— todos añadidos —':'— sin operarios en Maestro —')}</option>`+
-    libres.map(o=>`<option value="${esc(o.id)}">${esc(o.nombre)}</option>`).join('');
-  sel.value='';
-}
+function fillOperarioSel(){ renderOpChips(); }
+// Casillas: todos los operarios activos + los ya asignados aunque estén inactivos o borrados
 function renderOpChips(){
   const box=document.getElementById('op-chips'); if(!box) return;
-  box.innerHTML=selOps.map((o,i)=>`<span class="op-chip">${esc(getOperario(o.id)?.nombre||o.nombre)}<button type="button" onclick="quitarOperarioForm(${i})" title="Quitar">✕</button></span>`).join('');
+  const elegidos=new Set(selOps.map(o=>o.id));
+  const lista=operarios.filter(o=>o.activo!==false||elegidos.has(o.id)).map(o=>({id:o.id,nombre:o.nombre,inactivo:o.activo===false}));
+  selOps.forEach(o=>{ if(!lista.some(x=>x.id===o.id)) lista.push({id:o.id,nombre:o.nombre||'(operario eliminado)',inactivo:true}); });
+  box.innerHTML=lista.map(o=>{
+    const on=elegidos.has(o.id);
+    return `<label class="op-check${on?' on':''}${o.inactivo?' off':''}"><input type="checkbox" ${on?'checked':''} onchange="toggleOperarioForm('${esc(o.id)}',this.checked)">${esc(o.nombre)}${o.inactivo?' (inactivo)':''}</label>`;
+  }).join('')+`<button type="button" class="op-add" onclick="openOperarioModal(true)" title="Dar de alta un operario nuevo">＋ Nuevo</button>`;
+}
+function toggleOperarioForm(id,on){
+  if(on) addOperarioForm(id);
+  else { const i=selOps.findIndex(o=>o.id===id); if(i>=0) quitarOperarioForm(i); }
 }
 function syncNumOperarios(){
   // En limpiezas por horas, el Nº de operarios sigue a los operarios elegidos

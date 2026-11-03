@@ -210,7 +210,7 @@ button{cursor:pointer}
 
   <!-- SERVICIOS -->
   <section id="v-servicios" hidden>
-    <div class="top"><button class="back" onclick="go('home')" aria-label="Volver">‹</button><h1>Servicios<span class="sub">Pendientes de finalizar</span></h1></div>
+    <div class="top"><button class="back" onclick="go('home')" aria-label="Volver">‹</button><h1>Servicios<span class="sub">Tus servicios pendientes</span></h1></div>
     <div id="svc-list"></div>
   </section>
 
@@ -373,7 +373,8 @@ function go(v){
 }
 
 function pendientes(){
-  return servicios.filter(s=>!s.finalizado && (s.fechaServicio||'')>=DESDE)
+  // Solo los servicios asignados a quien ha entrado
+  return servicios.filter(s=>!s.finalizado && (s.fechaServicio||'')>=DESDE && esMio(s))
     .sort((a,b)=>(a.fechaServicio||'').localeCompare(b.fechaServicio||''));
 }
 function opsDe(s){
@@ -458,7 +459,7 @@ async function guardarHorario(){
 // ── SERVICIOS ──
 function pintarLista(){
   const p=pendientes(), hoy=fechaLocal();
-  if(!p.length){ $('svc-list').innerHTML='<div class="empty"><b>No hay servicios pendientes</b>Cuando la oficina cargue servicios aparecerán aquí.</div>'; return; }
+  if(!p.length){ $('svc-list').innerHTML='<div class="empty"><b>No tienes servicios pendientes</b>Cuando la oficina te asigne un servicio aparecerá aquí.</div>'; return; }
   const grupos=[['Atrasados',p.filter(s=>s.fechaServicio<hoy)],['Hoy',p.filter(s=>s.fechaServicio===hoy)],['Próximos',p.filter(s=>s.fechaServicio>hoy)]];
   $('svc-list').innerHTML=grupos.filter(g=>g[1].length).map(([t,l])=>`<div class="group-t">${t}</div>`+l.map(s=>{
     const ops=opsDe(s).filter(Boolean);
@@ -466,7 +467,6 @@ function pintarLista(){
       <div class="when">${esc(fmtFecha(s.fechaServicio,{weekday:'short',day:'numeric',month:'short'}))}${s.tipoLimpieza?' · '+esc(s.tipoLimpieza):''}</div>
       <div class="prop">${esc(propDe(s)?.nombre||cliDe(s)?.nombre||'Sin propiedad')}</div>
       <div class="meta">${ops.length?'👷 '+esc(ops.join(', ')):'Sin operarios asignados'}</div>
-      ${esMio(s)?'<span class="mine">Asignado a ti</span>':''}
     </button>`;}).join('')).join('');
 }
 function volverLista(){ actual=null; go('servicios'); }
