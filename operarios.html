@@ -382,7 +382,8 @@ function opsDe(s){
   if(s.operarioId) return [operarios.find(o=>o.id===s.operarioId)?.nombre||s.operarioNombre||''];
   return [];
 }
-function esMio(s){ return (Array.isArray(s.operariosIds)&&s.operariosIds.includes(yo.id))||s.operarioId===yo.id; }
+// Visible solo para los operarios marcados en «Ven el servicio en la app»
+function esMio(s){ return Array.isArray(s.visiblePara)&&s.visiblePara.includes(yo.id); }
 const propDe=s=>propiedades.find(p=>p.id===s.propiedadId);
 const cliDe=s=>clientes.find(c=>c.id===s.clienteId);
 

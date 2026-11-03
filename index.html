@@ -107,12 +107,18 @@ table.cols-fixed th.col-prop,table.cols-fixed td.col-prop{min-width:0;max-width:
 .arreglos-row>.form-group{flex:0 0 150px;min-width:0;}
 .arreglos-row>#f-arreglos-importe-group{flex:0 0 130px;}
 .arreglos-row>.ar-detalle{flex:1 1 auto;}
-.op-checks{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
-.op-check{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);background:var(--surface2);border-radius:999px;padding:6px 12px 6px 8px;font-size:13px;cursor:pointer;user-select:none;}
+.limpieza-row{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;}
+.msel{position:relative;}
+.msel-btn{width:100%;text-align:left;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.msel-btn span{display:block;overflow:hidden;text-overflow:ellipsis;}
+.msel-pop{display:none;position:absolute;z-index:60;left:0;right:0;top:calc(100% + 4px);background:var(--surface);border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(15,23,42,.15);max-height:260px;overflow:auto;padding:6px;min-width:200px;}
+.msel.open .msel-pop{display:block;}
+.op-check{display:flex;align-items:center;gap:8px;padding:8px 8px;border-radius:6px;font-size:13px;cursor:pointer;user-select:none;}
+.op-check:hover{background:var(--surface2);}
 .op-check input{width:16px;height:16px;margin:0;accent-color:var(--accent);}
-.op-check.on{border-color:var(--accent);background:rgba(37,99,235,.08);font-weight:600;}
 .op-check.off{opacity:.6;}
-.op-add{border:1px dashed var(--border);background:none;border-radius:999px;padding:6px 12px;font-size:13px;color:var(--muted);cursor:pointer;}
+.msel-empty{padding:8px;font-size:12px;color:var(--muted);}
+.op-add{display:block;width:100%;text-align:left;border:0;border-top:1px solid var(--border);background:none;padding:9px 8px 5px;margin-top:4px;font-size:13px;color:var(--accent);cursor:pointer;}
 .op-chip{display:inline-flex;align-items:center;gap:4px;background:var(--accent);color:#fff;border-radius:999px;padding:3px 4px 3px 10px;font-size:12px;font-weight:500;}
 .op-chip button{border:0;background:rgba(255,255,255,.25);color:#fff;border-radius:50%;width:18px;height:18px;line-height:18px;padding:0;cursor:pointer;font-size:11px;}
 
@@ -294,6 +300,7 @@ html,body{max-width:100%;overflow-x:hidden;}
   .resumen-grid{grid-template-columns:1fr;}
   .form-grid{grid-template-columns:1fr;}
   .form-group.full{grid-column:1;}
+  .limpieza-row{grid-column:1;grid-template-columns:1fr;}
   .arreglos-row{grid-column:1;flex-wrap:wrap;}
   .arreglos-row>.form-group,.arreglos-row>#f-arreglos-importe-group{flex:1 1 40%;}
   .arreglos-row>.ar-detalle{flex:1 1 100%;}
@@ -612,6 +619,7 @@ html,body{max-width:100%;overflow-x:hidden;}
     </div>
 
     <div class="section-divider">Limpieza</div>
+    <div class="limpieza-row">
     <div class="form-group">
       <label class="form-label">Tipo de limpieza</label>
       <select class="form-select" id="f-tipo-limpieza" onchange="onTipoLimpiezaChange()">
@@ -624,8 +632,19 @@ html,body{max-width:100%;overflow-x:hidden;}
       </select>
     </div>
     <div class="form-group">
-      <label class="form-label">Operarios asignados <span style="font-size:10px;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">(solo ellos lo verán en su app)</span></label>
-      <div class="op-checks" id="op-chips"></div>
+      <label class="form-label">Operarios</label>
+      <div class="msel" id="ms-op">
+        <button type="button" class="form-select msel-btn" onclick="toggleMsel('ms-op')"><span id="ms-op-txt">— seleccionar —</span></button>
+        <div class="msel-pop" id="op-chips"></div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Ven el servicio en la app</label>
+      <div class="msel" id="ms-vis">
+        <button type="button" class="form-select msel-btn" onclick="toggleMsel('ms-vis')"><span id="ms-vis-txt">— nadie —</span></button>
+        <div class="msel-pop" id="vis-checks"></div>
+      </div>
+    </div>
     </div>
     <div class="arreglos-row">
       <div class="form-group">
@@ -2074,7 +2093,7 @@ function clearServForm(){
   document.getElementById('f-cliente').value='';
   fillPropSel('','');
   document.getElementById('f-tipo-limpieza').value='';
-  setOperariosForm([]);
+  setOperariosForm([]); setVisibleForm([]); closeMsels();
   document.getElementById('f-arreglos').value='';
   const agi=document.getElementById('f-arreglos-importe');if(agi)agi.value='';
   const agg=document.getElementById('f-arreglos-importe-group');if(agg)agg.style.display='none';
@@ -2100,7 +2119,7 @@ function fillServForm(s){
   fillCliSel('f-cliente',s.clienteId||'');
   fillPropSel('',s.propiedadId||'');
   document.getElementById('f-tipo-limpieza').value=s.tipoLimpieza||'';
-  setOperariosForm(opsDeServicio(s));
+  setOperariosForm(opsDeServicio(s)); setVisibleForm(s.visiblePara); closeMsels();
   document.getElementById('f-arreglos').value=s.arreglos||'';
   onArreglosChange();
   const ai=document.getElementById('f-arreglos-importe');if(ai) ai.value=s.arreglosImporte||'';
@@ -2158,6 +2177,7 @@ function guardarServicio(){
     propiedadId:document.getElementById('f-propiedad').value,
     tipoLimpieza:tipo,precioLimpieza,horas,operarios,tarifa,
     operariosIds:selOps.map(o=>o.id),
+    visiblePara:[...selVis],
     operariosNombres:selOps.map(o=>getOperario(o.id)?.nombre||o.nombre||''),
     operarioId:null, operarioNombre:null,
     extras:getExtrasFromForm(),
@@ -2595,11 +2615,32 @@ function renderOpChips(){
   const elegidos=new Set(selOps.map(o=>o.id));
   const lista=operarios.filter(o=>o.activo!==false||elegidos.has(o.id)).map(o=>({id:o.id,nombre:o.nombre,inactivo:o.activo===false}));
   selOps.forEach(o=>{ if(!lista.some(x=>x.id===o.id)) lista.push({id:o.id,nombre:o.nombre||'(operario eliminado)',inactivo:true}); });
-  box.innerHTML=lista.map(o=>{
+  box.innerHTML=(lista.length?'':'<div class="msel-empty">No hay operarios en Maestro.</div>')+lista.map(o=>{
     const on=elegidos.has(o.id);
-    return `<label class="op-check${on?' on':''}${o.inactivo?' off':''}"><input type="checkbox" ${on?'checked':''} onchange="toggleOperarioForm('${esc(o.id)}',this.checked)">${esc(o.nombre)}${o.inactivo?' (inactivo)':''}</label>`;
-  }).join('')+`<button type="button" class="op-add" onclick="openOperarioModal(true)" title="Dar de alta un operario nuevo">＋ Nuevo</button>`;
+    return `<label class="op-check${o.inactivo?' off':''}"><input type="checkbox" ${on?'checked':''} onchange="toggleOperarioForm('${esc(o.id)}',this.checked)">${esc(o.nombre)}${o.inactivo?' (inactivo)':''}</label>`;
+  }).join('')+`<button type="button" class="op-add" onclick="closeMsels();openOperarioModal(true)">＋ Nuevo operario</button>`;
+  const t=document.getElementById('ms-op-txt'); if(t) t.textContent=selOps.length?selOps.map(o=>getOperario(o.id)?.nombre||o.nombre).join(', '):'— seleccionar —';
+  renderVisChecks();
 }
+// ── Quién ve el servicio en la app de operarios ──
+let selVis=[]; // ids
+function renderVisChecks(){
+  const box=document.getElementById('vis-checks'); if(!box) return;
+  const elegidos=new Set(selVis);
+  const lista=operarios.filter(o=>(o.activo!==false&&o.accesoApp===true)||elegidos.has(o.id));
+  selVis.forEach(id=>{ if(!lista.some(x=>x.id===id)) lista.push({id,nombre:'(operario eliminado)'}); });
+  box.innerHTML=(lista.length?'':'<div class="msel-empty">Nadie tiene acceso a la app. Autorízalo en Maestro.</div>')+lista.map(o=>{
+    const sinAcceso=!(o.activo!==false&&o.accesoApp===true);
+    return `<label class="op-check${sinAcceso?' off':''}"><input type="checkbox" ${elegidos.has(o.id)?'checked':''} onchange="toggleVis('${esc(o.id)}',this.checked)">${esc(o.nombre)}${sinAcceso?' (sin acceso)':''}</label>`;
+  }).join('');
+  const t=document.getElementById('ms-vis-txt'); if(t) t.textContent=selVis.length?selVis.map(id=>getOperario(id)?.nombre||'(eliminado)').join(', '):'— nadie —';
+}
+function toggleVis(id,on){ selVis=selVis.filter(x=>x!==id); if(on) selVis.push(id); renderVisChecks(); }
+function setVisibleForm(ids){ selVis=[...(ids||[])]; renderVisChecks(); }
+function toggleMsel(id){ const el=document.getElementById(id); const open=!el.classList.contains('open'); closeMsels(); if(open) el.classList.add('open'); }
+function closeMsels(){ document.querySelectorAll('.msel.open').forEach(m=>m.classList.remove('open')); }
+document.addEventListener('click',e=>{ if(!e.target.closest('.msel')) closeMsels(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeMsels(); });
 function toggleOperarioForm(id,on){
   if(on) addOperarioForm(id);
   else { const i=selOps.findIndex(o=>o.id===id); if(i>=0) quitarOperarioForm(i); }
@@ -2836,6 +2877,7 @@ function buildExcelRow(s){
       'Total Pack BB (€)': packBBTotal(s)||'',
       'Tipo Limpieza': s.tipoLimpieza||'',
       'Operarios (nombres)': nombresOperarios(s),
+      'Ven en la app': (s.visiblePara||[]).map(id=>getOperario(id)?.nombre||'').filter(Boolean).join(', '),
       'Finalizado':    s.finalizado?'Sí':'',
       'Precio Limpieza (€)': precioLimp||'',
       'Horas':         esPorHoras(s.tipoLimpieza)?s.horas||'':'',
