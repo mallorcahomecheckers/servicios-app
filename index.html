@@ -103,6 +103,8 @@ table.cols-fixed th.col-prop,table.cols-fixed td.col-prop{min-width:0;max-width:
 .pack-line .pk-btn{padding:6px 9px;font-size:12px;white-space:nowrap;}
 .pack-line .pk-bb-toggle.on{background:rgba(37,99,235,.1);border-color:var(--accent);color:var(--accent);}
 .horas-row{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.arreglos-row{grid-column:1/-1;display:grid;grid-template-columns:minmax(110px,150px) auto 1fr;gap:12px;align-items:end;}
+.arreglos-row #f-arreglos-importe-group{width:130px;}
 
 /* EXTRAS */
 .extras-section{grid-column:1/-1;display:flex;flex-direction:column;gap:10px;}
@@ -282,6 +284,9 @@ html,body{max-width:100%;overflow-x:hidden;}
   .resumen-grid{grid-template-columns:1fr;}
   .form-grid{grid-template-columns:1fr;}
   .form-group.full{grid-column:1;}
+  .arreglos-row{grid-column:1;grid-template-columns:1fr 1fr;}
+  .arreglos-row .ar-detalle{grid-column:1/-1;}
+  .arreglos-row #f-arreglos-importe-group{width:auto;}
   .section-divider{grid-column:1;}
   .precio-box{grid-template-columns:1fr;}
   .prop-prices-grid{grid-template-columns:1fr;}
@@ -314,7 +319,7 @@ html,body{max-width:100%;overflow-x:hidden;}
   <button class="nav-item" onclick="showView('salidas',this);closeSidebar()"><span>🚪</span> Salidas</button>
   <button class="nav-item" onclick="showView('resumen',this);closeSidebar()"><span>📊</span> Resumen</button>
   <div class="nav-section" style="color:#64748b;">Maestros</div>
-  <button class="nav-item" onclick="showView('maestros',this);closeSidebar()"><span>👥</span> Clientes &amp; Prop.</button>
+  <button class="nav-item" onclick="showView('maestros',this);closeSidebar()"><span>👥</span> Maestro</button>
 </aside>
 
 <main class="main">
@@ -498,7 +503,7 @@ html,body{max-width:100%;overflow-x:hidden;}
 
 <!-- MAESTROS -->
 <div class="view" id="view-maestros">
-  <div class="page-header"><div class="page-title">Clientes &amp; Propiedades</div>
+  <div class="page-header"><div class="page-title">Clientes, Propiedades &amp; Operarios</div>
   </div>
   <div class="two-col">
     <div class="panel">
@@ -508,6 +513,12 @@ html,body{max-width:100%;overflow-x:hidden;}
     <div class="panel">
       <div class="panel-header"><div class="panel-title">🏠 Propiedades</div><button class="btn btn-primary btn-sm" onclick="openPropModal(false)">+ Agregar</button></div>
       <div id="lista-propiedades"></div>
+    </div>
+  </div>
+  <div class="two-col" style="margin-top:20px">
+    <div class="panel">
+      <div class="panel-header"><div class="panel-title">👷 Operarios</div><button class="btn btn-primary btn-sm" onclick="openOperarioModal(false)">+ Agregar</button></div>
+      <div id="lista-operarios"></div>
     </div>
   </div>
 </div>
@@ -591,16 +602,25 @@ html,body{max-width:100%;overflow-x:hidden;}
       </select>
     </div>
     <div class="form-group">
-      <label class="form-label">Arreglos</label>
-      <select class="form-select" id="f-arreglos" onchange="onArreglosChange()"><option value="">— ninguno —</option><option>Sí</option><option>No</option></select>
+      <label class="form-label">Operarios</label>
+      <div class="input-with-btn">
+        <select class="form-select" id="f-operario"><option value="">— seleccionar —</option></select>
+        <button class="btn btn-ghost btn-icon" onclick="openOperarioModal(true)" title="Nuevo operario">＋</button>
+      </div>
     </div>
-    <div class="form-group" id="f-arreglos-importe-group" style="display:none">
-      <label class="form-label">Importe arreglos (€)</label>
-      <input type="number" class="form-input" id="f-arreglos-importe" min="0" step="0.01" placeholder="0.00" oninput="recalcTotal()">
-    </div>
-    <div class="form-group full">
-      <label class="form-label">Detalle arreglos</label>
-      <input type="text" class="form-input" id="f-detalle-arreglos" placeholder="Descripción">
+    <div class="arreglos-row">
+      <div class="form-group">
+        <label class="form-label">Arreglos</label>
+        <select class="form-select" id="f-arreglos" onchange="onArreglosChange()"><option value="">— ninguno —</option><option>Sí</option><option>No</option></select>
+      </div>
+      <div class="form-group" id="f-arreglos-importe-group" style="display:none">
+        <label class="form-label">Importe (€)</label>
+        <input type="number" class="form-input" id="f-arreglos-importe" min="0" step="0.01" placeholder="0.00" oninput="recalcTotal()">
+      </div>
+      <div class="form-group ar-detalle">
+        <label class="form-label">Detalle de arreglos</label>
+        <input type="text" class="form-input" id="f-detalle-arreglos" placeholder="Descripción">
+      </div>
     </div>
 
     <!-- PRECIO LIMPIEZA DINÁMICO -->
@@ -624,7 +644,7 @@ html,body{max-width:100%;overflow-x:hidden;}
           <input type="number" class="form-input" id="f-horas" min="0" step="0.5" placeholder="0" oninput="recalcTotal()">
         </div>
         <div class="form-group" id="pw-operarios">
-          <label class="form-label">Operarios</label>
+          <label class="form-label">Nº operarios</label>
           <input type="number" class="form-input" id="f-operarios" min="1" step="1" placeholder="1" oninput="recalcTotal()">
         </div>
         <div class="form-group" id="pw-tarifa">
@@ -754,6 +774,26 @@ html,body{max-width:100%;overflow-x:hidden;}
 </div>
 </div>
 
+<!-- ══════════ MODAL OPERARIO ══════════ -->
+<div class="modal-overlay" id="modal-operario">
+<div class="modal modal-sm">
+  <div class="modal-header">
+    <div class="modal-title" id="op-modal-title">Nuevo operario</div>
+    <button class="modal-close" onclick="closeOperarioModal()">✕</button>
+  </div>
+  <div class="form-grid">
+    <div class="form-group full"><label class="form-label">Nombre <span class="req">*</span></label><input type="text" class="form-input" id="op-nombre" placeholder="Nombre del operario"></div>
+    <div class="form-group"><label class="form-label">Teléfono</label><input type="text" class="form-input" id="op-telefono"></div>
+    <div class="form-group"><label class="form-label">Estado</label><select class="form-select" id="op-activo"><option value="1">Activo</option><option value="0">Inactivo</option></select></div>
+    <div class="form-group full"><label class="form-label">Notas</label><textarea class="form-textarea" id="op-notas" style="min-height:55px"></textarea></div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-ghost" onclick="closeOperarioModal()">Cancelar</button>
+    <button class="btn btn-primary" onclick="guardarOperario()">Guardar</button>
+  </div>
+</div>
+</div>
+
 <!-- ══════════ MODAL PROPIEDAD ══════════ -->
 <div class="modal-overlay" id="modal-prop">
 <div class="modal modal-sm">
@@ -792,7 +832,7 @@ html,body{max-width:100%;overflow-x:hidden;}
 // ══════════════════════════════════════
 // DATA
 // ══════════════════════════════════════
-let servicios=[], clientes=[], propiedades=[];
+let servicios=[], clientes=[], propiedades=[], operarios=[];
 let editServIdx=-1, editCliIdx=-1, editPropIdx=-1, fromServ=false;
 let editServId='', editCliId='', editPropId='';
 
@@ -835,6 +875,7 @@ function saveServicios(){ _fbSave('servicios', servicios); }
 function saveClientes() { _fbSave('clientes',  clientes);  }
 function saveProps()    { _fbSave('propiedades', propiedades); }
 function getCliente(id)   { return clientes.find(c=>c.id===id)||null; }
+function getOperario(id)  { return id?(operarios.find(o=>o.id===id)||null):null; }
 function getPropiedad(id) { return propiedades.find(p=>p.id===id)||null; }
 
 // Firebase helpers (usamos window.db que se define en el script de Firebase más abajo)
@@ -860,6 +901,7 @@ async function loadData(){
   servicios   = sSnap.docs.map(docData);invalidarReciboIdx();
   clientes    = cSnap.docs.map(docData);
   propiedades = sortProps(pSnap.docs.map(docData));
+  try{ operarios = sortProps((await window.db.collection('operarios').get()).docs.map(docData)); }catch(e){ operarios=[]; }
 
   // Siembra inicial SEGURA: solo si el servidor confirma que la colección está vacía
   // (nunca con la caché offline) y con IDs fijos, así repetirla no crea duplicados.
@@ -874,7 +916,7 @@ async function loadData(){
   // Listeners en tiempo real
   window.db.collection('servicios').onSnapshot(snap=>{
     servicios=snap.docs.map(docData);invalidarReciboIdx();
-    renderTable(); renderKPIs(); renderSalidas(); renderFacturacion(); renderCobros(); renderResumen();
+    renderTable(); renderKPIs(); renderSalidas(); renderFacturacion(); renderCobros(); renderResumen(); renderMaestros();
     if(document.getElementById('view-abastecimiento').classList.contains('active')) renderAbastView();
   });
   window.db.collection('clientes').onSnapshot(snap=>{
@@ -884,6 +926,11 @@ async function loadData(){
   window.db.collection('propiedades').onSnapshot(snap=>{
     propiedades=sortProps(snap.docs.map(docData));
     renderTable(); renderMaestros(); renderSalidas();
+  });
+  window.db.collection('operarios').onSnapshot(snap=>{
+    operarios=sortProps(snap.docs.map(docData));
+    renderMaestros();
+    const sel=document.getElementById('f-operario'); if(sel) fillOperarioSel(sel.value);
   });
 }
 
@@ -1988,6 +2035,7 @@ function clearServForm(){
   document.getElementById('f-cliente').value='';
   fillPropSel('','');
   document.getElementById('f-tipo-limpieza').value='';
+  fillOperarioSel('');
   document.getElementById('f-arreglos').value='';
   const agi=document.getElementById('f-arreglos-importe');if(agi)agi.value='';
   const agg=document.getElementById('f-arreglos-importe-group');if(agg)agg.style.display='none';
@@ -2012,6 +2060,7 @@ function fillServForm(s){
   fillCliSel('f-cliente',s.clienteId||'');
   fillPropSel('',s.propiedadId||'');
   document.getElementById('f-tipo-limpieza').value=s.tipoLimpieza||'';
+  fillOperarioSel(s.operarioId||'',s.operarioNombre||'');
   document.getElementById('f-arreglos').value=s.arreglos||'';
   onArreglosChange();
   const ai=document.getElementById('f-arreglos-importe');if(ai) ai.value=s.arreglosImporte||'';
@@ -2066,6 +2115,8 @@ function guardarServicio(){
     clienteId:cli,
     propiedadId:document.getElementById('f-propiedad').value,
     tipoLimpieza:tipo,precioLimpieza,horas,operarios,tarifa,
+    operarioId:document.getElementById('f-operario').value,
+    operarioNombre:(getOperario(document.getElementById('f-operario').value)?.nombre)||(document.getElementById('f-operario').selectedOptions[0]?.dataset.nombre)||'',
     extras:getExtrasFromForm(),
     abastecimiento:getAbastFromForm(),
     arreglos:document.getElementById('f-arreglos').value,
@@ -2483,6 +2534,57 @@ function generarAutofacturas(){
   setTimeout(()=>w.print(),500);
 }
 
+// ── OPERARIOS ──
+let editOpId='', fromServOp=false;
+function fillOperarioSel(selVal, nombreGuardado){
+  const sel=document.getElementById('f-operario'); if(!sel) return;
+  const activos=operarios.filter(o=>o.activo!==false||o.id===selVal);
+  let html='<option value="">— seleccionar —</option>'+activos.map(o=>`<option value="${esc(o.id)}">${esc(o.nombre)}${o.activo===false?' (inactivo)':''}</option>`).join('');
+  // Servicio con un operario que ya no está en el maestro: mantener su nombre
+  if(selVal&&!getOperario(selVal)) html+=`<option value="${esc(selVal)}" data-nombre="${esc(nombreGuardado||'')}">${esc(nombreGuardado||'(operario eliminado)')}</option>`;
+  sel.innerHTML=html; sel.value=selVal||'';
+}
+function openOperarioModal(fromServicio=false){
+  fromServOp=fromServicio; editOpId='';
+  document.getElementById('op-modal-title').textContent='Nuevo operario';
+  ['op-nombre','op-telefono','op-notas'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('op-activo').value='1';
+  document.getElementById('modal-operario').classList.add('open');
+  setTimeout(()=>document.getElementById('op-nombre').focus(),50);
+}
+function openEditOperario(id){
+  const o=getOperario(id); if(!o) return;
+  fromServOp=false; editOpId=id;
+  document.getElementById('op-modal-title').textContent='Editar operario';
+  document.getElementById('op-nombre').value=o.nombre||'';
+  document.getElementById('op-telefono').value=o.telefono||'';
+  document.getElementById('op-notas').value=o.notas||'';
+  document.getElementById('op-activo').value=o.activo===false?'0':'1';
+  document.getElementById('modal-operario').classList.add('open');
+}
+function closeOperarioModal(){ document.getElementById('modal-operario').classList.remove('open'); }
+function guardarOperario(){
+  const nombre=document.getElementById('op-nombre').value.trim();
+  if(!nombre){alert('El nombre es obligatorio.');return;}
+  const obj={id:editOpId||uid(),nombre,
+    telefono:document.getElementById('op-telefono').value.trim(),
+    notas:document.getElementById('op-notas').value.trim(),
+    activo:document.getElementById('op-activo').value!=='0'};
+  const idx=operarios.findIndex(o=>o.id===obj.id);
+  if(idx>=0) operarios[idx]=obj; else operarios.push(obj);
+  sortProps(operarios);
+  window.db.collection('operarios').doc(obj.id).set(obj);
+  closeOperarioModal(); renderMaestros();
+  if(fromServOp) fillOperarioSel(obj.id); else fillOperarioSel(document.getElementById('f-operario')?.value||'');
+  editOpId=''; fromServOp=false;
+}
+function delOperario(id){
+  const o=getOperario(id); if(!o) return;
+  const n=servicios.filter(s=>s.operarioId===id).length;
+  if(!confirm(n?`${o.nombre} aparece en ${n} servicio${n>1?'s':''}. Esos servicios conservarán su nombre. ¿Eliminar del maestro?\n\n(Si solo deja de trabajar, mejor márcalo como Inactivo.)`:`¿Eliminar a ${o.nombre}?`)) return;
+  window.db.collection('operarios').doc(id).delete();
+}
+
 function renderMaestros(){
   document.getElementById('lista-clientes').innerHTML=clientes.length?clientes.map((c,i)=>{
     const n=propiedades.filter(p=>p.clienteId===c.id).length;
@@ -2512,6 +2614,18 @@ function renderMaestros(){
       </div>
     </div>`;
   }).join(''):'<div class="empty"><div class="empty-icon">🏠</div>Sin propiedades</div>';
+
+  const lo=document.getElementById('lista-operarios');
+  if(lo) lo.innerHTML=operarios.length?operarios.map(o=>{
+    const n=servicios.filter(s=>s.operarioId===o.id).length;
+    return `<div class="list-item"${o.activo===false?' style="opacity:.55"':''}>
+      <div class="list-item-info"><div class="list-item-name">${esc(o.nombre)}${o.activo===false?' · inactivo':''}</div>
+      <div class="list-item-sub">${esc(o.telefono||'Sin teléfono')}${o.notas?' · '+esc(o.notas):''}</div></div>
+      <div class="actions"><span class="prop-tag">${n} serv.</span>
+      <button class="btn btn-ghost btn-sm" onclick="openEditOperario('${esc(o.id)}')">✏️</button>
+      <button class="btn btn-danger btn-sm" onclick="delOperario('${esc(o.id)}')">🗑</button></div>
+    </div>`;
+  }).join(''):'<div class="empty"><div class="empty-icon">👷</div>Sin operarios — pulsa «+ Agregar»</div>';
 }
 
 // ══════════════════════════════════════
@@ -2628,6 +2742,7 @@ function buildExcelRow(s){
       'Precio Pack BB (€)': s.packBBPrice||0,
       'Total Pack BB (€)': packBBTotal(s)||'',
       'Tipo Limpieza': s.tipoLimpieza||'',
+      'Operario':      s.operarioNombre||getOperario(s.operarioId)?.nombre||'',
       'Precio Limpieza (€)': precioLimp||'',
       'Horas':         esPorHoras(s.tipoLimpieza)?s.horas||'':'',
       'Operarios':     esPorHoras(s.tipoLimpieza)?getOperarios(s):'',
