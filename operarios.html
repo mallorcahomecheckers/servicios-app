@@ -304,7 +304,7 @@ const sesion={get(){try{return JSON.parse(localStorage.getItem('mhc_op')||'null'
 async function init(){
   fs.collection('operarios').onSnapshot(sn=>{
     operarios=sn.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.nombre||'').localeCompare(b.nombre||''));
-    if(!yo) arrancarSesion(); else { const o=operarios.find(x=>x.id===yo.id); if(!o||o.activo===false||o.pin!==sesion.get()?.pin){ logout(); } }
+    if(!yo) arrancarSesion(); else { const o=operarios.find(x=>x.id===yo.id); if(!o||!autorizado(o)||o.pin!==sesion.get()?.pin){ logout(); } }
   },err=>errorCarga(err));
   fs.collection('servicios').onSnapshot(sn=>{ servicios=sn.docs.map(d=>({id:d.id,...d.data()})); refrescar(); });
   fs.collection('propiedades').onSnapshot(sn=>{ propiedades=sn.docs.map(d=>({id:d.id,...d.data()})); refrescar(); });
@@ -319,18 +319,20 @@ function refrescar(){
 }
 
 // ── Entrar con nombre + PIN ──
+// Solo operarios activos y autorizados en Maestro, con PIN asignado
+function autorizado(o){ return o&&o.activo!==false&&o.accesoApp===true&&/^\d{4}$/.test(o.pin||''); }
 let elegido=null, pinTecleado='';
 function arrancarSesion(){
   const s=sesion.get();
-  const o=s&&operarios.find(x=>x.id===s.id&&x.activo!==false&&x.pin&&x.pin===s.pin);
+  const o=s&&operarios.find(x=>x.id===s.id&&autorizado(x)&&x.pin===s.pin);
   if(o){ entrar(o); return; }
   pantallaNombres();
 }
 function pantallaNombres(){
   elegido=null; pinTecleado='';
-  const lista=operarios.filter(o=>o.activo!==false);
+  const lista=operarios.filter(autorizado);
   $('login-title').textContent='¿Quién eres?';
-  $('login-sub').textContent=lista.length?'Toca tu nombre para entrar.':'Todavía no hay operarios dados de alta. Pide a la oficina que te añada.';
+  $('login-sub').textContent=lista.length?'Toca tu nombre para entrar.':'Todavía no hay nadie con acceso. Pide a la oficina que te autorice.';
   $('names').hidden=false; $('pin-box').hidden=true;
   $('names').innerHTML=lista.map(o=>`<button class="name-btn" onclick="elegir('${esc(o.id)}')">${esc(o.nombre)}</button>`).join('');
   show('login');

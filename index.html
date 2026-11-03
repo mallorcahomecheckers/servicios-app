@@ -811,8 +811,12 @@ html,body{max-width:100%;overflow-x:hidden;}
     <div class="form-group full"><label class="form-label">Nombre <span class="req">*</span></label><input type="text" class="form-input" id="op-nombre" placeholder="Nombre del operario"></div>
     <div class="form-group"><label class="form-label">Teléfono</label><input type="text" class="form-input" id="op-telefono"></div>
     <div class="form-group"><label class="form-label">Estado</label><select class="form-select" id="op-activo"><option value="1">Activo</option><option value="0">Inactivo</option></select></div>
-    <div class="form-group"><label class="form-label">PIN app operarios</label><input type="text" class="form-input" id="op-pin" inputmode="numeric" maxlength="4" placeholder="4 cifras" oninput="this.value=this.value.replace(/\D/g,'').slice(0,4)"></div>
-    <div class="form-group"><label class="form-label">Nombre en Control horario</label><input type="text" class="form-input" id="op-horario" placeholder="Si es distinto del nombre"></div>
+    <div class="form-group full" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 12px">
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox" id="op-acceso" style="width:18px;height:18px" onchange="onAccesoChange()"> <b>Acceso a la app de operarios</b></label>
+      <div style="font-size:11px;color:var(--muted);margin-top:3px">Solo los operarios autorizados aparecen en la app y pueden entrar con su PIN.</div>
+    </div>
+    <div class="form-group op-acc-f"><label class="form-label">PIN app operarios</label><input type="text" class="form-input" id="op-pin" inputmode="numeric" maxlength="4" placeholder="4 cifras" oninput="this.value=this.value.replace(/\D/g,'').slice(0,4)"></div>
+    <div class="form-group op-acc-f"><label class="form-label">Nombre en Control horario</label><input type="text" class="form-input" id="op-horario" placeholder="Si es distinto del nombre"></div>
     <div class="form-group full"><label class="form-label">Notas</label><textarea class="form-textarea" id="op-notas" style="min-height:55px"></textarea></div>
   </div>
   <div class="modal-footer">
@@ -2612,6 +2616,7 @@ function openOperarioModal(fromServicio=false){
   fromServOp=fromServicio; editOpId='';
   document.getElementById('op-modal-title').textContent='Nuevo operario';
   ['op-nombre','op-telefono','op-notas','op-pin','op-horario'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('op-acceso').checked=false; onAccesoChange();
   document.getElementById('op-activo').value='1';
   document.getElementById('modal-operario').classList.add('open');
   setTimeout(()=>document.getElementById('op-nombre').focus(),50);
@@ -2624,6 +2629,7 @@ function openEditOperario(id){
   document.getElementById('op-telefono').value=o.telefono||'';
   document.getElementById('op-notas').value=o.notas||'';
   document.getElementById('op-pin').value=o.pin||'';
+  document.getElementById('op-acceso').checked=o.accesoApp===true; onAccesoChange();
   document.getElementById('op-horario').value=o.nombreHorario||'';
   document.getElementById('op-activo').value=o.activo===false?'0':'1';
   document.getElementById('modal-operario').classList.add('open');
@@ -2633,9 +2639,12 @@ function guardarOperario(){
   const nombre=document.getElementById('op-nombre').value.trim();
   if(!nombre){alert('El nombre es obligatorio.');return;}
   const pin=document.getElementById('op-pin').value.trim();
+  const accesoApp=document.getElementById('op-acceso').checked;
+  if(accesoApp&&!/^\d{4}$/.test(pin)){alert('Para dar acceso a la app, asigna un PIN de 4 cifras.');return;}
   if(pin&&!/^\d{4}$/.test(pin)){alert('El PIN debe tener 4 cifras.');return;}
   const obj={id:editOpId||uid(),nombre,pin,
     nombreHorario:document.getElementById('op-horario').value.trim(),
+    accesoApp,
     telefono:document.getElementById('op-telefono').value.trim(),
     notas:document.getElementById('op-notas').value.trim(),
     activo:document.getElementById('op-activo').value!=='0'};
@@ -2646,6 +2655,10 @@ function guardarOperario(){
   closeOperarioModal(); renderMaestros();
   if(fromServOp) addOperarioForm(obj.id); else { fillOperarioSel(); renderOpChips(); }
   editOpId=''; fromServOp=false;
+}
+function onAccesoChange(){
+  const on=document.getElementById('op-acceso').checked;
+  document.querySelectorAll('.op-acc-f').forEach(el=>el.style.display=on?'':'none');
 }
 function guardarFotosUrl(){
   const v=document.getElementById('cfg-fotos-url').value.trim();
@@ -2696,7 +2709,7 @@ function renderMaestros(){
     const n=servicios.filter(s=>opsDeServicio(s).some(x=>x.id===o.id)).length;
     return `<div class="list-item"${o.activo===false?' style="opacity:.55"':''}>
       <div class="list-item-info"><div class="list-item-name">${esc(o.nombre)}${o.activo===false?' · inactivo':''}</div>
-      <div class="list-item-sub">${o.pin?'🔑 PIN asignado':'⚠️ Sin PIN (no puede entrar en la app)'} · ${esc(o.telefono||'Sin teléfono')}${o.notas?' · '+esc(o.notas):''}</div></div>
+      <div class="list-item-sub">${o.accesoApp===true?'📱 Con acceso a la app':'Sin acceso a la app'} · ${esc(o.telefono||'Sin teléfono')}${o.notas?' · '+esc(o.notas):''}</div></div>
       <div class="actions"><span class="prop-tag">${n} serv.</span>
       <button class="btn btn-ghost btn-sm" onclick="openEditOperario('${esc(o.id)}')">✏️</button>
       <button class="btn btn-danger btn-sm" onclick="delOperario('${esc(o.id)}')">🗑</button></div>
