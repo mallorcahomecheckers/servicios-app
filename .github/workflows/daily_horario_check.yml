@@ -1,0 +1,31 @@
+name: Aviso diario de horario sin cargar
+
+on:
+  schedule:
+    # 21:00 en Mallorca: 20:00 UTC en invierno y 19:00 UTC en verano.
+    # El script descarta la ejecución que no corresponde.
+    - cron: '0 20 * * 1-6'
+    - cron: '0 19 * * 1-6'
+  workflow_dispatch:
+
+jobs:
+  revisar-horario:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar dependencias
+        run: pip install firebase-admin
+
+      - name: Revisar horarios y avisar
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          TRIGGER_SCHEDULE: ${{ github.event.schedule }}
+        run: python scripts/check_horario_diario.py

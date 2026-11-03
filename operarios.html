@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1f4f43">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Operarios">
+<title>Operarios · Mallorca Home Checkers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* Persiana mallorquina: verde de contraventana, cal blanca, sol y mar.
+   Una sola familia (Atkinson Hyperlegible) porque se lee al sol, con guantes y deprisa. */
+:root{
+  --shutter:#1f4f43;   /* verde persiana: marca y acciones principales */
+  --shutter-2:#2c6b5b;
+  --lime:#f6f8f6;      /* cal: fondo */
+  --ink:#16201d;
+  --muted:#5b6b66;
+  --line:#d6e0dc;
+  --sun:#e9a92b;       /* Horario */
+  --sea:#246b9a;       /* Servicios */
+  --bloom:#8a4f8f;     /* Fotos: buganvilla */
+  --ok:#2e7d4f;
+  --warn:#b4531b;
+  --card:#ffffff;
+  --r-lg:22px; --r-md:14px; --r-sm:10px;
+  font-size:17px;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:'Atkinson Hyperlegible',system-ui,sans-serif;background:var(--lime);color:var(--ink);line-height:1.4;
+  padding:env(safe-area-inset-top) max(16px,env(safe-area-inset-right)) calc(24px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));
+  min-height:100vh;-webkit-tap-highlight-color:transparent}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+.wrap{max-width:560px;margin:0 auto}
+[hidden]{display:none!important}
+
+/* barra superior */
+.top{display:flex;align-items:center;gap:12px;padding:18px 0 14px}
+.top h1{font-size:1.45rem;margin:0;flex:1;line-height:1.15}
+.top .sub{display:block;font-size:.85rem;font-weight:400;color:var(--muted);margin-top:2px}
+.back{border:0;background:var(--card);width:44px;height:44px;border-radius:50%;box-shadow:inset 0 0 0 1.5px var(--line);font-size:1.3rem;flex:none}
+.ghost{border:0;background:none;color:var(--muted);font-size:.9rem;padding:8px 4px;text-decoration:underline}
+
+/* pantalla de entrada */
+.brand{padding:40px 0 20px}
+.brand .mark{width:54px;height:54px;border-radius:16px;background:var(--shutter);display:grid;place-items:center;margin-bottom:18px}
+.brand h1{font-size:1.9rem;margin:0 0 4px}
+.brand p{margin:0;color:var(--muted)}
+.names{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:22px}
+.name-btn{border:0;background:var(--card);border-radius:var(--r-md);padding:18px 14px;text-align:left;font-weight:700;font-size:1.05rem;box-shadow:inset 0 0 0 1.5px var(--line)}
+.name-btn:active{background:#e8f0ec}
+.pin-box{margin-top:26px;text-align:center}
+.pin-dots{display:flex;justify-content:center;gap:14px;margin:18px 0 8px}
+.pin-dots i{width:16px;height:16px;border-radius:50%;box-shadow:inset 0 0 0 2px var(--shutter)}
+.pin-dots i.on{background:var(--shutter)}
+.pin-err{min-height:1.4em;color:var(--warn);font-size:.92rem}
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:300px;margin:8px auto 0}
+.keypad button{border:0;background:var(--card);height:64px;border-radius:var(--r-md);font-size:1.5rem;font-weight:700;box-shadow:inset 0 0 0 1.5px var(--line)}
+.keypad button:active{background:#e8f0ec}
+.keypad .k-alt{background:none;box-shadow:none;font-size:1rem;color:var(--muted)}
+
+/* inicio: tres puertas grandes */
+.doors{display:flex;flex-direction:column;gap:14px;margin-top:6px}
+.door{position:relative;display:flex;align-items:center;gap:18px;border:0;width:100%;text-align:left;color:#fff;border-radius:var(--r-lg);padding:22px 20px;min-height:132px;overflow:hidden}
+.door::after{content:"";position:absolute;right:-30px;top:-30px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,.09)}
+.door svg{width:58px;height:58px;flex:none}
+.door b{display:block;font-size:1.55rem;line-height:1.1}
+.door span{display:block;font-size:.95rem;opacity:.92;margin-top:6px}
+.door:active{transform:scale(.985)}
+.d-horario{background:var(--sun);color:#2a1c00}
+.d-servicios{background:var(--sea)}
+.d-fotos{background:var(--bloom)}
+
+/* tarjetas y bloques */
+.panel{background:var(--card);border-radius:var(--r-lg);padding:18px;box-shadow:inset 0 0 0 1.5px var(--line);margin-bottom:14px}
+.panel h2{font-size:1.1rem;margin:0 0 4px}
+.panel .hint{color:var(--muted);font-size:.9rem;margin:0 0 12px}
+.seg{display:flex;background:#e6ece9;border-radius:999px;padding:4px;margin-bottom:16px}
+.seg button{flex:1;border:0;background:none;border-radius:999px;padding:10px;font-weight:700;color:var(--muted)}
+.seg button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(22,32,29,.15)}
+
+.clock{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.clock>div{min-width:0}
+.clock label{display:block;font-size:.9rem;color:var(--muted);margin-bottom:6px}
+.clock input{width:100%;min-width:0;font-size:1.3rem;font-weight:700;padding:12px 6px;border-radius:var(--r-md);border:2px solid var(--line);background:#fbfcfb;text-align:center;min-height:62px}
+.clock input:focus{border-color:var(--sun);outline:0}
+.now-btn{margin-top:8px;width:100%;border:0;background:#fdf1d6;color:#5a3d00;border-radius:var(--r-sm);padding:11px;font-weight:700}
+.total{margin:16px 0 0;font-size:1rem;color:var(--muted)}
+.total b{color:var(--ink)}
+
+.primary{display:block;width:100%;border:0;background:var(--shutter);color:#fff;font-weight:700;font-size:1.1rem;padding:17px;border-radius:var(--r-md);margin-top:16px}
+.primary:disabled{opacity:.5}
+.primary.sea{background:var(--sea)}
+.secondary{display:block;width:100%;border:0;background:#e3efe8;color:var(--ok);font-weight:700;font-size:1.05rem;padding:16px;border-radius:var(--r-md);margin-top:10px}
+
+.notice{border-radius:var(--r-md);padding:14px 16px;font-size:.95rem;margin-bottom:14px;background:#fff6e5;color:#5a3d00}
+.notice.err{background:#fde9e1;color:#7a2e0b}
+
+/* lista de servicios */
+.group-t{font-size:.95rem;font-weight:700;color:var(--muted);margin:18px 2px 8px}
+.svc{display:block;width:100%;border:0;text-align:left;background:var(--card);border-radius:var(--r-md);padding:14px 16px 14px 18px;margin-bottom:10px;box-shadow:inset 0 0 0 1.5px var(--line);position:relative}
+.svc::before{content:"";position:absolute;left:0;top:12px;bottom:12px;width:5px;border-radius:0 4px 4px 0;background:var(--sea)}
+.svc.today::before{background:var(--sun)}
+.svc .when{font-size:.88rem;color:var(--muted)}
+.svc .prop{font-weight:700;font-size:1.1rem;margin:2px 0 4px}
+.svc .meta{font-size:.9rem;color:var(--muted)}
+.svc .mine{display:inline-block;margin-top:6px;font-size:.8rem;font-weight:700;color:var(--sea);background:#e4eff7;border-radius:999px;padding:3px 10px}
+.empty{text-align:center;color:var(--muted);padding:40px 10px}
+.empty b{display:block;color:var(--ink);font-size:1.1rem;margin-bottom:4px}
+
+/* detalle */
+.facts{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:.95rem;margin:0}
+.facts dt{color:var(--muted)}
+.facts dd{margin:0;font-weight:700}
+.office-note{margin-top:12px;background:#f1f5f3;border-radius:var(--r-sm);padding:10px 12px;font-size:.93rem;white-space:pre-wrap}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:0;background:#eaf2f8;color:var(--sea);border-radius:999px;padding:10px 14px;font-weight:700;font-size:.95rem}
+.chip:active{background:#d6e7f3}
+.chip[disabled]{opacity:.35}
+.item{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:0}
+.item .nm{flex:1;min-width:0;font-weight:700}
+.item .nm small{display:block;font-weight:400;color:var(--muted);font-size:.85rem}
+.item input[type=text],.item input[type=number]{width:100%;padding:9px 10px;border-radius:var(--r-sm);border:1.5px solid var(--line);background:#fbfcfb;margin-top:6px;font-weight:400;font-size:.95rem}
+.x{border:0;background:#f3e6e6;color:#8b2c2c;width:40px;height:40px;border-radius:50%;flex:none;font-size:1rem}
+.qty{display:flex;align-items:center;gap:6px;flex:none}
+.qty button{border:0;width:40px;height:40px;border-radius:50%;background:#e6ece9;font-size:1.3rem;font-weight:700}
+.qty output{min-width:26px;text-align:center;font-weight:700;font-size:1.1rem}
+.add-row{display:flex;gap:8px;margin-top:12px}
+.add-row select{flex:1;min-width:0;padding:12px;border-radius:var(--r-sm);border:1.5px solid var(--line);background:#fbfcfb}
+.add-row button{border:0;background:var(--sea);color:#fff;border-radius:var(--r-sm);padding:0 16px;font-weight:700}
+.saved-flash{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 20px;border-radius:999px;font-weight:700;z-index:9;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+.loading{display:grid;place-items:center;min-height:70vh;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div id="v-loading" class="loading">Cargando…</div>
+
+  <!-- ENTRAR -->
+  <section id="v-login" hidden>
+    <div class="brand">
+      <div class="mark"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></svg></div>
+      <h1 id="login-title">¿Quién eres?</h1>
+      <p id="login-sub">Toca tu nombre para entrar.</p>
+    </div>
+    <div id="names" class="names"></div>
+    <div id="pin-box" class="pin-box" hidden>
+      <div class="pin-dots" id="pin-dots"><i></i><i></i><i></i><i></i></div>
+      <div class="pin-err" id="pin-err" role="alert"></div>
+      <div class="keypad" id="keypad"></div>
+    </div>
+  </section>
+
+  <!-- INICIO -->
+  <section id="v-home" hidden>
+    <div class="top">
+      <h1>Hola, <span id="h-name"></span><span class="sub" id="h-date"></span></h1>
+      <button class="ghost" onclick="logout()">Salir</button>
+    </div>
+    <div class="doors">
+      <button class="door d-horario" onclick="go('horario')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        <div><b>Horario</b><span id="st-horario">Carga tu entrada y salida</span></div>
+      </button>
+      <button class="door d-servicios" onclick="go('servicios')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2.8h6V4"/><path d="m8.5 12 2.2 2.2L15.5 9.5"/></svg>
+        <div><b>Servicios</b><span id="st-servicios">Extras y abastecimiento</span></div>
+      </button>
+      <button class="door d-fotos" onclick="abrirFotos()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
+        <div><b>Fotos</b><span id="st-fotos">Sube las fotos del servicio</span></div>
+      </button>
+    </div>
+  </section>
+
+  <!-- HORARIO -->
+  <section id="v-horario" hidden>
+    <div class="top"><button class="back" onclick="go('home')" aria-label="Volver">‹</button><h1>Horario<span class="sub" id="hr-sub"></span></h1></div>
+    <div id="hr-notice"></div>
+    <div class="panel" id="hr-panel">
+      <div class="seg" role="tablist">
+        <button id="seg-hoy" class="on" onclick="setDia(0)">Hoy</button>
+        <button id="seg-ayer" onclick="setDia(1)">Ayer</button>
+      </div>
+      <div class="clock">
+        <div>
+          <label for="hr-in">Entrada</label>
+          <input type="time" id="hr-in" oninput="renderTotal()">
+          <button class="now-btn" onclick="ahora('hr-in')">Ahora</button>
+        </div>
+        <div>
+          <label for="hr-out">Salida</label>
+          <input type="time" id="hr-out" oninput="renderTotal()">
+          <button class="now-btn" onclick="ahora('hr-out')">Ahora</button>
+        </div>
+      </div>
+      <p class="total" id="hr-total"></p>
+      <button class="primary" id="hr-save" onclick="guardarHorario()">Guardar horario</button>
+    </div>
+  </section>
+
+  <!-- SERVICIOS -->
+  <section id="v-servicios" hidden>
+    <div class="top"><button class="back" onclick="go('home')" aria-label="Volver">‹</button><h1>Servicios<span class="sub">Pendientes de finalizar</span></h1></div>
+    <div id="svc-list"></div>
+  </section>
+
+  <!-- DETALLE SERVICIO -->
+  <section id="v-detalle" hidden>
+    <div class="top"><button class="back" onclick="volverLista()" aria-label="Volver">‹</button><h1 id="d-title">Servicio<span class="sub" id="d-sub"></span></h1></div>
+    <div class="panel">
+      <dl class="facts" id="d-facts"></dl>
+      <div id="d-note"></div>
+    </div>
+    <div class="panel">
+      <h2>Extras</h2>
+      <p class="hint">Toca lo que has hecho además de la limpieza.</p>
+      <div class="chips" id="x-chips"></div>
+      <div id="x-list" style="margin-top:8px"></div>
+    </div>
+    <div class="panel">
+      <h2>Abastecimiento</h2>
+      <p class="hint">Productos que has dejado en la casa.</p>
+      <div id="a-list"></div>
+      <div class="add-row">
+        <select id="a-select" aria-label="Producto"></select>
+        <button onclick="addAbast()">Añadir</button>
+      </div>
+    </div>
+    <button class="primary sea" onclick="guardarServicio(false)">Guardar cambios</button>
+    <button class="secondary" onclick="guardarServicio(true)">✓ Finalizar servicio</button>
+  </section>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+// ── Configuración (la misma base de datos que ServiGestión y Control horario) ──
+const firebaseConfig = {
+  apiKey: "AIzaSyDiv5SbDfveNgrEoYUmwMKlU6PF90m6OSk",
+  authDomain: "mhc-app-184e9.firebaseapp.com",
+  databaseURL: "https://mhc-app-184e9-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "mhc-app-184e9",
+  storageBucket: "mhc-app-184e9.firebasestorage.app",
+  messagingSenderId: "564434438421",
+  appId: "1:564434438421:web:a4628396a190fd894b011c"
+};
+// Solo se listan servicios con fecha a partir de este día (los antiguos no se finalizaron nunca)
+const DESDE = '2026-11-01';
+
+const EXTRAS_CAT=[
+  {key:'cristales',  label:'Cristales',  icon:'🪟', defaultPrice:0,  estanciaDefault:'actual'},
+  {key:'chimenea',   label:'Chimenea',   icon:'🔥', defaultPrice:25, estanciaDefault:'anterior'},
+  {key:'basura',     label:'Basura',     icon:'🗑', defaultPrice:25, estanciaDefault:'anterior'},
+  {key:'lavanderia', label:'Lavandería', icon:'👕', defaultPrice:25, estanciaDefault:'anterior'},
+  {key:'dog',        label:'Dog',        icon:'🐕', defaultPrice:25, estanciaDefault:'anterior'},
+  {key:'bbq',        label:'BBQ',        icon:'🍖', defaultPrice:25, estanciaDefault:'anterior'},
+  {key:'compras',    label:'Compras',    icon:'🛒', defaultPrice:25, hasImporte:true, estanciaDefault:'actual'},
+  {key:'otro',       label:'Otro',       icon:'➕', defaultPrice:0,  isOtro:true, estanciaDefault:'actual'},
+];
+const ABAST_CAT=[
+  {key:'papel_vater',nombre:'Papel de váter'},{key:'rollo_cocina',nombre:'Rollo de cocina'},
+  {key:'estropajo',nombre:'Estropajo'},{key:'bayeta',nombre:'Bayeta'},
+  {key:'past_lavadora',nombre:'Pastilla Lavadora'},{key:'past_lavavajillas',nombre:'Pastillas Lavavajillas'},
+  {key:'bolsa_5l',nombre:'Bolsa 5 litros'},{key:'bolsa_10l',nombre:'Bolsa 10 litros'},
+  {key:'bolsa_30l',nombre:'Bolsa 30 litros'},{key:'bolsa_50l',nombre:'Bolsa 50 litros'},
+  {key:'limpia_lavav',nombre:'Limpia lavavajillas'},{key:'jabon_manos',nombre:'Jabón de manos'},
+  {key:'fairi',nombre:'Fairi'},{key:'abrillantador',nombre:'Abrillantador'},
+  {key:'limpia_lavadoras',nombre:'Limpialavadoras'},{key:'tubo_co2',nombre:'Tubo CO2'},
+  {key:'__otro__',nombre:'Otro producto'},
+];
+
+if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const fs=firebase.firestore();
+const rtdb=firebase.database();
+
+let operarios=[], servicios=[], propiedades=[], clientes=[], config={};
+let yo=null;                 // operario con sesión
+let personaHorario=null;     // nombre en Control horario
+let diaOffset=0;
+let actual=null, xSel=[], aSel=[];
+
+const $=id=>document.getElementById(id);
+const esc=v=>String(v??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const pad=n=>String(n).padStart(2,'0');
+function fechaLocal(off=0){const d=new Date();d.setDate(d.getDate()-off);return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;}
+function fmtFecha(f,opts={weekday:'long',day:'numeric',month:'long'}){ if(!f) return ''; const [y,m,d]=f.split('-').map(Number); const t=new Date(y,m-1,d).toLocaleDateString('es-ES',opts); return t.charAt(0).toUpperCase()+t.slice(1); }
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
+function flash(t){const el=document.createElement('div');el.className='saved-flash';el.textContent=t;el.setAttribute('role','status');document.body.appendChild(el);setTimeout(()=>el.remove(),2200);}
+function show(v){['loading','login','home','horario','servicios','detalle'].forEach(n=>$('v-'+n).hidden=(n!==v));window.scrollTo(0,0);}
+const sesion={get(){try{return JSON.parse(localStorage.getItem('mhc_op')||'null')}catch(e){return null}},set(v){try{localStorage.setItem('mhc_op',JSON.stringify(v))}catch(e){}},clear(){try{localStorage.removeItem('mhc_op')}catch(e){}}};
+
+// ── Arranque ──
+async function init(){
+  fs.collection('operarios').onSnapshot(sn=>{
+    operarios=sn.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.nombre||'').localeCompare(b.nombre||''));
+    if(!yo) arrancarSesion(); else { const o=operarios.find(x=>x.id===yo.id); if(!o||o.activo===false||o.pin!==sesion.get()?.pin){ logout(); } }
+  },err=>errorCarga(err));
+  fs.collection('servicios').onSnapshot(sn=>{ servicios=sn.docs.map(d=>({id:d.id,...d.data()})); refrescar(); });
+  fs.collection('propiedades').onSnapshot(sn=>{ propiedades=sn.docs.map(d=>({id:d.id,...d.data()})); refrescar(); });
+  fs.collection('clientes').onSnapshot(sn=>{ clientes=sn.docs.map(d=>({id:d.id,...d.data()})); refrescar(); });
+  fs.collection('config').doc('ajustes').onSnapshot(d=>{ config=d.exists?d.data():{}; refrescar(); },()=>{});
+}
+function errorCarga(){ $('v-loading').textContent='No se ha podido conectar. Revisa la conexión y vuelve a abrir la app.'; }
+function refrescar(){
+  if(!yo) return;
+  if(!$('v-home').hidden) pintarInicio();
+  if(!$('v-servicios').hidden) pintarLista();
+}
+
+// ── Entrar con nombre + PIN ──
+let elegido=null, pinTecleado='';
+function arrancarSesion(){
+  const s=sesion.get();
+  const o=s&&operarios.find(x=>x.id===s.id&&x.activo!==false&&x.pin&&x.pin===s.pin);
+  if(o){ entrar(o); return; }
+  pantallaNombres();
+}
+function pantallaNombres(){
+  elegido=null; pinTecleado='';
+  const lista=operarios.filter(o=>o.activo!==false);
+  $('login-title').textContent='¿Quién eres?';
+  $('login-sub').textContent=lista.length?'Toca tu nombre para entrar.':'Todavía no hay operarios dados de alta. Pide a la oficina que te añada.';
+  $('names').hidden=false; $('pin-box').hidden=true;
+  $('names').innerHTML=lista.map(o=>`<button class="name-btn" onclick="elegir('${esc(o.id)}')">${esc(o.nombre)}</button>`).join('');
+  show('login');
+}
+function elegir(id){
+  elegido=operarios.find(o=>o.id===id); if(!elegido) return;
+  pinTecleado='';
+  $('login-title').textContent=elegido.nombre;
+  if(!elegido.pin){ $('login-sub').textContent='Aún no tienes PIN. Pide a la oficina que te lo asigne.'; $('names').hidden=true; $('pin-box').hidden=false; $('keypad').innerHTML='<button class="k-alt" style="grid-column:1/-1" onclick="pantallaNombres()">Volver</button>'; $('pin-dots').hidden=true; return; }
+  $('pin-dots').hidden=false;
+  $('login-sub').textContent='Escribe tu PIN de 4 cifras.';
+  $('names').hidden=true; $('pin-box').hidden=false; $('pin-err').textContent='';
+  $('keypad').innerHTML=[1,2,3,4,5,6,7,8,9].map(n=>`<button onclick="tecla('${n}')">${n}</button>`).join('')+
+    `<button class="k-alt" onclick="pantallaNombres()">Volver</button><button onclick="tecla('0')">0</button><button class="k-alt" onclick="tecla('<')" aria-label="Borrar">Borrar</button>`;
+  pintarPin();
+}
+function pintarPin(){ [...$('pin-dots').children].forEach((d,i)=>d.classList.toggle('on',i<pinTecleado.length)); }
+function tecla(k){
+  if(k==='<'){ pinTecleado=pinTecleado.slice(0,-1); pintarPin(); return; }
+  if(pinTecleado.length>=4) return;
+  pinTecleado+=k; pintarPin(); $('pin-err').textContent='';
+  if(pinTecleado.length===4){
+    if(pinTecleado===elegido.pin){ sesion.set({id:elegido.id,pin:elegido.pin}); entrar(elegido); }
+    else { setTimeout(()=>{ pinTecleado=''; pintarPin(); $('pin-err').textContent='PIN incorrecto. Inténtalo otra vez.'; },150); }
+  }
+}
+document.addEventListener('keydown',e=>{ if($('v-login').hidden||$('pin-box').hidden||!elegido?.pin) return; if(/^\d$/.test(e.key)) tecla(e.key); else if(e.key==='Backspace') tecla('<'); });
+
+function entrar(o){ yo=o; go('home'); resolverPersona(); }
+function logout(){ sesion.clear(); yo=null; personaHorario=null; pantallaNombres(); }
+
+// ── Navegación ──
+function go(v){
+  if(v==='home'){ pintarInicio(); show('home'); }
+  else if(v==='horario'){ abrirHorario(); }
+  else if(v==='servicios'){ pintarLista(); show('servicios'); }
+  history.replaceState(null,'','#'+v);
+}
+
+function pendientes(){
+  return servicios.filter(s=>!s.finalizado && (s.fechaServicio||'')>=DESDE)
+    .sort((a,b)=>(a.fechaServicio||'').localeCompare(b.fechaServicio||''));
+}
+function opsDe(s){
+  if(Array.isArray(s.operariosIds)) return s.operariosIds.map((id,i)=>operarios.find(o=>o.id===id)?.nombre||s.operariosNombres?.[i]||'');
+  if(s.operarioId) return [operarios.find(o=>o.id===s.operarioId)?.nombre||s.operarioNombre||''];
+  return [];
+}
+function esMio(s){ return (Array.isArray(s.operariosIds)&&s.operariosIds.includes(yo.id))||s.operarioId===yo.id; }
+const propDe=s=>propiedades.find(p=>p.id===s.propiedadId);
+const cliDe=s=>clientes.find(c=>c.id===s.clienteId);
+
+function pintarInicio(){
+  $('h-name').textContent=yo.nombre;
+  $('h-date').textContent=fmtFecha(fechaLocal());
+  const p=pendientes(), hoy=p.filter(s=>s.fechaServicio===fechaLocal()).length;
+  $('st-servicios').textContent=p.length?`${p.length} pendiente${p.length>1?'s':''}${hoy?` · ${hoy} hoy`:''}`:'No hay servicios pendientes';
+  $('st-fotos').textContent=config.fotosUrl?'Sube las fotos del servicio':'Enlace no configurado todavía';
+  pintarEstadoHorario();
+}
+
+// ── HORARIO ──
+async function resolverPersona(){
+  personaHorario=null;
+  try{
+    const snap=await rtdb.ref('horario2026/persons').get();
+    const persons=snap.val()||[];
+    const lista=Array.isArray(persons)?persons:Object.values(persons);
+    const buscado=(yo.nombreHorario||yo.nombre||'').trim().toLowerCase();
+    personaHorario=lista.find(n=>String(n).trim().toLowerCase()===buscado)||null;
+  }catch(e){ personaHorario=null; }
+  pintarEstadoHorario();
+}
+async function pintarEstadoHorario(){
+  const el=$('st-horario'); if(!el||!yo) return;
+  if(!personaHorario){ el.textContent='Carga tu entrada y salida'; return; }
+  try{
+    const r=(await rtdb.ref(`horario2026/records/${personaHorario}/${fechaLocal()}`).get()).val()||{};
+    el.textContent=r.ingreso&&r.salida?`Hoy: ${r.ingreso} – ${r.salida}`:r.ingreso?`Entrada ${r.ingreso} · falta la salida`:'Hoy sin cargar';
+  }catch(e){}
+}
+async function abrirHorario(){
+  show('horario'); diaOffset=0; marcarSeg();
+  if(personaHorario===null) await resolverPersona();
+  if(!personaHorario){
+    $('hr-notice').innerHTML=`<div class="notice err">No apareces en Control horario como «${esc(yo.nombreHorario||yo.nombre)}». Pide a la oficina que revise tu nombre.</div>`;
+    $('hr-panel').hidden=true; return;
+  }
+  $('hr-notice').innerHTML=''; $('hr-panel').hidden=false;
+  cargarDia();
+}
+function setDia(off){ diaOffset=off; marcarSeg(); cargarDia(); }
+function marcarSeg(){ $('seg-hoy').classList.toggle('on',diaOffset===0); $('seg-ayer').classList.toggle('on',diaOffset===1); }
+async function cargarDia(){
+  const f=fechaLocal(diaOffset);
+  $('hr-sub').textContent=fmtFecha(f);
+  $('hr-in').value=''; $('hr-out').value=''; renderTotal();
+  try{
+    const r=(await rtdb.ref(`horario2026/records/${personaHorario}/${f}`).get()).val()||{};
+    $('hr-in').value=r.ingreso||''; $('hr-out').value=r.salida||'';
+  }catch(e){ $('hr-notice').innerHTML='<div class="notice err">No se ha podido leer el horario. Revisa la conexión.</div>'; }
+  renderTotal();
+}
+function ahora(id){ const d=new Date(); $(id).value=`${pad(d.getHours())}:${pad(d.getMinutes())}`; renderTotal(); }
+function renderTotal(){
+  const a=$('hr-in').value, b=$('hr-out').value;
+  if(!a||!b){ $('hr-total').innerHTML=a?'Falta la hora de salida.':''; return; }
+  let m=(+b.slice(0,2)*60+ +b.slice(3))-(+a.slice(0,2)*60+ +a.slice(3)); if(m<0) m+=1440;
+  $('hr-total').innerHTML=`Total del día: <b>${Math.floor(m/60)} h ${pad(m%60)} min</b>`;
+}
+async function guardarHorario(){
+  const ingreso=$('hr-in').value, salida=$('hr-out').value;
+  if(!ingreso&&!salida){ flash('Escribe al menos la entrada'); return; }
+  const btn=$('hr-save'); btn.disabled=true;
+  try{
+    // Solo se tocan entrada y salida; notas y el resto los gestiona la oficina
+    await rtdb.ref(`horario2026/records/${personaHorario}/${fechaLocal(diaOffset)}`).update({ingreso:ingreso||null,salida:salida||null});
+    flash('Horario guardado'); pintarEstadoHorario();
+  }catch(e){ flash('No se ha podido guardar. Inténtalo de nuevo.'); }
+  btn.disabled=false;
+}
+
+// ── SERVICIOS ──
+function pintarLista(){
+  const p=pendientes(), hoy=fechaLocal();
+  if(!p.length){ $('svc-list').innerHTML='<div class="empty"><b>No hay servicios pendientes</b>Cuando la oficina cargue servicios aparecerán aquí.</div>'; return; }
+  const grupos=[['Atrasados',p.filter(s=>s.fechaServicio<hoy)],['Hoy',p.filter(s=>s.fechaServicio===hoy)],['Próximos',p.filter(s=>s.fechaServicio>hoy)]];
+  $('svc-list').innerHTML=grupos.filter(g=>g[1].length).map(([t,l])=>`<div class="group-t">${t}</div>`+l.map(s=>{
+    const ops=opsDe(s).filter(Boolean);
+    return `<button class="svc${s.fechaServicio===hoy?' today':''}" onclick="abrirServicio('${esc(s.id)}')">
+      <div class="when">${esc(fmtFecha(s.fechaServicio,{weekday:'short',day:'numeric',month:'short'}))}${s.tipoLimpieza?' · '+esc(s.tipoLimpieza):''}</div>
+      <div class="prop">${esc(propDe(s)?.nombre||cliDe(s)?.nombre||'Sin propiedad')}</div>
+      <div class="meta">${ops.length?'👷 '+esc(ops.join(', ')):'Sin operarios asignados'}</div>
+      ${esMio(s)?'<span class="mine">Asignado a ti</span>':''}
+    </button>`;}).join('')).join('');
+}
+function volverLista(){ actual=null; go('servicios'); }
+function abrirServicio(id){
+  const s=servicios.find(x=>x.id===id); if(!s) return;
+  actual=s;
+  xSel=(s.extras||[]).map(e=>({...e}));
+  aSel=(s.abastecimiento||[]).map(a=>({...a}));
+  $('d-title').firstChild.textContent=propDe(s)?.nombre||'Servicio';
+  $('d-sub').textContent=fmtFecha(s.fechaServicio);
+  const ops=opsDe(s).filter(Boolean);
+  const facts=[['Cliente',cliDe(s)?.nombre],['Limpieza',s.tipoLimpieza],['Ocupación',s.ocupacion],['Operarios',ops.join(', ')],['Arreglos',s.arreglos==='Sí'?(s.detalleArreglos||'Sí'):'']].filter(f=>f[1]);
+  $('d-facts').innerHTML=facts.map(([k,v])=>`<dt>${k}</dt><dd>${esc(v)}</dd>`).join('');
+  $('d-note').innerHTML=s.observaciones?`<div class="office-note">📝 ${esc(s.observaciones)}</div>`:'';
+  pintarExtras(); pintarAbast();
+  show('detalle');
+}
+function pintarExtras(){
+  $('x-chips').innerHTML=EXTRAS_CAT.map(c=>{
+    const ya=c.key!=='otro'&&xSel.some(x=>x.key===c.key);
+    return `<button class="chip" ${ya?'disabled':''} onclick="addExtra('${c.key}')">${c.icon} ${c.label}</button>`;
+  }).join('');
+  $('x-list').innerHTML=xSel.map((e,i)=>{
+    const otro=e.isOtro||String(e.key).startsWith('otro');
+    const compras=e.key==='compras';
+    return `<div class="item">
+      <div class="nm">${esc(e.icon||'')} ${otro?'Otro':esc(e.label)}
+        ${otro?`<input type="text" placeholder="¿Qué has hecho?" value="${esc(e.label)}" oninput="xSel[${i}].label=this.value">`:''}
+        ${compras?`<input type="number" inputmode="decimal" min="0" step="0.01" placeholder="Importe del ticket (€)" value="${e.importe?esc(e.importe):''}" oninput="xSel[${i}].importe=parseFloat(this.value)||0">`:''}
+        <input type="text" placeholder="Nota (opcional)" value="${esc(e.nota)}" oninput="xSel[${i}].nota=this.value">
+      </div>
+      <button class="x" onclick="quitarExtra(${i})" aria-label="Quitar ${esc(e.label||'extra')}">✕</button>
+    </div>`;
+  }).join('');
+}
+function estanciaAnterior(s){
+  const f=s.fechaIngreso; if(!s.propiedadId||!f) return null;
+  return servicios.filter(x=>x.propiedadId===s.propiedadId&&x.id!==s.id&&(x.fechaSalida||x.fechaServicio||'')&&(x.fechaSalida||x.fechaServicio)<=f)
+    .sort((a,b)=>(b.fechaSalida||b.fechaServicio||'').localeCompare(a.fechaSalida||a.fechaServicio||''))[0]||null;
+}
+function addExtra(key){
+  const c=EXTRAS_CAT.find(e=>e.key===key); if(!c) return;
+  if(key==='otro'){ xSel.push({key:'otro_'+uid(),label:'',icon:'➕',precio:0,importe:0,nota:'',isOtro:true,estancia:'actual',refServicioId:'',refClienteId:'',porOperario:yo.nombre}); }
+  else{
+    const ref=c.estanciaDefault==='anterior'?estanciaAnterior(actual):null;
+    xSel.push({key:c.key,label:c.label,icon:c.icon,precio:c.defaultPrice||0,importe:0,nota:'',
+      estancia:ref?'anterior':'actual',refServicioId:ref?ref.id:'',refClienteId:ref?(ref.clienteId||''):'',porOperario:yo.nombre});
+  }
+  pintarExtras();
+}
+function quitarExtra(i){ xSel.splice(i,1); pintarExtras(); }
+
+function precioAbast(key){ const p=config.abastPrecios||{}; return parseFloat(p[key])||0; }
+function pintarAbast(){
+  const usados=new Set(aSel.map(a=>a.key));
+  $('a-select').innerHTML='<option value="">Elige un producto…</option>'+ABAST_CAT.filter(p=>p.key==='__otro__'||!usados.has(p.key)).map(p=>`<option value="${p.key}">${esc(p.nombre)}</option>`).join('');
+  $('a-list').innerHTML=aSel.length?aSel.map((a,i)=>`<div class="item">
+      <div class="nm">${a.isOtro?`<input type="text" placeholder="¿Qué producto?" value="${esc(a.nombre)}" oninput="aSel[${i}].nombre=this.value" style="margin-top:0">`:esc(a.nombre)}</div>
+      <div class="qty"><button onclick="cant(${i},-1)" aria-label="Menos">−</button><output>${a.cantidad||1}</output><button onclick="cant(${i},1)" aria-label="Más">+</button></div>
+    </div>`).join(''):'<p class="hint" style="margin:0">Todavía no has añadido productos.</p>';
+}
+function addAbast(){
+  const key=$('a-select').value; if(!key) return;
+  const c=ABAST_CAT.find(p=>p.key===key);
+  aSel.push(key==='__otro__'?{key:'__otro__',nombre:'',cantidad:1,precio:precioAbast('__otro__'),isOtro:true}:{key,nombre:c.nombre,cantidad:1,precio:precioAbast(key)});
+  pintarAbast();
+}
+function cant(i,d){ const n=(aSel[i].cantidad||1)+d; if(n<1){ aSel.splice(i,1); } else aSel[i].cantidad=n; pintarAbast(); }
+
+async function guardarServicio(finalizar){
+  if(!actual) return;
+  if(xSel.some(e=>(e.isOtro||String(e.key).startsWith('otro'))&&!String(e.label||'').trim())){ flash('Escribe qué es el extra «Otro»'); return; }
+  if(aSel.some(a=>a.isOtro&&!String(a.nombre||'').trim())){ flash('Escribe el nombre del producto'); return; }
+  if(finalizar&&!confirm('¿Finalizar este servicio? Dejará de aparecer en tu lista.')) return;
+  const extras=xSel.map(e=>{const o={...e}; o.label=String(o.label||'').trim(); o.nota=String(o.nota||'').trim(); return o;});
+  const abastecimiento=aSel.map(a=>({key:a.key,nombre:String(a.nombre||'').trim(),cantidad:a.cantidad||1,precio:a.precio||0,...(a.isOtro?{isOtro:true}:{})}));
+  const cambios={extras,abastecimiento,editadoPorOperario:yo.nombre,editadoEn:new Date().toISOString()};
+  if(finalizar) Object.assign(cambios,{finalizado:true,finalizadoPor:yo.nombre,finalizadoEn:new Date().toISOString()});
+  try{
+    await fs.collection('servicios').doc(actual.id).update(cambios);
+    flash(finalizar?'Servicio finalizado':'Cambios guardados');
+    if(finalizar) volverLista();
+  }catch(e){ flash('No se ha podido guardar. Inténtalo de nuevo.'); }
+}
+
+// ── FOTOS ──
+function abrirFotos(){
+  if(!config.fotosUrl){ flash('La oficina aún no ha configurado el enlace'); return; }
+  window.open(config.fotosUrl,'_blank','noopener');
+}
+
+init();
+</script>
+</body>
+</html>
