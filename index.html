@@ -103,8 +103,14 @@ table.cols-fixed th.col-prop,table.cols-fixed td.col-prop{min-width:0;max-width:
 .pack-line .pk-btn{padding:6px 9px;font-size:12px;white-space:nowrap;}
 .pack-line .pk-bb-toggle.on{background:rgba(37,99,235,.1);border-color:var(--accent);color:var(--accent);}
 .horas-row{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
-.arreglos-row{grid-column:1/-1;display:grid;grid-template-columns:minmax(110px,150px) auto 1fr;gap:12px;align-items:end;}
-.arreglos-row #f-arreglos-importe-group{width:130px;}
+.arreglos-row{grid-column:1/-1;display:flex;gap:12px;align-items:flex-end;}
+.arreglos-row>.form-group{flex:0 0 150px;min-width:0;}
+.arreglos-row>#f-arreglos-importe-group{flex:0 0 130px;}
+.arreglos-row>.ar-detalle{flex:1 1 auto;}
+.op-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
+.op-chips:empty{display:none;}
+.op-chip{display:inline-flex;align-items:center;gap:4px;background:var(--accent);color:#fff;border-radius:999px;padding:3px 4px 3px 10px;font-size:12px;font-weight:500;}
+.op-chip button{border:0;background:rgba(255,255,255,.25);color:#fff;border-radius:50%;width:18px;height:18px;line-height:18px;padding:0;cursor:pointer;font-size:11px;}
 
 /* EXTRAS */
 .extras-section{grid-column:1/-1;display:flex;flex-direction:column;gap:10px;}
@@ -284,9 +290,9 @@ html,body{max-width:100%;overflow-x:hidden;}
   .resumen-grid{grid-template-columns:1fr;}
   .form-grid{grid-template-columns:1fr;}
   .form-group.full{grid-column:1;}
-  .arreglos-row{grid-column:1;grid-template-columns:1fr 1fr;}
-  .arreglos-row .ar-detalle{grid-column:1/-1;}
-  .arreglos-row #f-arreglos-importe-group{width:auto;}
+  .arreglos-row{grid-column:1;flex-wrap:wrap;}
+  .arreglos-row>.form-group,.arreglos-row>#f-arreglos-importe-group{flex:1 1 40%;}
+  .arreglos-row>.ar-detalle{flex:1 1 100%;}
   .section-divider{grid-column:1;}
   .precio-box{grid-template-columns:1fr;}
   .prop-prices-grid{grid-template-columns:1fr;}
@@ -604,9 +610,10 @@ html,body{max-width:100%;overflow-x:hidden;}
     <div class="form-group">
       <label class="form-label">Operarios</label>
       <div class="input-with-btn">
-        <select class="form-select" id="f-operario"><option value="">— seleccionar —</option></select>
+        <select class="form-select" id="f-operario" onchange="addOperarioForm(this.value)"><option value="">— añadir operario —</option></select>
         <button class="btn btn-ghost btn-icon" onclick="openOperarioModal(true)" title="Nuevo operario">＋</button>
       </div>
+      <div class="op-chips" id="op-chips"></div>
     </div>
     <div class="arreglos-row">
       <div class="form-group">
@@ -930,7 +937,7 @@ async function loadData(){
   window.db.collection('operarios').onSnapshot(snap=>{
     operarios=sortProps(snap.docs.map(docData));
     renderMaestros();
-    const sel=document.getElementById('f-operario'); if(sel) fillOperarioSel(sel.value);
+    fillOperarioSel(); renderOpChips();
   });
 }
 
@@ -1911,7 +1918,7 @@ function onTipoLimpiezaChange(){
   } else if(tipo==='Inicial/Obra'||tipo==='Check'){
     ptitle.textContent=`Precio ${tipo} (horas × operarios × tarifa)`;
     phoras.style.display='';
-    const op=document.getElementById('f-operarios'); if(op&&!op.value) op.value=1;
+    const op=document.getElementById('f-operarios'); if(op&&!op.value) op.value=selOps.length||1;
   }
   recalcTotal();
 }
@@ -2035,7 +2042,7 @@ function clearServForm(){
   document.getElementById('f-cliente').value='';
   fillPropSel('','');
   document.getElementById('f-tipo-limpieza').value='';
-  fillOperarioSel('');
+  setOperariosForm([]);
   document.getElementById('f-arreglos').value='';
   const agi=document.getElementById('f-arreglos-importe');if(agi)agi.value='';
   const agg=document.getElementById('f-arreglos-importe-group');if(agg)agg.style.display='none';
@@ -2060,7 +2067,7 @@ function fillServForm(s){
   fillCliSel('f-cliente',s.clienteId||'');
   fillPropSel('',s.propiedadId||'');
   document.getElementById('f-tipo-limpieza').value=s.tipoLimpieza||'';
-  fillOperarioSel(s.operarioId||'',s.operarioNombre||'');
+  setOperariosForm(opsDeServicio(s));
   document.getElementById('f-arreglos').value=s.arreglos||'';
   onArreglosChange();
   const ai=document.getElementById('f-arreglos-importe');if(ai) ai.value=s.arreglosImporte||'';
@@ -2115,8 +2122,9 @@ function guardarServicio(){
     clienteId:cli,
     propiedadId:document.getElementById('f-propiedad').value,
     tipoLimpieza:tipo,precioLimpieza,horas,operarios,tarifa,
-    operarioId:document.getElementById('f-operario').value,
-    operarioNombre:(getOperario(document.getElementById('f-operario').value)?.nombre)||(document.getElementById('f-operario').selectedOptions[0]?.dataset.nombre)||'',
+    operariosIds:selOps.map(o=>o.id),
+    operariosNombres:selOps.map(o=>getOperario(o.id)?.nombre||o.nombre||''),
+    operarioId:null, operarioNombre:null,
     extras:getExtrasFromForm(),
     abastecimiento:getAbastFromForm(),
     arreglos:document.getElementById('f-arreglos').value,
@@ -2536,14 +2544,38 @@ function generarAutofacturas(){
 
 // ── OPERARIOS ──
 let editOpId='', fromServOp=false;
-function fillOperarioSel(selVal, nombreGuardado){
-  const sel=document.getElementById('f-operario'); if(!sel) return;
-  const activos=operarios.filter(o=>o.activo!==false||o.id===selVal);
-  let html='<option value="">— seleccionar —</option>'+activos.map(o=>`<option value="${esc(o.id)}">${esc(o.nombre)}${o.activo===false?' (inactivo)':''}</option>`).join('');
-  // Servicio con un operario que ya no está en el maestro: mantener su nombre
-  if(selVal&&!getOperario(selVal)) html+=`<option value="${esc(selVal)}" data-nombre="${esc(nombreGuardado||'')}">${esc(nombreGuardado||'(operario eliminado)')}</option>`;
-  sel.innerHTML=html; sel.value=selVal||'';
+let selOps=[]; // operarios elegidos en el formulario: [{id,nombre}]
+// Operarios de un servicio (admite servicios antiguos con un solo operario)
+function opsDeServicio(s){
+  if(Array.isArray(s?.operariosIds)) return s.operariosIds.map((id,i)=>({id,nombre:getOperario(id)?.nombre||s.operariosNombres?.[i]||'(operario eliminado)'}));
+  if(s?.operarioId) return [{id:s.operarioId,nombre:getOperario(s.operarioId)?.nombre||s.operarioNombre||'(operario eliminado)'}];
+  return [];
 }
+function nombresOperarios(s){ return opsDeServicio(s).map(o=>o.nombre).join(', '); }
+function fillOperarioSel(){
+  const sel=document.getElementById('f-operario'); if(!sel) return;
+  const usados=new Set(selOps.map(o=>o.id));
+  const libres=operarios.filter(o=>o.activo!==false&&!usados.has(o.id));
+  sel.innerHTML=`<option value="">${libres.length?'— añadir operario —':(operarios.length?'— todos añadidos —':'— sin operarios en Maestro —')}</option>`+
+    libres.map(o=>`<option value="${esc(o.id)}">${esc(o.nombre)}</option>`).join('');
+  sel.value='';
+}
+function renderOpChips(){
+  const box=document.getElementById('op-chips'); if(!box) return;
+  box.innerHTML=selOps.map((o,i)=>`<span class="op-chip">${esc(getOperario(o.id)?.nombre||o.nombre)}<button type="button" onclick="quitarOperarioForm(${i})" title="Quitar">✕</button></span>`).join('');
+}
+function syncNumOperarios(){
+  // En limpiezas por horas, el Nº de operarios sigue a los operarios elegidos
+  const n=selOps.length, el=document.getElementById('f-operarios');
+  if(n&&el&&esPorHoras(document.getElementById('f-tipo-limpieza')?.value)){ el.value=n; recalcTotal(); }
+}
+function setOperariosForm(list){ selOps=list.map(o=>({...o})); fillOperarioSel(); renderOpChips(); }
+function addOperarioForm(id){
+  if(!id||selOps.some(o=>o.id===id)) return fillOperarioSel();
+  selOps.push({id,nombre:getOperario(id)?.nombre||''});
+  fillOperarioSel(); renderOpChips(); syncNumOperarios();
+}
+function quitarOperarioForm(i){ selOps.splice(i,1); fillOperarioSel(); renderOpChips(); syncNumOperarios(); }
 function openOperarioModal(fromServicio=false){
   fromServOp=fromServicio; editOpId='';
   document.getElementById('op-modal-title').textContent='Nuevo operario';
@@ -2575,12 +2607,12 @@ function guardarOperario(){
   sortProps(operarios);
   window.db.collection('operarios').doc(obj.id).set(obj);
   closeOperarioModal(); renderMaestros();
-  if(fromServOp) fillOperarioSel(obj.id); else fillOperarioSel(document.getElementById('f-operario')?.value||'');
+  if(fromServOp) addOperarioForm(obj.id); else { fillOperarioSel(); renderOpChips(); }
   editOpId=''; fromServOp=false;
 }
 function delOperario(id){
   const o=getOperario(id); if(!o) return;
-  const n=servicios.filter(s=>s.operarioId===id).length;
+  const n=servicios.filter(s=>opsDeServicio(s).some(x=>x.id===id)).length;
   if(!confirm(n?`${o.nombre} aparece en ${n} servicio${n>1?'s':''}. Esos servicios conservarán su nombre. ¿Eliminar del maestro?\n\n(Si solo deja de trabajar, mejor márcalo como Inactivo.)`:`¿Eliminar a ${o.nombre}?`)) return;
   window.db.collection('operarios').doc(id).delete();
 }
@@ -2617,7 +2649,7 @@ function renderMaestros(){
 
   const lo=document.getElementById('lista-operarios');
   if(lo) lo.innerHTML=operarios.length?operarios.map(o=>{
-    const n=servicios.filter(s=>s.operarioId===o.id).length;
+    const n=servicios.filter(s=>opsDeServicio(s).some(x=>x.id===o.id)).length;
     return `<div class="list-item"${o.activo===false?' style="opacity:.55"':''}>
       <div class="list-item-info"><div class="list-item-name">${esc(o.nombre)}${o.activo===false?' · inactivo':''}</div>
       <div class="list-item-sub">${esc(o.telefono||'Sin teléfono')}${o.notas?' · '+esc(o.notas):''}</div></div>
@@ -2742,7 +2774,7 @@ function buildExcelRow(s){
       'Precio Pack BB (€)': s.packBBPrice||0,
       'Total Pack BB (€)': packBBTotal(s)||'',
       'Tipo Limpieza': s.tipoLimpieza||'',
-      'Operario':      s.operarioNombre||getOperario(s.operarioId)?.nombre||'',
+      'Operarios (nombres)': nombresOperarios(s),
       'Precio Limpieza (€)': precioLimp||'',
       'Horas':         esPorHoras(s.tipoLimpieza)?s.horas||'':'',
       'Operarios':     esPorHoras(s.tipoLimpieza)?getOperarios(s):'',
