@@ -416,6 +416,18 @@ html,body{max-width:100%;overflow-x:hidden;}
   </div>
   <div class="kpi-grid" id="kpi-abast"></div>
 
+  <!-- Migración de precios: solo visible abriendo la app con ?migrar=1 -->
+  <div id="migrar-panel" style="display:none;background:rgba(255,200,50,.08);border:1px solid rgba(255,200,50,.35);border-radius:var(--radius);padding:16px 20px;margin-bottom:16px;">
+    <div style="font-family:'Syne',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#ffc832;margin-bottom:8px;">🛠 Herramienta de uso único</div>
+    <div style="font-size:13px;color:var(--text);margin-bottom:6px;">Aplicar los precios actuales de la lista a los productos de abastecimiento de <strong>todos los servicios ya cargados</strong>.</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:12px;">Los productos cargados como “Otro” no se tocan. No modifica importes facturados: el abastecimiento no entra en la base imponible.</div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      <button class="btn btn-ghost" onclick="migrarPreciosAbast(false)">🔍 Ver qué cambiaría</button>
+      <button class="btn btn-primary" onclick="migrarPreciosAbast(true)">✓ Aplicar a todos los servicios</button>
+    </div>
+    <div id="migrar-out" style="font-size:12px;color:var(--muted);margin-top:12px;white-space:pre-line;"></div>
+  </div>
+
   <!-- Precio pack de ropa -->
   <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;margin-bottom:16px;">
     <div style="font-family:'Syne',sans-serif;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--accent);margin-bottom:12px;">💼 Pack de ropa</div>
@@ -1578,6 +1590,73 @@ const ABAST_CAT=[
   {key:'tubo_co2',         nombre:'Tubo CO2',              precio:0},
   {key:'__otro__',         nombre:'➕ Otro',               precio:0},
 ];
+
+// ══════════════════════════════════════
+// MIGRACIÓN DE UNA SOLA VEZ: precios de abastecimiento en servicios viejos
+// Se muestra únicamente si la URL lleva ?migrar=1
+// ══════════════════════════════════════
+function calcularCambiosAbast(){
+  const precios={};
+  ABAST_CAT.forEach(p=>{ if(p.key&&p.key!=='__otro__') precios[p.key]=parseFloat(p.precio)||0; });
+  const porNombre={};
+  ABAST_CAT.forEach(p=>{ if(p.key&&p.key!=='__otro__') porNombre[(p.nombre||'').trim().toLowerCase()]=parseFloat(p.precio)||0; });
+
+  const cambios=[], detalle={};
+  (servicios||[]).forEach(serv=>{
+    const items=serv.abastecimiento||[];
+    if(!items.length) return;
+    let tocado=false;
+    const nuevos=items.map(it=>{
+      if(it.isOtro||it.key==='__otro__') return it;
+      let nuevo=precios[it.key];
+      if(nuevo==null) nuevo=porNombre[(it.nombre||'').trim().toLowerCase()];
+      if(nuevo==null) return it;
+      const actual=parseFloat(it.precio)||0;
+      if(actual===nuevo) return it;
+      tocado=true;
+      detalle[it.nombre||it.key]=(detalle[it.nombre||it.key]||0)+1;
+      return {...it,precio:nuevo};
+    });
+    if(tocado) cambios.push({serv,nuevos});
+  });
+  return {cambios,detalle};
+}
+
+async function migrarPreciosAbast(aplicar){
+  const out=document.getElementById('migrar-out');
+  const {cambios,detalle}=calcularCambiosAbast();
+  const nItems=Object.values(detalle).reduce((a,b)=>a+b,0);
+  const resumen=Object.entries(detalle).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`   · ${k}: ${v}`).join('\n');
+
+  if(!cambios.length){
+    out.textContent='✓ No hay nada que cambiar: todos los productos ya tienen el precio de la lista.';
+    return;
+  }
+  if(!aplicar){
+    out.textContent=`Se actualizarían ${nItems} producto(s) en ${cambios.length} servicio(s):\n${resumen}`;
+    return;
+  }
+  if(!confirm(`Se van a actualizar ${nItems} producto(s) de abastecimiento en ${cambios.length} servicio(s).\n\nEsta acción sobrescribe los precios guardados. ¿Continuar?`)) return;
+
+  out.textContent='⏳ Guardando…';
+  try{
+    let hechos=0;
+    for(let i=0;i<cambios.length;i+=400){
+      const lote=cambios.slice(i,i+400);
+      const batch=window.db.batch();
+      lote.forEach(c=>{
+        if(!c.serv.id) return;
+        batch.update(window.db.collection('servicios').doc(c.serv.id),{abastecimiento:c.nuevos});
+      });
+      await batch.commit();
+      hechos+=lote.length;
+      out.textContent=`⏳ Guardando… ${hechos}/${cambios.length}`;
+    }
+    out.textContent=`✓ Listo: ${nItems} producto(s) actualizados en ${hechos} servicio(s).\n\nYa podés sacar el ?migrar=1 de la URL. De acá en adelante, los cambios de precio solo afectan a los servicios nuevos.`;
+  }catch(err){
+    out.textContent='⚠️ No se pudo completar: '+(err&&err.message?err.message:err)+'\nNo se guardó nada de este lote. Probá de nuevo.';
+  }
+}
 
 function loadAbastPrices(){
   try{
@@ -3101,6 +3180,10 @@ const savedIva=localStorage.getItem('sg_iva');
 if(savedIva&&document.getElementById('iva-pct')) document.getElementById('iva-pct').value=savedIva;
 applyAmountsState();
 loadAbastPrices();
+if(/[?&]migrar=1/.test(location.search)){
+  const mp=document.getElementById('migrar-panel');
+  if(mp) mp.style.display='';
+}
 buildAbastSelect();
 renderAbastConfigGrid();
 document.getElementById('kpi-grid').innerHTML='<div style="grid-column:1/-1;text-align:center;padding:30px;color:var(--muted)">⏳ Conectando...</div>';
@@ -3126,4 +3209,4 @@ loadData();
   window.db = firebase.firestore();
 </script>
 </body>
-</html>
+</html>  
