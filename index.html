@@ -67,6 +67,12 @@ td{padding:11px 14px;white-space:nowrap;}
 .section-divider{grid-column:1/-1;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent);padding-top:6px;border-top:1px solid var(--border);margin-top:4px;}
 .modal-footer{display:flex;justify-content:flex-end;gap:10px;margin-top:22px;padding-top:18px;border-top:1px solid var(--border);}
 .filters{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center;}
+.filters-top,.filters-rest{display:contents;}
+.collapse-bar{display:none;align-items:center;justify-content:space-between;gap:10px;width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-family:inherit;font-size:13px;font-weight:600;color:var(--text);cursor:pointer;text-align:left;}
+.collapse-bar .cb-sub{color:var(--muted);font-weight:400;}
+.collapse-bar .chev{color:var(--muted);font-size:10px;}
+.btn-more{display:none;}
+#acciones-sec{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
 .fecha-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
 .date-range{display:flex;align-items:center;gap:6px;flex-shrink:0;}
 .date-range label{font-size:12px;color:var(--muted);white-space:nowrap;}
@@ -310,6 +316,19 @@ html,body{max-width:100%;overflow-x:hidden;}
   .modal{padding:18px;width:96vw;}
   .modal-sm{width:96vw;}
   .filters{flex-direction:column;align-items:stretch;}
+  .collapse-bar{display:flex;}
+  .btn-more{display:inline-flex!important;}
+  .page-header{position:relative;}
+  #acciones-sec{display:none;position:absolute;top:calc(100% + 6px);right:0;z-index:120;flex-direction:column;align-items:stretch;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px;min-width:215px;box-shadow:0 10px 28px rgba(0,0,0,.28);}
+  #acciones-sec.open{display:flex;}
+  #acciones-sec .btn,#acciones-sec .btn-eye{width:100%;justify-content:center;}
+  #kpi-bar{margin-bottom:14px;}
+  body.kpis-collapsed #kpi-grid{display:none;}
+  .filters-top{display:flex;gap:8px;align-items:center;width:100%;}
+  .filters-top .form-input{flex:1;min-width:0;}
+  .filters-top .collapse-bar{width:auto;flex:0 0 auto;}
+  .filters-rest{display:flex;flex-direction:column;gap:10px;width:100%;}
+  body.filtros-collapsed .filters-rest{display:none;}
   .filters .form-input,.filters .form-select{max-width:100%;min-width:0!important;}
   .fact-filters{flex-direction:column;}
   .fact-filters .form-select{max-width:100%;}
@@ -346,15 +365,29 @@ html,body{max-width:100%;overflow-x:hidden;}
   <div class="page-header">
     <div class="page-title">Servicios</div>
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-      <button class="btn-eye" id="btn-eye" onclick="toggleAmounts()" title="Ocultar/mostrar importes">👁 Ocultar importes</button>
-      <button class="btn btn-ghost" onclick="exportarExcel('todos')">⬇ Exportar todo</button>
-      <button class="btn btn-ghost" onclick="exportarExcel('filtrado')">⬇ Exportar filtrado</button>
+      <div id="acciones-sec">
+        <button class="btn-eye" id="btn-eye" onclick="toggleAmounts()" title="Ocultar/mostrar importes">👁 Ocultar importes</button>
+        <button class="btn btn-ghost" onclick="exportarExcel('todos')">⬇ Exportar todo</button>
+        <button class="btn btn-ghost" onclick="exportarExcel('filtrado')">⬇ Exportar filtrado</button>
+      </div>
       <button class="btn btn-primary" onclick="openServModal()">+ Nuevo servicio</button>
+      <button class="btn btn-ghost btn-more" onclick="toggleAccionesMenu(event)" title="Más acciones" aria-label="Más acciones">⋯</button>
     </div>
   </div>
+  <button class="collapse-bar" id="kpi-bar" onclick="toggleKpis()">
+    <span><span id="kpi-bar-count">—</span> <span class="cb-sub">servicios</span></span>
+    <span class="chev" id="kpi-chev">▾</span>
+  </button>
   <div class="kpi-grid" id="kpi-grid"></div>
   <div class="filters">
-    <input class="form-input" id="filter-search" placeholder="🔍  Buscar…" oninput="renderTable()">
+    <div class="filters-top">
+      <input class="form-input" id="filter-search" placeholder="🔍  Buscar…" oninput="renderTable()">
+      <button class="collapse-bar" id="filtros-bar" onclick="toggleFiltros()">
+        <span>Filtros<span class="cb-sub" id="filtros-count"></span></span>
+        <span class="chev" id="filtros-chev">▾</span>
+      </button>
+    </div>
+    <div class="filters-rest">
     <button id="sort-btn" onclick="toggleSort()" style="flex-shrink:0;padding:0 14px;height:38px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">📅 Más reciente</button>
     <select class="form-select" id="filter-mes" onchange="renderTable()"><option value="">Todos los meses</option></select>
     <select class="form-select" id="filter-cliente" onchange="renderTable()"><option value="">Todos los clientes</option></select>
@@ -365,6 +398,7 @@ html,body{max-width:100%;overflow-x:hidden;}
     <select class="form-select" id="filter-cobro" onchange="renderTable()">
       <option value="">Estado cobro</option><option>Cobrado</option><option>Pendiente</option>
     </select>
+    </div>
   </div>
   <div class="table-wrap">
     <table>
@@ -1232,8 +1266,44 @@ function showView(name,btn){
 // ══════════════════════════════════════
 // KPIs
 // ══════════════════════════════════════
+// ══════════════════════════════════════
+// CABECERA PLEGABLE (solo afecta a móvil; en escritorio se ve todo igual)
+// ══════════════════════════════════════
+function aplicarColapsos(){
+  const kAbierto=localStorage.getItem('sg_kpis_open')==='1';
+  const fAbierto=localStorage.getItem('sg_filtros_open')==='1';
+  document.body.classList.toggle('kpis-collapsed',!kAbierto);
+  document.body.classList.toggle('filtros-collapsed',!fAbierto);
+  const kc=document.getElementById('kpi-chev'); if(kc) kc.textContent=kAbierto?'▲':'▼';
+  const fc=document.getElementById('filtros-chev'); if(fc) fc.textContent=fAbierto?'▲':'▼';
+}
+function toggleKpis(){
+  localStorage.setItem('sg_kpis_open', document.body.classList.contains('kpis-collapsed')?'1':'0');
+  aplicarColapsos();
+}
+function toggleFiltros(){
+  localStorage.setItem('sg_filtros_open', document.body.classList.contains('filtros-collapsed')?'1':'0');
+  aplicarColapsos();
+}
+function toggleAccionesMenu(e){
+  e.stopPropagation();
+  document.getElementById('acciones-sec')?.classList.toggle('open');
+}
+document.addEventListener('click',()=>document.getElementById('acciones-sec')?.classList.remove('open'));
+
+function actualizarContadorFiltros(){
+  const act=['filter-mes','filter-cliente','filter-propiedad','filter-factura','filter-cobro']
+    .filter(id=>(document.getElementById(id)?.value||'')!=='').length;
+  const el=document.getElementById('filtros-count');
+  if(el) el.textContent=act?` (${act})`:'';
+  const bar=document.getElementById('filtros-bar');
+  if(bar) bar.style.borderColor=act?'var(--accent)':'';
+}
+
 function renderKPIs(data){
   const d=data||servicios;
+  const kc=document.getElementById('kpi-bar-count'); if(kc) kc.textContent=d.length;
+  actualizarContadorFiltros();
   const ti=d.reduce((a,s)=>a+calcBase(s),0);
   const co=d.filter(s=>s.estadoCobro==='Cobrado').reduce((a,s)=>a+calcBase(s),0);
   const fMes=document.getElementById('filter-mes')?.value||'';
@@ -3180,6 +3250,7 @@ const savedIva=localStorage.getItem('sg_iva');
 if(savedIva&&document.getElementById('iva-pct')) document.getElementById('iva-pct').value=savedIva;
 applyAmountsState();
 loadAbastPrices();
+aplicarColapsos();
 if(/[?&]migrar=1/.test(location.search)){
   const mp=document.getElementById('migrar-panel');
   if(mp) mp.style.display='';
@@ -3209,4 +3280,4 @@ loadData();
   window.db = firebase.firestore();
 </script>
 </body>
-</html>  
+</html>
