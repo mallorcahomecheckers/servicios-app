@@ -1736,11 +1736,15 @@ function loadAbastPrices(){
 }
 function saveAbastPrices(){
   const obj={};
-  ABAST_CAT.forEach(p=>obj[p.key]=p.precio);
+  // Firestore rechaza campos que empiezan y terminan con "__", por eso se excluye __otro__
+  ABAST_CAT.forEach(p=>{ if(p.key && !/^__.*__$/.test(p.key)) obj[p.key]=p.precio; });
   localStorage.setItem('sg_abast_prices',JSON.stringify(obj));
   // Compartir precios con la app de operarios
   clearTimeout(window._abastSyncT);
-  window._abastSyncT=setTimeout(()=>{ try{ window.db.collection('config').doc('ajustes').set({abastPrecios:obj},{merge:true}); }catch(e){} },800);
+  window._abastSyncT=setTimeout(()=>{
+    window.db.collection('config').doc('ajustes').set({abastPrecios:obj},{merge:true})
+      .catch(e=>console.error('No se pudieron sincronizar los precios de abastecimiento:',e));
+  },800);
 }
 function getAbastDefaultPrice(key){
   return ABAST_CAT.find(p=>p.key===key)?.precio||0;
